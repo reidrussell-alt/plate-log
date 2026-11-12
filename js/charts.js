@@ -1,5 +1,11 @@
 import { formatDateShort } from './utils.js';
 
+// Read a colour token from css/main.css so charts follow the theme
+export function cssVar(name, fallback) {
+  const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  return v || fallback;
+}
+
 export function drawSingleLineChart(canvas, points, yKey, color) {
   if (points.length === 0) return;
   const dpr = window.devicePixelRatio || 1;
@@ -25,10 +31,10 @@ export function drawSingleLineChart(canvas, points, yKey, color) {
   const yMin = Math.max(0, minV - padYRange);
   const yMax = maxV + padYRange;
 
-  ctx.strokeStyle = '#262626';
+  ctx.strokeStyle = cssVar('--border', '#e3e8ef');
   ctx.lineWidth = 1;
-  ctx.font = '9px JetBrains Mono, monospace';
-  ctx.fillStyle = '#555';
+  ctx.font = '600 10px Manrope, system-ui, sans-serif';
+  ctx.fillStyle = cssVar('--text-dimmer', '#8792a3');
   for (let i = 0; i <= 3; i++) {
     const y = padT + (chartH / 3) * i;
     ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(w - padR, y); ctx.stroke();
@@ -36,7 +42,7 @@ export function drawSingleLineChart(canvas, points, yKey, color) {
     ctx.fillText(Math.round(v), 4, y + 3);
   }
 
-  ctx.fillStyle = '#888';
+  ctx.fillStyle = cssVar('--text-dim', '#5f6b7d');
   if (points.length === 1) {
     ctx.fillText(formatDateShort(points[0].date), padL, h - 8);
   } else {
@@ -69,7 +75,7 @@ export function drawSingleLineChart(canvas, points, yKey, color) {
     const y = padT + chartH - ((p[yKey] - yMin) / (yMax - yMin)) * chartH;
     ctx.fillStyle = color;
     ctx.beginPath(); ctx.arc(x, y, 4, 0, Math.PI * 2); ctx.fill();
-    ctx.fillStyle = '#0a0a0a';
+    ctx.fillStyle = cssVar('--surface', '#ffffff');
     ctx.beginPath(); ctx.arc(x, y, 2, 0, Math.PI * 2); ctx.fill();
   });
 }

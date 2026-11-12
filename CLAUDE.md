@@ -179,44 +179,43 @@ This is Reid's original default program. New users pick from 6 templates in `pro
 
 ---
 
-## CSS variables (from :root)
+## Theme — "Daylight" (CSS variables in :root)
+
+Light theme: white cards with soft shadows on a cool grey page, ink text, one cobalt accent. Chosen 11 Nov 2026 from four options (Graphite, Daylight, Chalk & Iron, Matchday).
 
 ```css
-/* Surfaces (dark → light) */
---bg: #0a0a0a
---surface: #141414
---surface-2: #1c1c1c
---surface-3: #242424
---border: #262626
---border-bright: #383838
+/* Surfaces */
+--bg: #f2f4f8            /* page */
+--surface: #ffffff       /* cards */
+--surface-2: #f3f5f9     /* inputs, nested cards */
+--surface-3: #e9edf3     /* deeply nested / pressed */
+--border: #e3e8ef
+--border-bright: #cdd5e1
 
-/* 5-step gray scale (light → dark) */
---text: #fafafa          /* primary text */
---text-secondary: #c0c0c0 /* secondary emphasis */
---text-dim: #888          /* supporting labels */
---text-dimmer: #555       /* de-emphasized */
---text-faint: #333        /* near-invisible chrome */
+/* Text (dark → light) */
+--text: #0f1a2b  --text-secondary: #34405a  --text-dim: #5f6b7d  --text-dimmer: #8792a3  --text-faint: #c5ccd8
 
 /* Accent */
---accent: #d4ff3a        /* neon lime — primary CTAs, key highlights */
---accent-dim: #a8c82a    /* desaturated lime — secondary/supporting accent */
+--accent: #2453ff        /* cobalt — primary buttons, active tab, key numbers */
+--accent-dim: #4a63d8    /* supporting — pills, badges, section labels */
+--on-accent: #ffffff     /* text/icons on accent backgrounds */
 
-/* Workout types */
---push: #ff6b35
---pull: #3a9eff
---legs: #22d3ee
---recovery: #b86bff
---success: #4ade80
+/* Workout types & states */
+--push: #e8572a  --pull: #1a8fe0  --legs: #0fa678  --recovery: #7c4dff
+--success: #0fa678  --danger: #e5484d  --warm: #e07a14  --cool: #0f9f72
 
-/* Home readiness / momentum */
---warm: #ff8833
---cool: #66cc88
+/* Shape & type */
+--radius-card: 18px  --shadow-card  --shadow-raised
+--font-display: Bricolage Grotesque   --font-body / --font-mono: Manrope (tabular figures on body)
 ```
 
-**Accent usage convention:**
-- Use `--accent` for primary interactive elements: tab.active, primary buttons, focus rings, key stat numbers, today indicator.
-- Use `--accent-dim` for supporting/metadata uses: target-pill, trend badges, section labels, metadata chips.
-- Use `rgba(212, 255, 58, 0.06–0.2)` for tinted backgrounds and subtle borders.
+**Rules:**
+- Never hard-code colours. For tints use `color-mix(in srgb, var(--token) N%, transparent)`.
+- Text on an `--accent` background uses `--on-accent`, never `--bg`.
+- Cards: white surface, no visible border, `--shadow-card`. Pop-ups and sheets: `--shadow-raised`.
+- Charts read colours at runtime with `cssVar()` from `charts.js`, so they follow the theme.
+- Daylight overrides (card shadows, set rows, calendar, page titles) live in labelled `DAYLIGHT —` blocks at the end of `main.css`.
+- Rest timer: red (resting) → amber (last third) → green "READY", via `--timer-red/amber/green` on `.rest-timer-pill`.
 
 ---
 
@@ -257,7 +256,7 @@ Splash screen shown on every app open. Tap to dismiss (no auto-dismiss).
 ## Service worker
 
 - Cache name must be bumped (v1 → v2 → v3...) on **every deploy** that changes JS/CSS files
-- Currently: `lift-tracker-v21`
+- Currently: `lift-tracker-v22`
 - Every JS file must be listed in the `ASSETS` array — add new modules there, remove deleted ones
 - SW is **disabled on localhost** — the hostname check in `app.js` prevents re-registration during development
 - When a new SW takes control, `app.js` reloads the page automatically (`controllerchange`)
@@ -284,10 +283,9 @@ git push origin main
 
 ## Fonts
 
-Loaded from Google Fonts:
-- `Archivo Black` — headings, large display text
-- `JetBrains Mono` — labels, stats, monospace UI elements
-- `Inter Tight` — body, secondary text
+Loaded from Google Fonts (link in `index.html`), always referenced through the font tokens:
+- `Bricolage Grotesque` (`--font-display`, weight 800) — page titles, big numbers
+- `Manrope` (`--font-body`, `--font-mono`) — everything else, including labels and numbers
 
 ---
 

@@ -434,35 +434,28 @@ These are displayed in the session view as "Last session" hints above each exerc
 
 ## 9. Styling & Theming
 
-All design tokens live in `:root` in `css/main.css`. **Never hardcode colors** — always use variables.
+The app uses the **Daylight** theme: white cards with soft shadows on a cool grey page, dark ink text and one cobalt accent. All design tokens live in `:root` in `css/main.css`. **Never hardcode colours** — use the variables, and `color-mix(in srgb, var(--token) N%, transparent)` for tints.
 
 | Variable | Value | Usage |
 |----------|-------|-------|
-| `--bg` | `#0a0a0a` | Page background |
-| `--surface` | `#141414` | Cards |
-| `--surface-2` | `#1c1c1c` | Inputs, nested cards |
-| `--surface-3` | `#242424` | Deeply nested elements |
-| `--border` | `#262626` | Default borders |
-| `--border-bright` | `#383838` | Highlighted borders |
-| `--text` | `#fafafa` | Primary text |
-| `--text-secondary` | `#c0c0c0` | Secondary emphasis |
-| `--text-dim` | `#888` | Supporting labels |
-| `--text-dimmer` | `#555` | Muted/disabled text |
-| `--text-faint` | `#333` | Near-invisible chrome |
-| `--accent` | `#d4ff3a` | Neon lime — primary CTAs, key highlights |
-| `--accent-dim` | `#a8c82a` | Supporting accent — pills, badges, section labels |
-| `--push` | `#ff6b35` | Upper A / push day |
-| `--pull` | `#3a9eff` | Upper B / pull day |
-| `--legs` | `#22d3ee` | Lower days (cyan) |
-| `--warm` | `#ff8833` | Home: "recovering" readiness, PR tag |
-| `--cool` | `#66cc88` | Home: "ready" readiness dot, coaching tag |
-| `--recovery` | `#b86bff` | Lower B / posterior |
-| `--success` | `#4ade80` | Confirmation states |
+| `--bg` | `#f2f4f8` | Page background |
+| `--surface` | `#ffffff` | Cards |
+| `--surface-2` | `#f3f5f9` | Inputs, nested cards |
+| `--surface-3` | `#e9edf3` | Pressed / deeply nested |
+| `--border` / `--border-bright` | `#e3e8ef` / `#cdd5e1` | Dividers, outlines |
+| `--text` … `--text-faint` | `#0f1a2b` → `#c5ccd8` | 5-step ink scale |
+| `--accent` | `#2453ff` | Cobalt — primary buttons, active tab, key numbers |
+| `--accent-dim` | `#4a63d8` | Supporting accent |
+| `--on-accent` | `#ffffff` | Text on accent backgrounds |
+| `--push` / `--pull` / `--legs` / `--recovery` | `#e8572a` / `#1a8fe0` / `#0fa678` / `#7c4dff` | Workout types |
+| `--success` / `--danger` | `#0fa678` / `#e5484d` | Logged sets, destructive actions |
+| `--radius-card`, `--shadow-card`, `--shadow-raised` | 18px, soft shadows | Card and pop-up shape |
 
-**Typography:**
-- `Archivo Black` — display headings, large text
-- `JetBrains Mono` — labels, stats, monospace UI
-- `Inter Tight` — body text, secondary copy
+**Typography:** `Bricolage Grotesque` for titles and big numbers (`--font-display`), `Manrope` for everything else (`--font-body`, `--font-mono`), with tabular figures so numbers line up.
+
+**Rest timer:** floating circle above the tab bar; red while resting, amber in the last third, green "READY".
+
+**Charts** read their colours from the CSS variables at draw time (`cssVar()` in `charts.js`).
 
 ---
 
@@ -473,7 +466,7 @@ flowchart TD
     A[Make code changes locally] --> B[Test at localhost:8082]
     B --> C{Changes correct?}
     C -->|No| A
-    C -->|Yes| D[Bump CACHE_NAME in service-worker.js\ne.g. v21 → v22\nupdate ASSETS if files added/removed]
+    C -->|Yes| D[Bump CACHE_NAME in service-worker.js\ne.g. v22 → v23\nupdate ASSETS if files added/removed]
     D --> E[git add changed files]
     E --> F[git commit]
     F --> G[git push origin main\nuse PAT for password]
@@ -486,7 +479,7 @@ flowchart TD
 
 **Remote:** `https://github.com/reidrussell-alt/lifting-tracker-Application.git`  
 **Auth:** Personal Access Token (GitHub no longer accepts passwords)  
-**Current SW cache version:** `lift-tracker-v21`  
+**Current SW cache version:** `lift-tracker-v22`  
 **Auto-update:** when a new service worker takes control, the app reloads itself. On iOS a delete + re-add is still the reliable way to force fresh code.
 
 ---
@@ -500,7 +493,7 @@ flowchart TD
 - [ ] Filter Progress charts by program
 - [ ] "Create plan from history" wizard for track-as-you-go users
 - [ ] Swipe gestures on session cards
-- [ ] Dark/light mode toggle
+- [ ] Dark version of the Daylight theme (follow the phone's dark mode)
 - [ ] Push notification reminders
 
 **Done**
@@ -517,6 +510,7 @@ flowchart TD
 
 | Date | Change |
 |------|--------|
+| 2026-11-11 | Daylight theme: light surfaces, cobalt accent, Bricolage Grotesque + Manrope, card shadows, bolder set-logging tick, light rest-timer colours, plate logo on welcome screen; status bar set to default; SW bumped to v22 |
 | 2026-11-11 | App icon added (red weight plate stamped "LBS", on white): iOS home-screen icon, manifest icons, favicon; home-screen name "Lift"; SW bumped to v21 |
 | 2026-11-11 | Docs refresh: ARCHITECTURE.md and CLAUDE.md brought in line with the code (schema v5, SW v20, current modules, roadmap) |
 | 2026-06-05 | Fixed edit-set row overflowing on mobile; SW at v20 |

@@ -2,9 +2,9 @@ import { state, saveData } from './data.js';
 import { MUSCLE_GROUPS } from './program.js';
 import { MUSCLE_GROUP_ORDER, MUSCLE_GROUP_META } from './exerciseLibrary.js';
 import { formatDate, formatDateShort, isoDateOnly, todayDateString, showToast, showConfirm } from './utils.js';
-import { drawSingleLineChart } from './charts.js';
+import { drawSingleLineChart, cssVar } from './charts.js';
 
-const FALLBACK_COLORS = ['#ff6b35','#d4ff3a','#3a9eff','#b86bff','#4ade80','#f472b6','#fb923c','#60a5fa'];
+const FALLBACK_COLORS = ['#e8572a','#0fa678','#1a8fe0','#7c4dff','#2453ff','#db2777','#e07a14','#0891b2'];
 
 const CHART_RANGES_KEY = 'liftTrackerChartRanges';
 const RANGE_OPTIONS = [10, 20, 30, 'all'];
@@ -46,7 +46,7 @@ function _subtitleText(loadType, visibleCount, totalCount) {
 }
 
 function dayColor(dayId) {
-  const known = { upperA:'#ff6b35', lowerA:'#d4ff3a', upperB:'#3a9eff', lowerB:'#b86bff' };
+  const known = { upperA:'#e8572a', lowerA:'#0fa678', upperB:'#1a8fe0', lowerB:'#7c4dff' };  // push, legs, pull, posterior
   if (known[dayId]) return known[dayId];
   let h = 0;
   for (const c of dayId) h = (h * 31 + c.charCodeAt(0)) & 0x7fffffff;
@@ -178,7 +178,7 @@ function _buildChartCardHtml(mg, exercisesInGroup) {
         <span><span class="legend-dot" style="background: ${meta.color};"></span>${selectedData.loadType === 'bw' ? 'Max Reps' : 'Top Weight (lb)'}</span>
       </div>
       <div style="margin-top: 14px; padding-top: 14px; border-top: 1px dashed var(--border);">
-        <div style="font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--text-dim); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
+        <div style="font-family: var(--font-mono); font-size: 9px; color: var(--text-dim); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
           <span>Session History</span>
           <span style="color: var(--text-dimmer); text-transform: none; letter-spacing: 0.5px; font-style: italic;">tap to expand</span>
         </div>
@@ -196,7 +196,7 @@ function _buildChartCardHtml(mg, exercisesInGroup) {
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
                   <div class="history-date" style="margin-bottom: 0;">${formatDate(s.date)} · ${s.dayTitle}</div>
                   <button onclick="event.stopPropagation(); openEditModal(${s.sessionIdx}, ${s.exerciseIdx})"
-                          style="background: var(--surface-3); border: 1px solid var(--border); color: var(--accent); font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; padding: 4px 8px; border-radius: 6px; cursor: pointer;">
+                          style="background: var(--surface-3); border: 1px solid var(--border); color: var(--accent); font-family: var(--font-mono); font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; padding: 4px 8px; border-radius: 6px; cursor: pointer;">
                     Edit
                   </button>
                 </div>
@@ -285,7 +285,7 @@ export function renderProgress() {
         </div>
         <div class="stat-box">
           <div class="stat-label">Most Trained</div>
-          <div class="stat-value" style="font-size: 16px; font-family: 'Inter Tight'; font-weight: 900;">
+          <div class="stat-value" style="font-size: 16px; font-family: var(--font-body); font-weight: 900;">
             ${getMostTrainedDay(sessionsByDay)}
           </div>
           <div class="stat-sub">${Math.max(...Object.values(sessionsByDay).map(s => s.count), 0)} sessions</div>
@@ -440,14 +440,14 @@ export function renderVolumeChart() {
     date: s.date,
     sets: s.exercises.reduce((sum, ex) => sum + ex.sets.length, 0)
   }));
-  drawSingleLineChart(canvas, dataPoints, 'sets', '#d4ff3a');
+  drawSingleLineChart(canvas, dataPoints, 'sets', cssVar('--accent', '#2453ff'));
 }
 
 export function renderBwChart(bwData) {
   const canvas = document.getElementById('bwChart');
   if (!canvas) return;
   const dataPoints = bwData.map(s => ({ date: s.date, bw: parseFloat(s.bw) }));
-  drawSingleLineChart(canvas, dataPoints, 'bw', '#ff6b35');
+  drawSingleLineChart(canvas, dataPoints, 'bw', cssVar('--push', '#e8572a'));
 }
 
 export function getMostTrainedDay(sessionsByDay) {

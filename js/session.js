@@ -292,7 +292,7 @@ export function renderSession() {
                 <span>Suggestion: <strong>${suggestion.msg}</strong></span>
               </div>
             ` : `
-              <div class="suggestion" style="background:rgba(212,255,58,0.04);color:var(--text-dimmer);">
+              <div class="suggestion" style="background:color-mix(in srgb, var(--accent) 5%, transparent);color:var(--text-dimmer);">
                 <svg class="suggestion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
                 <span>First time — start at a comfortable weight</span>
               </div>

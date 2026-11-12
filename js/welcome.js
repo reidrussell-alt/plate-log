@@ -36,22 +36,14 @@ export function showWelcomeScreen() {
     <div class="welcome-inner">
       <div class="welcome-logo-wrap">
         <div class="welcome-logo">
-          <svg viewBox="0 0 60 52" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <defs>
-              <filter id="wLogoGlow" x="-40%" y="-40%" width="180%" height="180%">
-                <feGaussianBlur in="SourceGraphic" stdDeviation="2.5" result="blur"/>
-                <feMerge>
-                  <feMergeNode in="blur"/>
-                  <feMergeNode in="SourceGraphic"/>
-                </feMerge>
-              </filter>
-            </defs>
-            <g filter="url(#wLogoGlow)">
-              <path d="M30 3 L5 50 L16 50 L30 22 L44 50 L55 50 Z"
-                    fill="#232323" stroke="#d4ff3a" stroke-width="1.5" stroke-linejoin="round"/>
-              <line x1="18" y1="35" x2="42" y2="35"
-                    stroke="#d4ff3a" stroke-width="1.5" stroke-linecap="round"/>
-            </g>
+          <svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <!-- Weight plate mark, matches the home-screen icon -->
+            <circle cx="30" cy="30" r="27" fill="#d9342b"/>
+            <circle cx="30" cy="30" r="20.5" fill="none" stroke="#fff" stroke-opacity=".45" stroke-width="1.2"/>
+            <circle cx="30" cy="30" r="8" fill="#fff"/>
+            <circle cx="30" cy="30" r="3.4" fill="#d9342b"/>
+            <rect x="25.5" y="6.5" width="9" height="4.2" rx="2.1" fill="#fff"/>
+            <rect x="25.5" y="49.3" width="9" height="4.2" rx="2.1" fill="#fff"/>
           </svg>
         </div>
       </div>
