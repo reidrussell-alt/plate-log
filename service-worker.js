@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lift-tracker-v20';
+const CACHE_NAME = 'lift-tracker-v21';
 
 const ASSETS = [
   './',
@@ -24,6 +24,11 @@ const ASSETS = [
   './js/programBuilder.js',
   './js/healthkit.js',
   './manifest.json',
+  './icons/apple-touch-icon.png',
+  './icons/icon-192.png',
+  './icons/icon-512.png',
+  './icons/icon-512-maskable.png',
+  './icons/favicon-32.png',
 ];
 
 self.addEventListener('install', event => {

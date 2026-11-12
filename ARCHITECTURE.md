@@ -473,7 +473,7 @@ flowchart TD
     A[Make code changes locally] --> B[Test at localhost:8082]
     B --> C{Changes correct?}
     C -->|No| A
-    C -->|Yes| D[Bump CACHE_NAME in service-worker.js\ne.g. v20 → v21\nupdate ASSETS if files added/removed]
+    C -->|Yes| D[Bump CACHE_NAME in service-worker.js\ne.g. v21 → v22\nupdate ASSETS if files added/removed]
     D --> E[git add changed files]
     E --> F[git commit]
     F --> G[git push origin main\nuse PAT for password]
@@ -486,7 +486,7 @@ flowchart TD
 
 **Remote:** `https://github.com/reidrussell-alt/lifting-tracker-Application.git`  
 **Auth:** Personal Access Token (GitHub no longer accepts passwords)  
-**Current SW cache version:** `lift-tracker-v20`  
+**Current SW cache version:** `lift-tracker-v21`  
 **Auto-update:** when a new service worker takes control, the app reloads itself. On iOS a delete + re-add is still the reliable way to force fresh code.
 
 ---
@@ -517,6 +517,7 @@ flowchart TD
 
 | Date | Change |
 |------|--------|
+| 2026-11-11 | App icon added (red weight plate stamped "LBS", on white): iOS home-screen icon, manifest icons, favicon; home-screen name "Lift"; SW bumped to v21 |
 | 2026-11-11 | Docs refresh: ARCHITECTURE.md and CLAUDE.md brought in line with the code (schema v5, SW v20, current modules, roadmap) |
 | 2026-06-05 | Fixed edit-set row overflowing on mobile; SW at v20 |
 | 2026-05-30 | Refactor; PR detection on Home; per-chart re-render on range change; v4→v5 exercise-ID migration; removed `plan.js` |

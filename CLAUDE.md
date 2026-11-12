@@ -22,7 +22,9 @@ A personal workout tracking PWA (Progressive Web App) for Reid's 4-day push/pull
 ```
 lift-tracker/
 ├── index.html              # Shell — markup only, no inline JS/CSS
-├── manifest.json           # PWA manifest
+├── manifest.json           # PWA manifest (name, colours, icon list)
+├── icons/                  # App icon PNGs: apple-touch-icon (iOS), 192/512 + maskable (manifest), favicon
+├── scripts/make_icons.py   # Regenerates everything in icons/ (needs Pillow)
 ├── service-worker.js       # Cache-first SW; bump CACHE_NAME version on every deploy
 ├── css/
 │   └── main.css            # All styles; CSS variables in :root
@@ -255,7 +257,7 @@ Splash screen shown on every app open. Tap to dismiss (no auto-dismiss).
 ## Service worker
 
 - Cache name must be bumped (v1 → v2 → v3...) on **every deploy** that changes JS/CSS files
-- Currently: `lift-tracker-v20`
+- Currently: `lift-tracker-v21`
 - Every JS file must be listed in the `ASSETS` array — add new modules there, remove deleted ones
 - SW is **disabled on localhost** — the hostname check in `app.js` prevents re-registration during development
 - When a new SW takes control, `app.js` reloads the page automatically (`controllerchange`)
