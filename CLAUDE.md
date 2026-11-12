@@ -27,20 +27,28 @@ lift-tracker/
 ├── css/
 │   └── main.css            # All styles; CSS variables in :root
 └── js/
-    ├── app.js              # Entry point — imports everything, binds window.* handlers
-    ├── program.js          # Original 4-day split data + extended MUSCLE_GROUPS (no DOM)
-    ├── exerciseLibrary.js  # 60+ exercises with id/name/muscleGroup/loadType (no DOM)
-    ├── programTemplates.js # 6 program templates using exercise library (no DOM)
-    ├── data.js             # localStorage read/write; state (profile, programs, history)
-    ├── onboarding.js       # New-user onboarding flow (name, mode, template)
-    ├── settings.js         # Settings tab: profile, program management, data backup
-    ├── session.js          # Active workout session; structured + track-as-you-go
-    ├── plan.js             # Plan tab: reads active program from state.programs
-    ├── progress.js         # Progress tab: stats, charts, calendar, edit modal
+    ├── app.js              # Entry point — imports everything, binds window.* handlers, switchTab
+    ├── home.js             # Home tab: streak, readiness strip, split grid, PR + coaching cards, yesterday card
+    ├── myplans.js          # My Plans tab: active program day cards, program library, create-plan sheet
+    ├── session.js          # Active workout session; structured + track-as-you-go; overload suggestions
+    ├── sessionBanner.js    # "Session in progress" banner shown on other tabs
+    ├── restTimer.js        # Floating rest timer pill (background-accurate, vibrate alert)
+    ├── progress.js         # Progress tab: stats, calendar, per-muscle charts + range filters, edit modals
     ├── charts.js           # Canvas chart drawing utility
-    ├── utils.js            # Date helpers, showToast()
-    └── welcome.js          # Welcome/splash screen shown on every app open
+    ├── settings.js         # Profile tab: profile, rest timer, HealthKit, data backup; program actions
+    ├── onboarding.js       # New-user onboarding flow (name, mode, template, import)
+    ├── programBuilder.js   # Full-screen program editor (drag-to-reorder, sets/rep ranges)
+    ├── exerciseSelector.js # Exercise picker modal (search, filter by muscle, create custom)
+    ├── healthkit.js        # iOS Capacitor HealthKit (steps, weight); no-ops elsewhere
+    ├── welcome.js          # Welcome/splash screen shown on every app open
+    ├── data.js             # localStorage read/write; state; schema migrations
+    ├── program.js          # Original 4-day split data + MUSCLE_GROUPS mapping (no DOM)
+    ├── exerciseLibrary.js  # 127 exercises with id/name/muscleGroup/loadType (no DOM)
+    ├── programTemplates.js # 6 program templates using exercise library (no DOM)
+    └── utils.js            # Date helpers, showToast(), showConfirm(), showPrompt()
 ```
+
+Tabs: **Home · My Plans · Progress · Profile.** `switchTab()` uses `data-tab` attributes; legacy aliases `'plan'` → `'myPlans'` and `'settings'` → `'profile'` still work.
 
 ---
 
@@ -58,7 +66,7 @@ lift-tracker/
 
 ### `render*` vs `show*`
 
-- **`render*()`** — writes HTML to the DOM (full or partial re-render). Examples: `renderPlan()`, `renderProgress()`, `renderSession()`. These are the heavy-lifting functions that build UI from state.
+- **`render*()`** — writes HTML to the DOM (full or partial re-render). Examples: `renderHome()`, `renderMyPlans()`, `renderProgress()`, `renderSession()`. These are the heavy-lifting functions that build UI from state.
 - **`show*()`** — displays something that already exists in the DOM by adding a class or setting visibility. Examples: `showToast()`, `showConfirm()`, `showOnboarding()`, `showWelcomeScreen()`. These never touch innerHTML.
 
 Follow this convention when adding new functions so callsites remain predictable.
@@ -83,11 +91,18 @@ Cross-module calls (e.g. session.js calling switchTab) use `window.switchTab` at
 ## Data storage
 
 **Key:** `liftTrackerData` in localStorage
-**Schema version:** 4 (v2→v3→v4 auto-migration on load)
+**Schema version:** 5 (v2→v3→v4→v5 auto-migration on load and on import)
+
+Other localStorage keys:
+- `liftTrackerSession` — the in-progress workout, so it survives the app closing
+- `liftTimerSettings` — rest timer on/off, duration, vibrate
+- `liftHealthSettings` — HealthKit toggles
+- `liftTrackerChartRanges` — chosen range (10/20/30/All) per Progress chart
 
 ```js
 {
-  version: 4,
+  version: 5,
+  customExercises: [],           // user-created exercises from the exercise selector
   profile: {
     name: "Reid",
     createdAt: "2026-05-04T...",
@@ -105,7 +120,8 @@ Cross-module calls (e.g. session.js calling switchTab) use `window.switchTab` at
           name: "Upper A - Push",
           type: "push",           // optional, for styling
           exercises: [
-            { id: "db_press", name: "Dumbbell Press", sets: 4, loadType: "weight", muscleGroup: "chest" }
+            { id: "db_press", name: "Dumbbell Press", sets: 4, loadType: "weight", muscleGroup: "chest",
+              repType: "range", repRangeMin: 8, repRangeMax: 12 }   // repType: "range" | "fixed" | "amrap"
           ]
         }
       ]
@@ -133,9 +149,14 @@ Cross-module calls (e.g. session.js calling switchTab) use `window.switchTab` at
 }
 ```
 
-**Migration:** `loadData()` auto-migrates v2→v3 (creates default program, tags history with programId, normalizes set notes) then v3→v4 (remaps `leg_ext_a`/`leg_ext_b` → `leg_extension`). New users (no localStorage) see onboarding instead.
+**Migration:** `loadData()` (and `importData()`) run each step in order:
+- v2→v3: creates default program, tags history with programId, normalizes set notes
+- v3→v4: remaps `leg_ext_a`/`leg_ext_b` → `leg_extension`
+- v4→v5: remaps the old split-specific exercise IDs (e.g. `db_press_b` → `db_shoulder_press`, `machine_t` → `chest_supported_row`) to their exercise-library IDs, in both programs and history
 
-**Backup/restore:** Export downloads a JSON file; import replaces all history after confirmation.
+New users (no localStorage) see onboarding instead.
+
+**Backup/restore:** Export downloads a JSON file (profile, programs, history, custom exercises); import migrates it, then replaces history, profile and programs after confirmation.
 
 ---
 
@@ -150,7 +171,9 @@ Defined in `program.js`. Rotation order: `upperA → lowerA → upperB → lower
 | upperB  | Upper B | Pull            |
 | lowerB  | Lower B | Posterior chain |
 
-`MUSCLE_GROUPS` maps exercise IDs to muscle group keys. `MUSCLE_GROUP_ORDER` controls display order on the Progress tab.
+This is Reid's original default program. New users pick from 6 templates in `programTemplates.js` or build their own; any program can be active.
+
+`MUSCLE_GROUPS` (in `program.js`) maps exercise IDs to muscle group keys. `MUSCLE_GROUP_ORDER` and `MUSCLE_GROUP_META` (in `exerciseLibrary.js`) control display order and labels on the Progress tab.
 
 ---
 
@@ -179,9 +202,13 @@ Defined in `program.js`. Rotation order: `upperA → lowerA → upperB → lower
 /* Workout types */
 --push: #ff6b35
 --pull: #3a9eff
---legs: #d4ff3a
+--legs: #22d3ee
 --recovery: #b86bff
 --success: #4ade80
+
+/* Home readiness / momentum */
+--warm: #ff8833
+--cool: #66cc88
 ```
 
 **Accent usage convention:**
@@ -193,24 +220,31 @@ Defined in `program.js`. Rotation order: `upperA → lowerA → upperB → lower
 
 ## Key module responsibilities
 
+### `home.js`
+- `renderHome()` — week streak, readiness strip, split progress grid, momentum row, yesterday card, stat footer
+- `detectMostRecentPr()` — walks history and finds the latest session that beat an exercise's previous best (top weight, or top reps for bodyweight). PRs are computed on the fly, not stored.
+- Coaching card surfaces `getSuggestion()` from `session.js`
+- `homeStartWorkout()` — opens the day-picker sheet (structured) or starts track-as-you-go
+
 ### `welcome.js`
 Splash screen shown on every app open. Tap to dismiss (no auto-dismiss).
 - `getGreeting()` — time-based "Good morning/afternoon/evening"
-- `getWelcomeWorkoutLabel()` — determines next workout from history rotation; falls back to "TODAY'S SESSION"
-- `USER_NAME` constant at top of file — change here to update the name everywhere
+- `getWelcomeWorkoutLabel()` — next workout from the active program's rotation; falls back to "TODAY'S SESSION"
+- Name comes from `state.profile.name`
 - Dismissal: fades out, then removes the element from DOM
 
 ### `session.js`
 - `getLastPerformance(exerciseId)` — finds most recent session containing that exercise
 - `getLastExerciseNote(exerciseId)` — returns last note, with backward-compat fallback to set-level notes
-- `getSuggestion(exerciseId, loadType)` — progressive overload suggestion shown during session
-- Calls `window.switchTab('plan')` after finishing a session
+- `getSuggestion(exercise, last?)` — progressive overload suggestion shown during session and on Home
+- In-session: add/replace/remove exercise, add/remove set, reorder mode
+- Calls `window.switchTab('home')` after finishing a session
 
 ### `progress.js`
 - Module-level `calendarYear` / `calendarMonth` state for calendar navigation
-- `renderCalendar()` — private; generates monthly grid with color-coded workout dots
-- `WORKOUT_COLORS` — maps dayId to hex color and display label
+- `renderCalendar()` — private; monthly grid with workout dots, colors derived from the day
 - `navigateCalendar(dir)` — exported, bound to window, called by calendar arrow buttons
+- `setChartRange()` — 10/20/30/All quick filter per chart; re-renders only that chart
 
 ### `data.js`
 - `importData(event, onSuccess)` — calls optional `onSuccess` callback after a successful import; the caller (`app.js`) is responsible for any UI updates
@@ -221,8 +255,10 @@ Splash screen shown on every app open. Tap to dismiss (no auto-dismiss).
 ## Service worker
 
 - Cache name must be bumped (v1 → v2 → v3...) on **every deploy** that changes JS/CSS files
-- Currently: `lift-tracker-v7`
+- Currently: `lift-tracker-v20`
+- Every JS file must be listed in the `ASSETS` array — add new modules there, remove deleted ones
 - SW is **disabled on localhost** — the hostname check in `app.js` prevents re-registration during development
+- When a new SW takes control, `app.js` reloads the page automatically (`controllerchange`)
 - On iOS, updating the PWA requires deleting the home screen app and re-adding it from Safari
 
 ---

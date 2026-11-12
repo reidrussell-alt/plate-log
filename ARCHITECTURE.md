@@ -26,7 +26,7 @@ graph TD
     Cache --> LoadData
     Network --> LoadData
 
-    LoadData[loadData\nv2→v3 migration] --> HasProfile{state.profile\nexists?}
+    LoadData[loadData\nv2→v5 migrations] --> HasProfile{state.profile\nexists?}
     HasProfile -->|No| Onboarding[Onboarding Flow\nNew User Setup]
     HasProfile -->|Yes| Welcome
 
@@ -64,7 +64,9 @@ graph TD
 
     StartSession --> ActiveSession[Active Session\nLog sets, notes, BW]
     StartTAYG --> ActiveSession
-    ActiveSession -->|Add Exercise| ExercisePicker[Exercise Picker Modal]
+    ActiveSession -->|Add / Replace Exercise| ExercisePicker[Exercise Picker Modal]
+    ActiveSession -->|Set logged| RestTimer[Rest Timer Pill]
+    ActiveSession -->|Switch tab| Banner[Session-in-progress Banner\nTap to resume]
     ActiveSession -->|Abandon| HomeTab
     ActiveSession -->|Finish| ConfirmModal[Confirm Finish Modal]
     ConfirmModal -->|Save| SaveSession[Save to localStorage]
@@ -72,10 +74,11 @@ graph TD
 
     ProgressTab --> Stats[Stats Overview]
     ProgressTab --> Calendar[Monthly Calendar]
-    ProgressTab --> Charts[Per-muscle Charts]
+    ProgressTab --> Charts[Per-muscle Charts\n10 / 20 / 30 / All range]
     Charts --> EditModal[Edit Past Session Modal]
 
     ProfileTab --> ProfileSection[Profile: name, mode]
+    ProfileTab --> TimerSection[Workout: rest timer, duration, vibrate]
     ProfileTab --> DataSection[Data: export, import, reset]
     ProfileTab --> HealthSection[HealthKit — iOS only]
 ```
@@ -135,12 +138,17 @@ graph LR
     myplans.js --> programTemplates.js
 
     session.js --> data.js
-    session.js --> program.js
     session.js --> exerciseLibrary.js
+    session.js --> exerciseSelector.js
+    session.js --> restTimer.js
+    session.js --> healthkit.js
     session.js --> utils.js
+
+    sessionBanner.js --> data.js
 
     progress.js --> data.js
     progress.js --> program.js
+    progress.js --> exerciseLibrary.js
     progress.js --> utils.js
     progress.js --> charts.js
 
@@ -148,6 +156,9 @@ graph LR
 
     settings.js --> data.js
     settings.js --> programTemplates.js
+    settings.js --> myplans.js
+    settings.js --> restTimer.js
+    settings.js --> healthkit.js
     settings.js --> utils.js
 
     onboarding.js --> data.js
@@ -155,11 +166,15 @@ graph LR
     onboarding.js --> utils.js
 
     programBuilder.js --> data.js
-    programBuilder.js --> exerciseLibrary.js
+    programBuilder.js --> exerciseSelector.js
+    programBuilder.js --> utils.js
     exerciseSelector.js --> exerciseLibrary.js
+    exerciseSelector.js --> data.js
+    exerciseSelector.js --> utils.js
 
     data.js --> utils.js
     data.js --> program.js
+    program.js --> exerciseLibrary.js
     programTemplates.js --> exerciseLibrary.js
     charts.js --> utils.js
 ```
@@ -171,22 +186,22 @@ graph LR
 | Module | Imports | Responsibilities |
 |--------|---------|-----------------|
 | `app.js` | All modules | Entry point. Binds all `window.*` handlers. Calls `loadData()`, shows onboarding if new user, otherwise `switchTab('home')` + `showWelcomeScreen()`. Registers service worker (non-localhost only). |
-| `home.js` | `data.js`, `session.js` | Home tab. Week streak, readiness strip (48h rule), split progress grid (3 cell states: completed/today/future), momentum row (PR card mocked + coaching via `getSuggestion`), yesterday card, stat footer. |
+| `home.js` | `data.js`, `session.js` | Home tab. Week streak, readiness strip (48h rule), split progress grid (3 cell states: completed/today/future), momentum row (most recent PR computed from history + coaching via `getSuggestion`), yesterday card with volume, stat footer. |
 | `myplans.js` | `data.js`, `programTemplates.js` | My Plans tab — program management workshop only (no Start buttons). Active program day cards with exercise preview + chevron → program builder. Library section with Set Active / Duplicate / Delete overflow. |
-| `program.js` | _(none)_ | Static data: original 4-day split, extended `MUSCLE_GROUPS` mapping (covers all exercise library IDs), display metadata. |
-| `data.js` | `utils.js`, `program.js` | `state` object (profile, programs, history). `loadData()` with v2→v3→v4 migration, `saveData()`, `exportData()`, `importData()`. |
-| `utils.js` | _(none)_ | `todayDateString()`, `isoDateOnly()`, `formatDate()`, `formatDateShort()`, `showToast()`, `showConfirm()`. |
-| `exerciseLibrary.js` | _(none)_ | 82 exercises with id, name, muscleGroup, loadType. `getExerciseById()`, `getExercisesByMuscleGroup()`, `searchExercises()`. |
+| `program.js` | `exerciseLibrary.js` | Static data: original 4-day split, `MUSCLE_GROUPS` mapping (covers all exercise library IDs), display metadata. |
+| `data.js` | `utils.js`, `program.js` | `state` object (profile, programs, history, customExercises, currentSession). `loadData()` with v2→v3→v4→v5 migrations, `saveData()`, `saveCurrentSession()`, `exportData()`, `importData()`. |
+| `utils.js` | _(none)_ | `todayDateString()`, `isoDateOnly()`, `formatDate()`, `formatDateShort()`, `showToast()`, `showConfirm()`, `showPrompt()`. |
+| `exerciseLibrary.js` | _(none)_ | 127 exercises with id, name, muscleGroup, loadType. `MUSCLE_GROUP_ORDER`, `MUSCLE_GROUP_META`, `getExerciseById()` and search helpers. |
 | `programTemplates.js` | `exerciseLibrary.js` | 6 program templates (3-day full body, 4-day upper/lower, 4-day PPL, 5-day PPL, 6-day PPL 2×, 5-day bro split). `getTemplateById()`. |
 | `onboarding.js` | `data.js`, `programTemplates.js`, `utils.js` | Multi-step new-user onboarding: welcome → name → mode → template/track-as-you-go → save. Also handles backup import during onboarding. |
-| `settings.js` | `data.js`, `programTemplates.js`, `utils.js` | Profile tab: profile editing, program activate/duplicate/delete, data backup/restore, HealthKit toggle. |
-| `session.js` | `data.js`, `program.js`, `exerciseLibrary.js`, `utils.js` | Structured and TAYG session lifecycle. `startSession()`, `startTrackAsYouGoWorkout()`, `renderSession()`, `getSuggestion()` (progressive overload), `getLastPerformance()`. |
-| `programBuilder.js` | `data.js`, `exerciseLibrary.js` | Full-screen program editor overlay. `showProgramBuilder(editingId, focusDayId?)` — optional `focusDayId` pre-expands and scrolls to the target day. Drag-to-reorder via Sortable.js. |
-| `exerciseSelector.js` | `exerciseLibrary.js` | Modal for picking/creating exercises during session or program builder. |
-| `restTimer.js` | _(none)_ | Floating rest timer pill. Auto-starts after set logged. |
-| `sessionBanner.js` | _(none)_ | Persistent banner shown on non-session tabs when a session is in progress. |
+| `settings.js` | `data.js`, `programTemplates.js`, `myplans.js`, `restTimer.js`, `healthkit.js`, `utils.js` | Profile tab: stats card, profile editing, rest timer settings, HealthKit toggles, data backup/restore. Also holds program activate/duplicate/delete actions used by My Plans. |
+| `session.js` | `data.js`, `exerciseLibrary.js`, `exerciseSelector.js`, `restTimer.js`, `healthkit.js`, `utils.js` | Structured and TAYG session lifecycle. `startSession()`, `startTrackAsYouGoWorkout()`, `renderSession()`, add/replace/remove exercise, add/remove set, reorder, `getSuggestion()` (progressive overload), `getLastPerformance()`. In-progress session persisted separately so it survives app close. |
+| `programBuilder.js` | `data.js`, `exerciseSelector.js`, `utils.js` | Full-screen program editor overlay. `showProgramBuilder(editingId, focusDayId?)` — optional `focusDayId` pre-expands and scrolls to the target day. Drag-to-reorder via Sortable.js. Per-exercise sets and rep type (range / fixed / AMRAP). |
+| `exerciseSelector.js` | `exerciseLibrary.js`, `data.js`, `utils.js` | Modal for picking exercises (search, muscle filter) or creating custom ones (saved to `customExercises`). |
+| `restTimer.js` | _(none)_ | Floating rest timer pill. Auto-starts after set logged; stays accurate in the background (`reconcileTimer()`); traffic-light states; optional vibrate. |
+| `sessionBanner.js` | `data.js` | Persistent banner shown on non-session tabs when a session is in progress. |
 | `healthkit.js` | _(none)_ | iOS Capacitor HealthKit integration (steps, weight). No-ops on non-iOS. |
-| `progress.js` | `data.js`, `program.js`, `utils.js`, `charts.js` | Stats, calendar (dynamic colors by dayId hash), per-muscle charts, session history, edit modal. |
+| `progress.js` | `data.js`, `program.js`, `exerciseLibrary.js`, `utils.js`, `charts.js` | Stats, calendar (dynamic colors by dayId hash), per-muscle charts with 10/20/30/All range (re-renders only the changed chart), sets-per-session and bodyweight charts, session history, edit modals. |
 | `charts.js` | `utils.js` | `drawSingleLineChart()` — canvas-based line chart. |
 | `welcome.js` | `data.js` | Splash screen using `state.profile.name` and active program's next workout. |
 
@@ -204,15 +219,17 @@ sequenceDiagram
 
     Note over User,localStorage: Starting and completing a session
 
-    User->>UI: Tap "Start Session" on day card
+    User->>UI: Tap "Start Workout" on Home, pick a day
     UI->>session.js: startSession(dayId)
     session.js->>data.js: Read state.history for last performance
     session.js->>data.js: Set state.currentSession
+    data.js->>localStorage: saveCurrentSession() (liftTrackerSession)
     session.js->>UI: renderSession() — show exercise cards
 
     User->>UI: Log sets, enter weight/reps
     UI->>session.js: updateSet(exIdx, setIdx, field, value)
-    session.js->>data.js: Mutate state.currentSession
+    session.js->>data.js: Mutate state.currentSession + saveCurrentSession()
+    session.js->>UI: Start rest timer when a set is logged
 
     User->>UI: Tap "Finish Session"
     UI->>session.js: finishSession()
@@ -221,7 +238,7 @@ sequenceDiagram
     User->>UI: Confirm
     UI->>session.js: confirmFinishSession()
     session.js->>data.js: Push session to state.history
-    data.js->>localStorage: JSON.stringify and setItem
+    data.js->>localStorage: saveData() (liftTrackerData), clear liftTrackerSession
     session.js->>UI: window.switchTab('home')
 ```
 
@@ -238,6 +255,7 @@ erDiagram
         object currentSession
         object chartExerciseByGroup
         object editing
+        array customExercises
     }
 
     PROFILE {
@@ -265,6 +283,9 @@ erDiagram
         number sets
         string loadType
         string muscleGroup
+        string repType
+        number repRangeMin
+        number repRangeMax
     }
 
     SESSION {
@@ -300,10 +321,17 @@ erDiagram
 ```
 
 **localStorage key:** `liftTrackerData`  
-**Schema version:** `3`  
+**Schema version:** `5`  
 **loadType values:** `'weight'` (barbell/dumbbell) | `'bw'` (bodyweight)  
 **trainingMode values:** `'structured'` | `'trackAsYouGo'`  
-**Migration:** `loadData()` auto-migrates v2 → v3 (builds default program from program.js, tags history with programId, creates profile with name "Reid").
+**repType values:** `'range'` | `'fixed'` | `'amrap'`  
+**Migrations** (run in order by `loadData()` and `importData()`):
+- v2 → v3: builds default program from program.js, tags history with programId, creates profile with name "Reid"
+- v3 → v4: `leg_ext_a` / `leg_ext_b` → `leg_extension`
+- v4 → v5: old split-specific exercise IDs remapped to exercise-library IDs in programs and history
+
+**Other localStorage keys:** `liftTrackerSession` (in-progress workout), `liftTimerSettings`, `liftHealthSettings`, `liftTrackerChartRanges`.  
+**Personal records** are not stored — Home computes the most recent PR from history each render.
 
 ---
 
@@ -314,13 +342,13 @@ erDiagram
 ```mermaid
 flowchart TD
     A[Open App] --> B[Welcome Screen]
-    B -->|Tap| C[Plan Tab]
-    C --> D[Tap a workout day card]
+    B -->|Tap| C[Home Tab]
+    C --> D[Tap Start Workout\npick a day]
     D --> E[Active Session View]
     E --> F{For each exercise}
     F --> G[View last performance\nand suggestion]
     G --> H[Enter weight & reps\nfor each set]
-    H --> I[Toggle set as logged ✓]
+    H --> I[Toggle set as logged ✓\nrest timer starts]
     I --> J{More sets?}
     J -->|Yes| H
     J -->|No, next exercise| F
@@ -330,7 +358,7 @@ flowchart TD
     L -->|Yes| N[Confirm modal]
     M --> N
     N -->|Confirm| O[Session saved\nto localStorage]
-    O --> P[Return to Plan Tab]
+    O --> P[Return to Home Tab]
 ```
 
 ### Workflow 2 — Reviewing Progress and Editing History
@@ -356,7 +384,7 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    A[Plan Tab\nBackup & Restore section] --> B{Action}
+    A[Profile Tab\nData section] --> B{Action}
     B -->|Export| C[Generate JSON blob]
     C --> D[Download lift-tracker-backup-DATE.json]
     B -->|Import| E[File picker opens]
@@ -364,9 +392,9 @@ flowchart TD
     F --> G{Valid?}
     G -->|No| H[Toast: Invalid backup file]
     G -->|Yes| I[Confirm modal\nShow session counts]
-    I -->|Confirm| J[Replace state.history]
+    I -->|Confirm| J[Replace history,\nprofile and programs]
     J --> K[saveData to localStorage]
-    K --> L[renderPlan]
+    K --> L[Re-render current tab]
     B -->|Reset| M[Confirm modal\nDestructive warning]
     M -->|Confirm| N[Clear state.history]
     N --> K
@@ -382,11 +410,15 @@ Defined in `session.js`:
 getLastPerformance(exerciseId)
   → finds most recent session in state.history containing that exercise
 
-getSuggestion(exerciseId, loadType)
-  → if loadType === 'weight':
-      suggest last top weight if all sets matched, else same weight
+getSuggestion(exercise, last?)
+  → top rep = upper end of the exercise's rep range (default 10)
   → if loadType === 'bw':
-      suggest +1 rep on top set
+      best reps ≥ top rep  → "Try for <top+1>+ reps"
+      otherwise            → "Match <best> reps"
+  → if loadType === 'weight':
+      every set hit the top rep (and enough sets were done)
+                           → "Bump up: <w> → <w+5> lb"
+      otherwise            → "Last: <w> × <reps>"
 
 getLastExerciseNote(exerciseId)
   → returns { date, note } from most recent session
@@ -394,7 +426,9 @@ getLastExerciseNote(exerciseId)
     e.g. "Set 1: felt strong | Set 3: form broke"
 ```
 
-These are displayed in the session view as "Last session" hints above each exercise card.
+These are displayed in the session view as "Last session" hints above each exercise card, and the suggestion for the next workout is surfaced on the Home tab's coaching card.
+
+**PR detection** (`home.js`, `detectMostRecentPr()`): walks history oldest → newest keeping each exercise's best (top weight, or top reps for bodyweight); the last time any exercise beat its previous best is shown on the Home PR card.
 
 ---
 
@@ -411,12 +445,17 @@ All design tokens live in `:root` in `css/main.css`. **Never hardcode colors** �
 | `--border` | `#262626` | Default borders |
 | `--border-bright` | `#383838` | Highlighted borders |
 | `--text` | `#fafafa` | Primary text |
-| `--text-dim` | `#888` | Secondary text |
+| `--text-secondary` | `#c0c0c0` | Secondary emphasis |
+| `--text-dim` | `#888` | Supporting labels |
 | `--text-dimmer` | `#555` | Muted/disabled text |
-| `--accent` | `#d4ff3a` | Neon lime — primary accent |
+| `--text-faint` | `#333` | Near-invisible chrome |
+| `--accent` | `#d4ff3a` | Neon lime — primary CTAs, key highlights |
+| `--accent-dim` | `#a8c82a` | Supporting accent — pills, badges, section labels |
 | `--push` | `#ff6b35` | Upper A / push day |
 | `--pull` | `#3a9eff` | Upper B / pull day |
-| `--legs` | `#d4ff3a` | Lower days (same as accent) |
+| `--legs` | `#22d3ee` | Lower days (cyan) |
+| `--warm` | `#ff8833` | Home: "recovering" readiness, PR tag |
+| `--cool` | `#66cc88` | Home: "ready" readiness dot, coaching tag |
 | `--recovery` | `#b86bff` | Lower B / posterior |
 | `--success` | `#4ade80` | Confirmation states |
 
@@ -434,7 +473,7 @@ flowchart TD
     A[Make code changes locally] --> B[Test at localhost:8082]
     B --> C{Changes correct?}
     C -->|No| A
-    C -->|Yes| D[Bump CACHE_NAME in service-worker.js\ne.g. v4 → v5]
+    C -->|Yes| D[Bump CACHE_NAME in service-worker.js\ne.g. v20 → v21\nupdate ASSETS if files added/removed]
     D --> E[git add changed files]
     E --> F[git commit]
     F --> G[git push origin main\nuse PAT for password]
@@ -447,22 +486,30 @@ flowchart TD
 
 **Remote:** `https://github.com/reidrussell-alt/lifting-tracker-Application.git`  
 **Auth:** Personal Access Token (GitHub no longer accepts passwords)  
-**Current SW cache version:** `lift-tracker-v5`
+**Current SW cache version:** `lift-tracker-v20`  
+**Auto-update:** when a new service worker takes control, the app reloads itself. On iOS a delete + re-add is still the reliable way to force fresh code.
 
 ---
 
 ## 11. Future Roadmap
 
+**Open**
 - [ ] Show welcome screen only once per day (not every open)
-- [ ] Rest timer between sets
-- [ ] Weekly/monthly volume summary on Progress tab
-- [ ] Swipe gestures on session cards
-- [ ] Dark/light mode toggle
-- [ ] Workout streak tracking
-- [ ] Push notification reminders
-- [ ] Custom program builder (day-by-day exercise picker, not template-based)
+- [ ] Rate difficulty (RPE) after each set — gym idea, 13 May
+- [ ] Weekly/monthly volume summary on Progress tab (today: sets-per-session chart only)
 - [ ] Filter Progress charts by program
 - [ ] "Create plan from history" wizard for track-as-you-go users
+- [ ] Swipe gestures on session cards
+- [ ] Dark/light mode toggle
+- [ ] Push notification reminders
+
+**Done**
+- [x] Rest timer between sets, with vibrate alert (May 2026)
+- [x] Workout streak tracking — week streak on Home (May 2026)
+- [x] Custom program builder (May 2026)
+- [x] PR detection — most recent PR on Home (May 2026)
+- [x] Chart range quick filters (May 2026)
+- [x] Exercise library expanded to 100–150 (127 exercises)
 
 ---
 
@@ -470,6 +517,17 @@ flowchart TD
 
 | Date | Change |
 |------|--------|
+| 2026-11-11 | Docs refresh: ARCHITECTURE.md and CLAUDE.md brought in line with the code (schema v5, SW v20, current modules, roadmap) |
+| 2026-06-05 | Fixed edit-set row overflowing on mobile; SW at v20 |
+| 2026-05-30 | Refactor; PR detection on Home; per-chart re-render on range change; v4→v5 exercise-ID migration; removed `plan.js` |
+| 2026-05-25 | Background-accurate rest timer; add exercise to any session (including past ones) |
+| 2026-05-22 | Replace exercise and remove set mid-session; auto-reload when a new service worker takes control |
+| 2026-05-15 | Home redesigned as workout launchpad (readiness, split grid, PR + coaching cards, yesterday card); My Plans as program workshop |
+| 2026-05-14 | 4-tab navigation: Home, My Plans, Progress, Profile |
+| 2026-05-11 | UI/UX polish: bottom nav, safe areas, touch targets |
+| 2026-05-09 | Delete exercise/set in active session and past-workout edit; code-quality refactor; rest timer fixes |
+| 2026-05-08 | Apple Health (Capacitor) integration groundwork |
+| 2026-05-07 | Exercise library, exercise selector, program builder; rest timer with traffic-light states; chart range quick filters |
 | 2026-05-04 | Multi-program support: onboarding, exercise library, 6 templates, Settings tab, track-as-you-go mode, v2→v3 data migration; SW bumped to v5 |
 | 2026-05-04 | Added `ARCHITECTURE.md` and updated `CLAUDE.md` with architecture section |
 | 2026-05-04 | Added welcome screen (`welcome.js`) with dynamic greeting, workout label, staggered animations, tap-to-dismiss |
