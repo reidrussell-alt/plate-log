@@ -11,7 +11,8 @@ A detailed architecture doc with Mermaid diagrams lives at `ARCHITECTURE.md` in 
 ## What this is
 A personal workout tracking PWA (Progressive Web App) for Reid's 4-day push/pull/legs training split. Built as a modular vanilla JS app with no frameworks. Deployed to GitHub Pages and installed as a home screen app on iOS.
 
-**Live URL:** https://reidrussell-alt.github.io/lifting-tracker-Application/
+**Live URL:** https://reidrussell-alt.github.io/plate-log/
+**Old URL (retired Nov 2026):** https://reidrussell-alt.github.io/lifting-tracker-Application/
 **Local dev:** `python3 -m http.server 8082 --directory "/Users/reidrussell/Documents/Learning Tools/lift-tracker"`
 **Then open:** http://localhost:8082
 
@@ -276,7 +277,8 @@ git push origin main
 - Hosted on GitHub Pages from the `main` branch
 - GitHub Pages takes 1–5 minutes to deploy after push
 - After deploy, phone users must delete + re-add the home screen app to get new code
-- Git remote: `https://github.com/reidrussell-alt/lifting-tracker-Application.git`
+- Git remote `origin`: `https://github.com/reidrussell-alt/plate-log.git` (full history moved here Nov 2026)
+- Old repository kept as remote `old-origin`: `https://github.com/reidrussell-alt/lifting-tracker-Application.git`
 - Auth: Personal Access Token required (password auth disabled by GitHub)
 
 ---

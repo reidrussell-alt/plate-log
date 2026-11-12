@@ -477,7 +477,7 @@ flowchart TD
     K --> L[Open in Safari\nre-add to home screen]
 ```
 
-**Remote:** `https://github.com/reidrussell-alt/lifting-tracker-Application.git`  
+**Remote:** `https://github.com/reidrussell-alt/plate-log.git` (live at `https://reidrussell-alt.github.io/plate-log/`; the old `lifting-tracker-Application` repository is kept as an archive)  
 **Auth:** Personal Access Token (GitHub no longer accepts passwords)  
 **Current SW cache version:** `lift-tracker-v22`  
 **Auto-update:** when a new service worker takes control, the app reloads itself. On iOS a delete + re-add is still the reliable way to force fresh code.
@@ -510,6 +510,7 @@ flowchart TD
 
 | Date | Change |
 |------|--------|
+| 2026-11-11 | Moved to a new GitHub repository, `plate-log`, with full history; new web address |
 | 2026-11-11 | Daylight theme: light surfaces, cobalt accent, Bricolage Grotesque + Manrope, card shadows, bolder set-logging tick, light rest-timer colours, plate logo on welcome screen; status bar set to default; SW bumped to v22 |
 | 2026-11-11 | App icon added (red weight plate stamped "LBS", on white): iOS home-screen icon, manifest icons, favicon; home-screen name "Lift"; SW bumped to v21 |
 | 2026-11-11 | Docs refresh: ARCHITECTURE.md and CLAUDE.md brought in line with the code (schema v5, SW v20, current modules, roadmap) |
