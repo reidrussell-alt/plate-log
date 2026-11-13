@@ -26,7 +26,7 @@
   --text-dimmer: #8792a3;    /* de-emphasized */
   --text-faint: #c5ccd8;     /* near-invisible chrome */
   /* Shape */
-  --radius-card: 18px;
+  --radius-card: 12px;
   --shadow-card: 0 1px 2px rgba(15, 26, 43, 0.05), 0 4px 14px rgba(15, 26, 43, 0.06);
   --shadow-raised: 0 2px 6px rgba(15, 26, 43, 0.08), 0 12px 32px rgba(15, 26, 43, 0.12);
   /* Type */
@@ -88,8 +88,7 @@ body {
 
 .tab-label {
   font-family: var(--font-mono);
-  font-size: 9px; font-weight: 700;
-  letter-spacing: 0.8px; text-transform: uppercase;
+  font-size: 11px; font-weight: 700;
   line-height: 1;
 }
 
@@ -148,9 +147,8 @@ body {
 
 .day-tag {
   font-family: var(--font-mono);
-  font-size: 9px; padding: 2px 7px;
-  border-radius: 4px; letter-spacing: 1px;
-  text-transform: uppercase; font-weight: 500;
+  font-size: 11px; padding: 2px 7px;
+  border-radius: 4px; font-weight: 500;
 }
 
 .day-card[data-type="push"] .day-tag { background: color-mix(in srgb, var(--push) 15%, transparent); color: var(--push); }
@@ -166,7 +164,6 @@ body {
   background: var(--accent); color: var(--on-accent);
   border: none; padding: 10px 16px;
   border-radius: 10px; font-weight: 700; font-size: 12px;
-  letter-spacing: 1px; text-transform: uppercase;
   font-family: var(--font-mono);
   cursor: pointer; flex-shrink: 0;
 }
@@ -213,8 +210,7 @@ body {
 
 .bw-label {
   font-family: var(--font-mono);
-  font-size: 10px; color: var(--text-dim);
-  letter-spacing: 1.5px; text-transform: uppercase;
+  font-size: 11px; color: var(--text-dim);
   flex: 1;
 }
 
@@ -252,7 +248,7 @@ body {
   border-radius: 6px; color: var(--accent-dim);
   font-weight: 700;
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 11px;
 }
 
 .suggestion {
@@ -336,8 +332,7 @@ body {
   position: absolute; top: -7px; left: 8px;
   background: var(--surface); padding: 0 4px;
   font-family: var(--font-mono);
-  font-size: 10px; color: var(--text-dimmer);
-  letter-spacing: 1px; text-transform: uppercase;
+  font-size: 11px; color: var(--text-dimmer);
 }
 
 .icon-btn {
@@ -375,10 +370,10 @@ body {
   color: var(--text);
   font-family: var(--font-body);
   font-size: 12px; resize: none;
-  min-height: 32px; font-style: italic;
+  min-height: 32px; font-style: normal;
 }
 
-.note-input::placeholder { color: var(--text-dimmer); font-style: italic; }
+.note-input::placeholder { color: var(--text-dimmer); font-style: normal; }
 .note-input:focus { outline: none; border-color: var(--accent); }
 
 .add-set-btn {
@@ -387,8 +382,7 @@ body {
   border: 1px dashed var(--border);
   border-radius: 8px; padding: 10px;
   font-family: var(--font-mono);
-  font-size: 11px; letter-spacing: 1px;
-  text-transform: uppercase; cursor: pointer;
+  font-size: 11px; cursor: pointer;
   font-weight: 600;
 }
 
@@ -409,8 +403,7 @@ body {
   border: none; padding: 16px;
   border-radius: 14px;
   font-family: var(--font-display); font-weight: 800;
-  font-size: 14px; letter-spacing: 1.5px;
-  text-transform: uppercase; cursor: pointer;
+  font-size: 14px; cursor: pointer;
   margin-top: 8px;
 }
 
@@ -441,8 +434,7 @@ body {
 
 .stat-label {
   font-family: var(--font-mono);
-  font-size: 10px; color: var(--text-dim);
-  letter-spacing: 1.5px; text-transform: uppercase;
+  font-size: 11px; color: var(--text-dim);
   margin-bottom: 6px;
 }
 
@@ -454,7 +446,7 @@ body {
 
 .stat-sub {
   font-family: var(--font-mono);
-  font-size: 10px; color: var(--text-dim);
+  font-size: 11px; color: var(--text-dim);
   margin-top: 4px;
 }
 
@@ -496,8 +488,7 @@ body {
 
 .chart-subtitle {
   font-family: var(--font-mono);
-  font-size: 10px; color: var(--text-dim);
-  letter-spacing: 0.5px; text-transform: uppercase;
+  font-size: 11px; color: var(--text-dim);
   margin-bottom: 14px;
 }
 
@@ -526,8 +517,7 @@ body {
   display: flex; gap: 16px; justify-content: center;
   margin-top: 12px;
   font-family: var(--font-mono);
-  font-size: 10px; color: var(--text-dim);
-  text-transform: uppercase; letter-spacing: 1px;
+  font-size: 11px; color: var(--text-dim);
 }
 
 .legend-dot {
@@ -558,15 +548,14 @@ body {
 
 .ex-history-meta {
   font-family: var(--font-mono);
-  font-size: 10px; color: var(--text-dim);
+  font-size: 11px; color: var(--text-dim);
   margin-top: 2px;
 }
 
 .trend-pill {
   font-family: var(--font-mono);
-  font-size: 10px; padding: 4px 8px;
+  font-size: 11px; padding: 4px 8px;
   border-radius: 6px; font-weight: 700;
-  letter-spacing: 0.5px;
 }
 
 .trend-up { background: color-mix(in srgb, var(--success) 15%, transparent); color: var(--success); }
@@ -590,8 +579,7 @@ body {
 
 .history-date {
   font-family: var(--font-mono);
-  font-size: 10px; color: var(--text-dim);
-  letter-spacing: 1px; text-transform: uppercase;
+  font-size: 11px; color: var(--text-dim);
   margin-bottom: 6px;
 }
 
@@ -611,7 +599,7 @@ body {
 }
 
 .history-note {
-  font-style: italic;
+  font-style: normal;
   color: var(--text-dim);
   font-size: 11px;
   margin-top: 4px; margin-bottom: 4px;
@@ -630,8 +618,7 @@ body {
 .progress-section-title {
   font-family: var(--font-mono);
   font-size: 11px; margin: 8px 4px 12px;
-  color: var(--text-dim); letter-spacing: 1.5px;
-  text-transform: uppercase; font-weight: 600;
+  color: var(--text-dim); font-weight: 600;
 }
 
 .modal-bg {
@@ -673,8 +660,7 @@ body {
   background: var(--surface-2);
   color: var(--text);
   font-family: var(--font-mono);
-  font-size: 11px; letter-spacing: 1px;
-  text-transform: uppercase; font-weight: 700;
+  font-size: 11px; font-weight: 700;
   cursor: pointer;
 }
 
@@ -687,11 +673,10 @@ body {
 .edit-section { margin-bottom: 16px; }
 .edit-label {
   font-family: var(--font-mono);
-  font-size: 9px; color: var(--text-dim);
-  letter-spacing: 1.5px; text-transform: uppercase;
+  font-size: 11px; color: var(--text-dim);
   margin-bottom: 6px;
 }
-.edit-helper { font-size: 10px; color: var(--text-dimmer); margin-top: 4px; font-style: italic; }
+.edit-helper { font-size: 11px; color: var(--text-dimmer); margin-top: 4px; font-style: normal; }
 .edit-date-input {
   width: 100%; background: var(--surface-2);
   border: 1px solid var(--border); border-radius: 8px;
@@ -716,7 +701,7 @@ body {
 .edit-note {
   width: 100%; background: var(--surface-3); border: 1px solid var(--border);
   border-radius: 6px; padding: 6px 8px; color: var(--text);
-  font-family: var(--font-body); font-size: 11px; font-style: italic;
+  font-family: var(--font-body); font-size: 11px; font-style: normal;
   resize: vertical; min-height: 30px;
 }
 
@@ -731,8 +716,8 @@ body {
 
 .rules-card-title, .data-section-title {
   font-family: var(--font-display); font-weight: 800;
-  font-size: 12px; letter-spacing: 1.5px;
-  margin-bottom: 12px; text-transform: uppercase;
+  font-size: 12px;
+  margin-bottom: 12px;
 }
 
 .rules-card-title { color: var(--accent-dim); }
@@ -747,7 +732,7 @@ body {
 
 .rules-card .rule-num {
   font-family: var(--font-mono);
-  font-size: 10px; color: var(--accent);
+  font-size: 11px; color: var(--accent);
   font-weight: 700; flex-shrink: 0;
 }
 
@@ -766,7 +751,6 @@ body {
   border-radius: 10px;
   font-family: var(--font-mono);
   font-size: 11px; font-weight: 700;
-  letter-spacing: 1px; text-transform: uppercase;
   cursor: pointer;
   display: flex; align-items: center; justify-content: center;
   gap: 6px;
@@ -791,8 +775,7 @@ body {
   background: transparent; border: none;
   color: var(--text-dimmer);
   font-family: var(--font-mono);
-  font-size: 10px; letter-spacing: 1.5px;
-  text-transform: uppercase; cursor: pointer;
+  font-size: 11px; cursor: pointer;
   padding: 8px;
 }
 
@@ -827,14 +810,13 @@ body {
 .ex-last-note-label {
   display: block;
   font-family: var(--font-mono);
-  font-size: 9px; color: var(--text-dim);
-  letter-spacing: 1px; text-transform: uppercase;
+  font-size: 11px; color: var(--text-dim);
   margin-bottom: 4px;
 }
 
 .ex-last-note-text {
   font-size: 12px; color: var(--text-dim);
-  font-style: italic; line-height: 1.4;
+  font-style: normal; line-height: 1.4;
 }
 
 /* Per-exercise: current session note textarea */
@@ -854,7 +836,7 @@ body {
   min-height: 44px; line-height: 1.5;
 }
 
-.ex-note-input::placeholder { color: var(--text-dimmer); font-style: italic; }
+.ex-note-input::placeholder { color: var(--text-dimmer); font-style: normal; }
 .ex-note-input:focus { outline: none; border-color: var(--accent); }
 
 /* Calendar */
@@ -888,8 +870,7 @@ body {
 .cal-legend-item {
   display: flex; align-items: center; gap: 5px;
   font-family: var(--font-mono);
-  font-size: 10px; color: var(--text-dim);
-  text-transform: uppercase; letter-spacing: 0.5px;
+  font-size: 11px; color: var(--text-dim);
 }
 
 .cal-legend-dot {
@@ -903,8 +884,7 @@ body {
 
 .cal-dow {
   font-family: var(--font-mono);
-  font-size: 10px; color: var(--text-dimmer);
-  letter-spacing: 0.5px; text-transform: uppercase;
+  font-size: 11px; color: var(--text-dimmer);
   text-align: center; padding: 2px 0 8px;
 }
 
@@ -949,7 +929,7 @@ body {
   border-radius: 0 6px 6px 0;
   font-size: 11px;
   color: var(--text-dim);
-  font-style: italic;
+  font-style: normal;
   line-height: 1.4;
 }
 
@@ -976,7 +956,7 @@ body {
   left: -80px;
   width: 420px;
   height: 420px;
-  background: radial-gradient(circle, color-mix(in srgb, var(--accent) 5.5%, transparent) 0%, transparent 65%);
+  background: none;
   pointer-events: none;
   border-radius: 50%;
 }
@@ -1038,7 +1018,6 @@ body {
   font-size: clamp(13px, 3.5vw, 16px);
   color: var(--text-dim);
   font-weight: 500;
-  letter-spacing: 0.2px;
   margin-bottom: 28px;
   animation: wFadeIn 400ms ease-out both;
   animation-delay: 330ms;
@@ -1061,11 +1040,9 @@ body {
 
 .welcome-label {
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
   color: var(--accent);
-  letter-spacing: 3px;
-  text-transform: uppercase;
 }
 
 .welcome-progress {
@@ -1088,10 +1065,8 @@ body {
   position: absolute;
   bottom: calc(env(safe-area-inset-bottom, 20px) + 28px);
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 11px;
   color: var(--text-dimmer);
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
   animation: wFadeIn 400ms ease-out both;
   animation-delay: 650ms;
 }
@@ -1118,7 +1093,6 @@ body {
 .plan-mode-sub {
   font-family: var(--font-mono);
   font-size: 11px; color: var(--text-dim);
-  letter-spacing: 1px; text-transform: uppercase;
 }
 
 /* ===== SETTINGS TAB ===== */
@@ -1131,8 +1105,7 @@ body {
 }
 .settings-section-title {
   font-family: var(--font-display); font-weight: 800;
-  font-size: 11px; letter-spacing: 1.5px;
-  text-transform: uppercase; color: var(--text-dim);
+  font-size: 11px; color: var(--text-dim);
   margin-bottom: 14px;
 }
 .settings-row {
@@ -1144,7 +1117,6 @@ body {
 .settings-row-label {
   font-family: var(--font-mono);
   font-size: 11px; color: var(--text-dim);
-  letter-spacing: 1px; text-transform: uppercase;
 }
 .settings-row-right { display: flex; align-items: center; gap: 10px; }
 .settings-row-value { font-size: 14px; font-weight: 600; }
@@ -1153,8 +1125,7 @@ body {
   border: 1px solid var(--border);
   color: var(--text-dim);
   font-family: var(--font-mono);
-  font-size: 10px; font-weight: 700;
-  letter-spacing: 1px; text-transform: uppercase;
+  font-size: 11px; font-weight: 700;
   padding: 8px 12px; border-radius: 6px; cursor: pointer;
 }
 .settings-empty-msg {
@@ -1180,8 +1151,7 @@ body {
 }
 .program-item-meta {
   font-family: var(--font-mono);
-  font-size: 10px; color: var(--text-dim);
-  letter-spacing: 0.5px;
+  font-size: 11px; color: var(--text-dim);
 }
 .program-item-actions { display: flex; gap: 8px; flex-wrap: wrap; }
 .prog-btn {
@@ -1189,8 +1159,7 @@ body {
   border: 1px solid var(--border);
   color: var(--text-dim);
   font-family: var(--font-mono);
-  font-size: 10px; font-weight: 700;
-  letter-spacing: 1px; text-transform: uppercase;
+  font-size: 11px; font-weight: 700;
   padding: 9px 12px; border-radius: 7px; cursor: pointer;
 }
 .prog-btn.accent { color: var(--accent-dim); border-color: color-mix(in srgb, var(--accent-dim) 30%, transparent); }
@@ -1200,8 +1169,7 @@ body {
 /* Program sections */
 .programs-section-label {
   font-family: var(--font-mono);
-  font-size: 10px; font-weight: 700;
-  letter-spacing: 1.5px; text-transform: uppercase;
+  font-size: 11px; font-weight: 700;
   color: var(--text-dim);
   margin: 20px 0 10px 0;
   padding-bottom: 8px;
@@ -1220,8 +1188,7 @@ body {
   background: var(--accent);
   color: var(--on-accent);
   font-family: var(--font-mono);
-  font-size: 9px; font-weight: 700;
-  letter-spacing: 1.5px; text-transform: uppercase;
+  font-size: 11px; font-weight: 700;
   padding: 4px 9px; border-radius: 5px;
   flex-shrink: 0; margin-left: 10px;
 }
@@ -1236,8 +1203,7 @@ body {
 /* Plan tab: last workout date */
 .day-last {
   font-family: var(--font-mono);
-  font-size: 10px; color: var(--text-dimmer);
-  letter-spacing: 0.3px;
+  font-size: 11px; color: var(--text-dimmer);
   margin-top: 2px;
 }
 
@@ -1272,8 +1238,7 @@ body {
 }
 .ob-step-num {
   font-family: var(--font-mono);
-  font-size: 10px; color: var(--text-dimmer);
-  letter-spacing: 2px; text-transform: uppercase;
+  font-size: 11px; color: var(--text-dimmer);
   margin-bottom: 20px;
 }
 .ob-big-icon { font-size: 52px; margin-bottom: 8px; }
@@ -1305,8 +1270,7 @@ body {
   border: none; border-radius: 14px;
   padding: 16px; margin-bottom: 12px;
   font-family: var(--font-display); font-weight: 800;
-  font-size: 14px; letter-spacing: 1px;
-  text-transform: uppercase; cursor: pointer;
+  font-size: 14px; cursor: pointer;
 }
 .ob-btn-primary:active { transform: scale(0.97); }
 .ob-btn-secondary {
@@ -1315,16 +1279,14 @@ body {
   border: 1px solid var(--border);
   border-radius: 14px; padding: 14px; margin-bottom: 12px;
   font-family: var(--font-mono);
-  font-size: 12px; letter-spacing: 1px;
-  text-transform: uppercase; cursor: pointer;
+  font-size: 12px; cursor: pointer;
 }
 .ob-import-link {
   margin-top: 4px;
 }
 .ob-import-link a {
   font-family: var(--font-mono);
-  font-size: 10px; color: var(--text-dimmer);
-  letter-spacing: 1px; text-decoration: none;
+  font-size: 11px; color: var(--text-dimmer); text-decoration: none;
 }
 .ob-import-filename {
   font-size: 12px; color: var(--text-dim);
@@ -1377,8 +1339,8 @@ body {
 }
 .ob-template-days-badge {
   font-family: var(--font-mono);
-  font-size: 9px; font-weight: 700;
-  color: var(--accent-dim); letter-spacing: 1px;
+  font-size: 11px; font-weight: 700;
+  color: var(--accent-dim);
   background: color-mix(in srgb, var(--accent-dim) 10%, transparent);
   padding: 3px 7px; border-radius: 5px;
   flex-shrink: 0;
@@ -1390,11 +1352,11 @@ body {
 .ob-day-chips { display: flex; flex-wrap: wrap; gap: 5px; }
 .ob-day-chip {
   font-family: var(--font-mono);
-  font-size: 9px; font-weight: 600;
+  font-size: 11px; font-weight: 600;
   background: var(--surface-2);
   border: 1px solid var(--border);
   padding: 3px 7px; border-radius: 5px;
-  color: var(--text-dim); letter-spacing: 0.5px;
+  color: var(--text-dim);
 }
 .ob-day-chip--more {
   background: transparent; border-style: dashed;
@@ -1404,9 +1366,8 @@ body {
 .picker-group { margin-bottom: 12px; }
 .picker-group-label {
   font-family: var(--font-mono);
-  font-size: 10px; font-weight: 700;
-  color: var(--text-dimmer); letter-spacing: 2px;
-  text-transform: uppercase; margin-bottom: 6px;
+  font-size: 11px; font-weight: 700;
+  color: var(--text-dimmer); margin-bottom: 6px;
 }
 .picker-ex-btn {
   display: flex; align-items: center; justify-content: space-between;
@@ -1420,8 +1381,7 @@ body {
 .picker-ex-btn:active { background: var(--surface-3); border-color: var(--accent); }
 .picker-load-tag {
   font-family: var(--font-mono);
-  font-size: 9px; font-weight: 700;
-  letter-spacing: 1px; padding: 2px 6px;
+  font-size: 11px; font-weight: 700; padding: 2px 6px;
   border-radius: 4px; flex-shrink: 0;
 }
 .picker-load-tag.bw { background: color-mix(in srgb, var(--success) 15%, transparent); color: var(--success); }
@@ -1435,7 +1395,6 @@ body {
   border-radius: 14px; padding: 14px;
   font-family: var(--font-mono);
   font-size: 12px; font-weight: 700;
-  letter-spacing: 1.5px; text-transform: uppercase;
   cursor: pointer; margin-top: 8px; margin-bottom: 8px;
 }
 .add-exercise-fab:active { background: var(--surface-2); }
@@ -1474,11 +1433,11 @@ body {
 }
 .cday-sub {
   font-family: var(--font-mono); font-size: 11px;
-  color: var(--text-dim); letter-spacing: 0.5px; margin-bottom: 14px;
+  color: var(--text-dim); margin-bottom: 14px;
 }
 .cday-sub-label {
-  font-family: var(--font-mono); font-size: 9px;
-  color: var(--text-dim); letter-spacing: 1.5px; text-transform: uppercase;
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--text-dim);
   margin-bottom: 8px;
 }
 .cday-session {
@@ -1487,8 +1446,8 @@ body {
 }
 .cday-session-name { font-size: 14px; font-weight: 700; margin-bottom: 3px; }
 .cday-session-meta {
-  font-family: var(--font-mono); font-size: 10px;
-  color: var(--text-dim); letter-spacing: 0.5px; text-transform: uppercase;
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--text-dim);
   margin-bottom: 10px;
 }
 .cday-exercises { border-top: 1px solid var(--border); }
@@ -1499,7 +1458,7 @@ body {
 .cday-ex:last-child { border-bottom: none; }
 .cday-ex-name { color: var(--text); }
 .cday-ex-sets {
-  font-family: var(--font-mono); font-size: 10px;
+  font-family: var(--font-mono); font-size: 11px;
   color: var(--text-dim); flex-shrink: 0; margin-left: 8px;
 }
 .cday-actions { display: flex; gap: 8px; margin-top: 12px; }
@@ -1518,7 +1477,7 @@ body {
 .manual-day-card:active { border-color: var(--accent); background: var(--surface-3); }
 .manual-day-name { font-size: 14px; font-weight: 700; margin-bottom: 2px; }
 .manual-day-meta {
-  font-family: var(--font-mono); font-size: 10px; color: var(--text-dim);
+  font-family: var(--font-mono); font-size: 11px; color: var(--text-dim);
 }
 
 /* ===== ACTIVE WORKOUT BANNER ===== */
@@ -1540,8 +1499,8 @@ body {
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .awb-meta {
-  font-family: var(--font-mono); font-size: 10px;
-  color: var(--text-dim); letter-spacing: 0.5px; text-transform: uppercase;
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--text-dim);
   margin-top: 2px;
 }
 .awb-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
@@ -1552,8 +1511,7 @@ body {
 .awb-resume-btn {
   background: var(--accent); color: var(--on-accent); border: none;
   border-radius: 8px; padding: 7px 13px;
-  font-family: var(--font-mono); font-size: 10px; font-weight: 700;
-  letter-spacing: 1px; text-transform: uppercase; cursor: pointer;
+  font-family: var(--font-mono); font-size: 11px; font-weight: 700; cursor: pointer;
   pointer-events: none; /* tap handled by parent */
 }
 
@@ -1578,7 +1536,6 @@ body {
   padding: 7px 12px;
   font-family: var(--font-mono);
   font-size: 11px; font-weight: 700;
-  letter-spacing: 1px; text-transform: uppercase;
   line-height: 1;
   cursor: pointer;
   transition: background 0.15s, color 0.15s, border-color 0.15s;
@@ -1620,8 +1577,8 @@ body {
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .reorder-meta {
-  font-family: var(--font-mono); font-size: 10px;
-  color: var(--text-dim); letter-spacing: 0.5px; margin-top: 3px;
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--text-dim); margin-top: 3px;
 }
 .reorder-check { color: var(--success); flex-shrink: 0; display: flex; align-items: center; }
 
@@ -1642,7 +1599,7 @@ body {
 .abandon-link {
   display: block; text-align: center; width: 100%;
   font-family: var(--font-mono); font-size: 11px;
-  color: var(--text-dimmer); letter-spacing: 0.5px;
+  color: var(--text-dimmer);
   padding: 12px; cursor: pointer; background: none; border: none;
   text-decoration: underline; margin-top: 4px;
 }
@@ -1667,7 +1624,6 @@ body {
   font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 600;
-  letter-spacing: 0.3px;
   transition: background 0.15s ease, color 0.15s ease;
   min-width: 36px;
   text-align: center;
@@ -2083,7 +2039,6 @@ body {
   font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 600;
-  letter-spacing: 0.3px;
   transition: all 0.15s ease;
   flex-shrink: 0;
 }
@@ -2104,9 +2059,8 @@ body {
 .ex-sel-section-label {
   padding: 10px 20px 6px;
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
-  letter-spacing: 1.5px;
   color: var(--text-dimmer);
   background: var(--bg);
   position: sticky;
@@ -2138,10 +2092,8 @@ body {
   color: var(--accent-dim);
   border-radius: 6px;
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
   flex-shrink: 0;
 }
 
@@ -2200,9 +2152,7 @@ body {
   font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 600;
-  letter-spacing: 0.5px;
   color: var(--text-dim);
-  text-transform: uppercase;
   margin-bottom: 8px;
 }
 
@@ -2407,11 +2357,9 @@ body {
 
 .pb-day-label {
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
-  letter-spacing: 1.2px;
   color: var(--text-dimmer);
-  text-transform: uppercase;
   margin-bottom: 6px;
 }
 
@@ -2447,7 +2395,7 @@ body {
 
 .pb-day-meta {
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 11px;
   color: var(--text-dimmer);
 }
 
@@ -2652,9 +2600,7 @@ body {
   font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.5px;
   color: var(--text-dim);
-  text-transform: uppercase;
   margin-bottom: 12px;
 }
 
@@ -2709,7 +2655,6 @@ body {
   font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.3px;
   cursor: pointer;
   transition: all 0.15s;
 }
@@ -2792,8 +2737,7 @@ body {
 
 .home-day-label {
   font-family: var(--font-mono);
-  font-size: 10px; font-weight: 700;
-  letter-spacing: 1.5px; text-transform: uppercase;
+  font-size: 11px; font-weight: 700;
   color: var(--text-dim);
 }
 
@@ -2809,7 +2753,6 @@ body {
   color: var(--warm);
   font-family: var(--font-mono);
   font-size: 12px; font-weight: 700;
-  letter-spacing: 0.5px;
   padding: 5px 10px; border-radius: 99px;
   white-space: nowrap;
 }
@@ -2825,7 +2768,6 @@ body {
   border: none; border-radius: 99px; padding: 17px 20px;
   font-family: var(--font-mono);
   font-size: 14px; font-weight: 700;
-  letter-spacing: 0.08em; text-transform: uppercase;
   cursor: pointer; display: flex; align-items: center;
   justify-content: center; gap: 10px; margin-bottom: 20px;
 }
@@ -2833,8 +2775,7 @@ body {
 
 .home-section-label {
   font-family: var(--font-mono);
-  font-size: 10px; font-weight: 700;
-  letter-spacing: 2px; text-transform: uppercase;
+  font-size: 11px; font-weight: 700;
   color: var(--text-dim); margin-bottom: 12px;
 }
 
@@ -2850,8 +2791,8 @@ body {
 
 .home-week-dow {
   font-family: var(--font-mono);
-  font-size: 10px; font-weight: 700;
-  color: var(--text-dimmer); text-transform: uppercase;
+  font-size: 11px; font-weight: 700;
+  color: var(--text-dimmer);
 }
 
 .home-week-cell--today .home-week-dow { color: var(--accent); }
@@ -2860,7 +2801,7 @@ body {
   width: 36px; height: 36px; border-radius: 10px;
   display: flex; align-items: center; justify-content: center;
   font-family: var(--font-mono);
-  font-size: 9px; font-weight: 700; letter-spacing: 0.3px;
+  font-size: 11px; font-weight: 700;
   cursor: pointer; border: 1px solid transparent;
 }
 
@@ -2901,8 +2842,7 @@ body {
 
 .myplans-section-label {
   font-family: var(--font-mono);
-  font-size: 10px; font-weight: 700;
-  letter-spacing: 1.5px; text-transform: uppercase;
+  font-size: 11px; font-weight: 700;
   color: var(--text-dim);
   display: flex; align-items: center; gap: 6px;
   margin-bottom: 12px; margin-top: 24px;
@@ -2963,7 +2903,7 @@ body {
 
 .myplans-day-meta {
   font-family: var(--font-mono);
-  font-size: 10px; color: var(--text-dim);
+  font-size: 11px; color: var(--text-dim);
   white-space: nowrap; flex-shrink: 0;
 }
 
@@ -3016,8 +2956,7 @@ body {
   color: var(--accent); border-radius: 99px;
   padding: 6px 12px;
   font-family: var(--font-mono);
-  font-size: 10px; font-weight: 700;
-  letter-spacing: 0.5px; text-transform: uppercase;
+  font-size: 11px; font-weight: 700;
   cursor: pointer; white-space: nowrap;
 }
 .myplans-set-active-btn:active { background: color-mix(in srgb, var(--accent) 8%, transparent); }
@@ -3027,7 +2966,6 @@ body {
   color: var(--text-dimmer); cursor: pointer;
   font-size: 16px; line-height: 1;
   padding: 4px 6px; border-radius: 6px;
-  letter-spacing: 1px;
 }
 .myplans-more-btn:active { background: var(--surface-3); color: var(--text); }
 
@@ -3050,8 +2988,7 @@ body {
   color: var(--text-secondary);
   border-radius: 8px; padding: 6px 14px;
   font-family: var(--font-mono);
-  font-size: 10px; font-weight: 700;
-  letter-spacing: 0.5px; text-transform: uppercase;
+  font-size: 11px; font-weight: 700;
   cursor: pointer;
 }
 .myplans-sec-btn:active { opacity: 0.75; }
@@ -3064,7 +3001,6 @@ body {
   color: var(--text-dim); border-radius: 14px; padding: 14px;
   font-family: var(--font-mono);
   font-size: 12px; font-weight: 700;
-  letter-spacing: 1px; text-transform: uppercase;
   cursor: pointer; display: flex;
   align-items: center; justify-content: center; gap: 8px;
   margin-top: 8px;
@@ -3112,8 +3048,7 @@ body {
 .home-legend-item {
   display: flex; align-items: center; gap: 5px;
   font-family: var(--font-mono);
-  font-size: 9px; color: var(--text-dim);
-  text-transform: uppercase; letter-spacing: 0.5px;
+  font-size: 11px; color: var(--text-dim);
 }
 
 .home-legend-dot {
@@ -3150,15 +3085,13 @@ body {
 
 .home-stat-label {
   font-family: var(--font-mono);
-  font-size: 9px; color: var(--text-dim);
-  letter-spacing: 1px; text-transform: uppercase;
+  font-size: 11px; color: var(--text-dim);
 }
 
 /* ===== HOME — START WORKOUT SHEET ===== */
 .start-sheet-label {
   font-family: var(--font-mono);
-  font-size: 9px; font-weight: 700;
-  letter-spacing: 2px; text-transform: uppercase;
+  font-size: 11px; font-weight: 700;
   color: var(--accent-dim);
   margin-bottom: 8px;
 }
@@ -3215,15 +3148,13 @@ body {
 
 .home-split-label {
   font-family: var(--font-mono);
-  font-size: 10px; font-weight: 700;
-  letter-spacing: 1.5px; text-transform: uppercase;
+  font-size: 11px; font-weight: 700;
   color: var(--text-dim);
 }
 
 .home-split-status {
   font-family: var(--font-mono);
-  font-size: 10px; font-weight: 700;
-  letter-spacing: 0.5px; text-transform: uppercase;
+  font-size: 11px; font-weight: 700;
   color: var(--warm);
 }
 
@@ -3273,8 +3204,7 @@ body {
 
 .home-momentum-tag {
   font-family: var(--font-mono);
-  font-size: 9px; font-weight: 700;
-  letter-spacing: 0.08em; text-transform: uppercase;
+  font-size: 11px; font-weight: 700;
   color: var(--warm); margin-bottom: 2px;
   display: flex; align-items: center; gap: 4px;
 }
@@ -3297,8 +3227,8 @@ body {
 }
 
 .home-momentum-delta {
-  font-size: 10px; color: var(--text-dim);
-  margin-top: 3px; letter-spacing: 0.2px;
+  font-size: 11px; color: var(--text-dim);
+  margin-top: 3px;
 }
 
 /* ===== HOME — YESTERDAY CARD ===== */
@@ -3315,8 +3245,7 @@ body {
 
 .home-yesterday-label {
   font-family: var(--font-mono);
-  font-size: 9px; font-weight: 700;
-  letter-spacing: 1.5px; text-transform: uppercase;
+  font-size: 11px; font-weight: 700;
   color: var(--text-dim); margin-bottom: 4px;
 }
 
@@ -3330,8 +3259,8 @@ body {
 
 .home-stat-footer {
   font-family: var(--font-mono);
-  font-size: 10px; color: var(--text-dimmer);
-  text-align: center; letter-spacing: 0.5px;
+  font-size: 11px; color: var(--text-dimmer);
+  text-align: center;
   padding: 2px 0 20px;
 }
 
@@ -3354,8 +3283,7 @@ body {
 
 .profile-stats-since {
   font-family: var(--font-mono);
-  font-size: 10px; color: var(--text-dim);
-  letter-spacing: 0.5px; text-transform: uppercase;
+  font-size: 11px; color: var(--text-dim);
 }
 
 .profile-stats-grid {
@@ -3377,19 +3305,19 @@ body {
 
 .profile-stat-label {
   font-family: var(--font-mono);
-  font-size: 9px; color: var(--text-dim);
-  letter-spacing: 1px; text-transform: uppercase;
+  font-size: 11px; color: var(--text-dim);
 }
 
 /* ===== DAYLIGHT — card treatment =====
-   Cards sit on the grey page as white surfaces with a soft shadow instead of an outline. */
+   Cards sit on the grey page as flat white surfaces with a hairline edge. No soft drop
+   shadows: stacked floating cards were the main reason the app looked generated. */
 .day-card, .session-header, .exercise-block, .progress-summary, .day-freq-card, .chart-card,
 .exercise-history-block, .rules-card, .data-section, .settings-section, .ob-mode-option,
 .ob-template-card, .exercise-reorder-card, .pb-section-card, .pb-day-card, .myplans-day-card,
 .home-week-card, .home-stat-tile, .home-readiness-strip, .home-yesterday-card,
 .profile-stats-card, .home-momentum-card {
-  border-color: transparent;
-  box-shadow: var(--shadow-card);
+  border: 1px solid var(--border);
+  box-shadow: none;
 }
 .session-header, .exercise-block, .progress-summary, .day-freq-card, .chart-card,
 .settings-section, .home-week-card, .profile-stats-card, .pb-section-card, .data-section, .rules-card {
@@ -3424,7 +3352,7 @@ body {
 }
 .set-input:focus { border-color: var(--accent); background: var(--surface); }
 .set-row.logged .set-input { background: color-mix(in srgb, var(--success) 8%, var(--surface)); }
-.set-input-label { background: transparent; top: -15px; left: 2px; padding: 0; font-size: 9.5px; font-weight: 700; }
+.set-input-label { background: transparent; top: -15px; left: 2px; padding: 0; font-size: 11px; font-weight: 700; }
 .set-row .icon-btn { background: transparent; border-color: transparent; }
 .set-row .icon-btn--note { width: 34px; }
 .set-row .remove-set-btn { width: 26px; }
@@ -3435,7 +3363,9 @@ body {
 .set-row .icon-btn--check svg { width: 20px; height: 20px; stroke: var(--text-faint); stroke-width: 3; }
 .set-row .icon-btn--check.logged { background: var(--success); border-color: var(--success); }
 .set-row .icon-btn--check.logged svg { stroke: #fff; }
-.sets-list { padding-top: 10px; }
+/* Room for the LB / REPS labels, which sit 15px above the first row —
+   less than this and they poke up into the exercise header's bottom border. */
+.sets-list { padding-top: 26px; }
 
 /* ===== DAYLIGHT — calendar =====
    Plain day numbers; only today and workout days get emphasis. */
@@ -3445,3 +3375,52 @@ body {
 /* Column labels only above the first set; the rest line up beneath it */
 .sets-list .set-row ~ .set-row .set-input-label { display: none; }
 .sets-list .set-row ~ .set-row { margin-top: 2px; }
+
+/* ===== SHARPEN — fewer decorations =====
+   Sentence-case labels, no tinted pills, square-ish controls, one accent used sparingly.
+   Information is shown as plain text with weight and colour, not boxed in badges. */
+.tab.active { background: transparent; color: var(--accent); }
+.tab.active .tab-label { font-weight: 700; }
+
+.home-start-btn { border-radius: 12px; font-family: var(--font-body); font-size: 16px; font-weight: 700; padding: 16px 20px; margin-bottom: 8px; }
+.home-start-btn svg { display: none; }
+.home-start-meta { font-size: 13px; color: var(--text-dim); margin: 0 2px 24px; font-variant-numeric: tabular-nums; }
+
+.home-header { align-items: flex-end; }
+.home-day-label { font-size: 13px; font-weight: 600; color: var(--text-dim); }
+.home-streak-badge, .home-streak-badge--empty {
+  background: none; border: 0; padding: 0 0 4px; border-radius: 0;
+  font-family: var(--font-body); font-size: 13px; font-weight: 600; color: var(--text-secondary);
+}
+.home-streak-badge svg { display: none; }
+.home-streak-badge { gap: 4px; align-items: baseline; }
+.home-streak-badge strong { font-family: var(--font-display); font-size: 20px; font-weight: 800; color: var(--text); }
+
+.home-section-label, .home-split-label, .stat-label, .chart-title, .edit-label {
+  font-family: var(--font-body); font-size: 13px; font-weight: 700; color: var(--text);
+}
+.home-split-card { background: var(--surface); border-color: var(--border); }
+.home-split-status { font-family: var(--font-body); font-size: 13px; font-weight: 600; color: var(--text-dim); }
+.home-week-legend { display: none; }
+.home-week-badge { border-radius: 8px; font-family: var(--font-body); font-size: 12px; }
+.home-week-badge--push, .home-week-badge--pull, .home-week-badge--legs,
+.home-week-badge--recovery, .home-week-badge--default { background: var(--text); border-color: var(--text); color: var(--surface); }
+
+.home-momentum-card--warm, .home-momentum-card--cool { background: var(--surface); border: 1px solid var(--border); }
+.home-momentum-tag, .home-momentum-tag--cool { font-family: var(--font-body); font-size: 12px; font-weight: 600; color: var(--text-dim); }
+.home-momentum-tag svg { display: none; }
+.home-momentum-name { font-weight: 700; color: var(--text); }
+.home-momentum-delta { color: var(--success); font-weight: 600; }
+
+.target-pill { background: none; padding: 0; color: var(--text-dim); font-family: var(--font-body); font-weight: 600; font-size: 13px; }
+.suggestion { background: none; border: 0; padding: 0; margin-top: 2px; font-size: 13px; }
+.suggestion strong { font-family: var(--font-body); color: var(--text); }
+.suggestion-icon { display: none; }
+
+.trend-pill, .trend-up, .trend-flat, .trend-new { background: none; padding: 0; font-family: var(--font-body); font-size: 13px; }
+
+.stat-box { background: none; border: 0; border-radius: 0; padding: 4px 0; }
+.stat-value { font-family: var(--font-display); color: var(--text); }
+
+.finish-btn, .add-set-btn { font-family: var(--font-body); }
+.finish-btn { border-radius: 12px; }

@@ -161,9 +161,9 @@ function _buildChartCardHtml(mg, exercisesInGroup) {
   `).join('');
 
   return `
-    <div class="chart-card" id="chartCard_${mg}" style="border-left: 3px solid ${meta.color};">
+    <div class="chart-card" id="chartCard_${mg}">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-        <div class="chart-title" style="color: ${meta.color};">${meta.label.toUpperCase()}</div>
+        <div class="chart-title">${meta.label}</div>
         <div class="trend-pill ${trend.cls}">${trend.label}</div>
       </div>
       <div class="chart-subtitle" id="chartSubtitle_${mg}">${_subtitleText(selectedData.loadType, visibleCount, selectedData.sessions.length)}</div>
@@ -178,10 +178,7 @@ function _buildChartCardHtml(mg, exercisesInGroup) {
         <span><span class="legend-dot" style="background: ${meta.color};"></span>${selectedData.loadType === 'bw' ? 'Max Reps' : 'Top Weight (lb)'}</span>
       </div>
       <div style="margin-top: 14px; padding-top: 14px; border-top: 1px dashed var(--border);">
-        <div style="font-family: var(--font-mono); font-size: 9px; color: var(--text-dim); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
-          <span>Session History</span>
-          <span style="color: var(--text-dimmer); text-transform: none; letter-spacing: 0.5px; font-style: italic;">tap to expand</span>
-        </div>
+        <div style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 10px;">History</div>
         <div class="exercise-history-block" style="margin-bottom: 0; border: 1px solid var(--border);">
           <div class="exercise-history-header" onclick="toggleHistoryBlock(this)">
             <div>
@@ -196,7 +193,7 @@ function _buildChartCardHtml(mg, exercisesInGroup) {
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
                   <div class="history-date" style="margin-bottom: 0;">${formatDate(s.date)} · ${s.dayTitle}</div>
                   <button onclick="event.stopPropagation(); openEditModal(${s.sessionIdx}, ${s.exerciseIdx})"
-                          style="background: var(--surface-3); border: 1px solid var(--border); color: var(--accent); font-family: var(--font-mono); font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; padding: 4px 8px; border-radius: 6px; cursor: pointer;">
+                          style="background: none; border: 0; color: var(--accent); font-family: var(--font-body); font-size: 13px; font-weight: 600; padding: 4px 0; cursor: pointer;">
                     Edit
                   </button>
                 </div>
@@ -209,7 +206,7 @@ function _buildChartCardHtml(mg, exercisesInGroup) {
                 ${s.sets.filter(set => set.note).map(set => `
                   <div class="history-note">"${set.note}"</div>
                 `).join('')}
-                ${s.note ? `<div class="history-ex-note">📝 ${s.note}</div>` : ''}
+                ${s.note ? `<div class="history-ex-note">${s.note}</div>` : ''}
               </div>
             `).join('')}
           </div>
@@ -226,8 +223,7 @@ export function renderProgress() {
   if (state.history.length === 0) {
     el.innerHTML = `
       <div class="empty-state">
-        <div class="icon">📊</div>
-        <p><strong>No workouts logged yet.</strong><br>Complete a session to see your progress here.</p>
+                <p><strong>No workouts logged yet.</strong><br>Complete a session to see your progress here.</p>
       </div>
       ${renderCalendar()}
     `;
@@ -266,25 +262,23 @@ export function renderProgress() {
 
   let html = `
     <div class="progress-summary">
-      <div class="progress-title">Your Stats</div>
+      <div class="progress-title">All time</div>
       <div class="stat-grid">
         <div class="stat-box">
           <div class="stat-label">Sessions</div>
           <div class="stat-value">${totalSessions}</div>
-          <div class="stat-sub">All-time</div>
         </div>
         <div class="stat-box">
-          <div class="stat-label">Sets Logged</div>
+          <div class="stat-label">Sets logged</div>
           <div class="stat-value">${totalSets}</div>
-          <div class="stat-sub">All-time</div>
         </div>
         <div class="stat-box">
-          <div class="stat-label">Current BW</div>
+          <div class="stat-label">Bodyweight</div>
           <div class="stat-value">${currentBw}</div>
           <div class="stat-sub">lb</div>
         </div>
         <div class="stat-box">
-          <div class="stat-label">Most Trained</div>
+          <div class="stat-label">Most trained</div>
           <div class="stat-value" style="font-size: 16px; font-family: var(--font-body); font-weight: 900;">
             ${getMostTrainedDay(sessionsByDay)}
           </div>
@@ -458,7 +452,7 @@ export function getMostTrainedDay(sessionsByDay) {
 
 export function analyzeTrend(exerciseData) {
   const sessions = exerciseData.sessions;
-  if (sessions.length < 2) return { label: 'NEW', cls: 'trend-new', summary: 'First time logged' };
+  if (sessions.length < 2) return { label: 'New', cls: 'trend-new', summary: 'First time logged' };
 
   const first = sessions[0];
   const last = sessions[sessions.length - 1];
@@ -467,17 +461,17 @@ export function analyzeTrend(exerciseData) {
     const firstReps = Math.max(...first.sets.map(s => parseInt(s.reps) || 0));
     const lastReps = Math.max(...last.sets.map(s => parseInt(s.reps) || 0));
     const diff = lastReps - firstReps;
-    if (diff > 0) return { label: `+${diff} REPS`, cls: 'trend-up', summary: `${firstReps} → ${lastReps} reps` };
-    if (diff < 0) return { label: `${diff} REPS`, cls: 'trend-flat', summary: `${firstReps} → ${lastReps} reps` };
-    return { label: 'STEADY', cls: 'trend-flat', summary: `${lastReps} reps top set` };
+    if (diff > 0) return { label: `+${diff} reps`, cls: 'trend-up', summary: `${firstReps} → ${lastReps} reps` };
+    if (diff < 0) return { label: `${diff} reps`, cls: 'trend-flat', summary: `${firstReps} → ${lastReps} reps` };
+    return { label: 'Steady', cls: 'trend-flat', summary: `${lastReps} reps top set` };
   }
 
   const firstTop = Math.max(...first.sets.map(s => parseFloat(s.weight) || 0));
   const lastTop = Math.max(...last.sets.map(s => parseFloat(s.weight) || 0));
   const diff = lastTop - firstTop;
-  if (diff > 0) return { label: `+${diff}LB`, cls: 'trend-up', summary: `${firstTop} → ${lastTop} lb top set` };
-  if (diff < 0) return { label: `${diff}LB`, cls: 'trend-flat', summary: `${firstTop} → ${lastTop} lb top set` };
-  return { label: 'STEADY', cls: 'trend-flat', summary: `${lastTop} lb top set` };
+  if (diff > 0) return { label: `+${diff} lb`, cls: 'trend-up', summary: `${firstTop} → ${lastTop} lb top set` };
+  if (diff < 0) return { label: `${diff} lb`, cls: 'trend-flat', summary: `${firstTop} → ${lastTop} lb top set` };
+  return { label: 'Steady', cls: 'trend-flat', summary: `${lastTop} lb top set` };
 }
 
 export function toggleHistoryBlock(header) {
@@ -496,7 +490,7 @@ export function openEditModal(sessionIdx, exerciseIdx) {
       <input type="date" id="editDateInput" value="${dateStr}" class="edit-date-input">
       <div class="edit-helper">Date applies to the whole workout session.</div>
     </div>
-    <div class="edit-label" style="margin-bottom: 8px;">${exercise.name} — Sets</div>
+    <div class="edit-label" style="margin-bottom: 8px;">${exercise.name}: sets</div>
   `;
 
   exercise.sets.forEach((set, i) => {
@@ -556,7 +550,7 @@ export function saveEdit() {
 
   saveData();
   closeEditModal();
-  showToast('Workout updated ✓', 'success');
+  showToast('Workout updated', 'success');
   renderProgress();
 }
 
@@ -571,7 +565,7 @@ export function deleteEditSession() {
     }
     saveData();
     closeEditModal();
-    showToast('Deleted ✓');
+    showToast('Deleted');
     renderProgress();
   }, 'Delete');
 }
@@ -806,7 +800,7 @@ export function saveSessionEdit() {
 
   saveData();
   closeSessionEdit();
-  showToast('Workout updated ✓', 'success');
+  showToast('Workout updated', 'success');
   renderProgress();
 }
 

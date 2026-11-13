@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lift-tracker-v22';
+const CACHE_NAME = 'lift-tracker-v24';
 
 const ASSETS = [
   './',

@@ -34,8 +34,8 @@ export function getSuggestion(exercise, last = getLastPerformance(exercise.id)) 
 
   if (exercise.loadType === 'bw') {
     const bestReps = Math.max(...validSets.map(s => parseInt(s.reps) || 0));
-    if (bestReps >= topRep) return { msg: `Try for ${topRep + 1}+ reps` };
-    return { msg: `Match ${bestReps} reps` };
+    if (bestReps >= topRep) return { msg: `Try for ${topRep + 1}+ reps`, bump: true };
+    return { msg: `Beat ${bestReps} reps` };
   }
 
   const lastWeight = parseFloat(topSet.weight);
@@ -44,9 +44,9 @@ export function getSuggestion(exercise, last = getLastPerformance(exercise.id)) 
   const targetSets = exercise.targetSets || 3;
 
   if (allHitTop && validSets.length >= targetSets - 1) {
-    return { msg: `Bump up: ${lastWeight} → ${lastWeight + 5} lb` };
+    return { msg: `Go up to ${lastWeight + 5} lb`, bump: true };
   }
-  return { msg: `Last: ${lastWeight} × ${lastTopReps}` };
+  return { msg: `Repeat ${lastWeight} lb, beat ${lastTopReps} reps` };
 }
 
 export function getLastSetsString(exerciseId, last = getLastPerformance(exerciseId)) {
@@ -202,7 +202,8 @@ function _doStartManualEntry(dayId, dateKey) {
 export function renderSession() {
   const sess = state.currentSession;
   const el = document.getElementById('sessionPage');
-  const metaTag = (sess.tag || 'LIFT').toUpperCase();
+  const tag = (sess.tag || 'Lift').toLowerCase();
+  const metaTag = tag.charAt(0).toUpperCase() + tag.slice(1);
   const canReorder = sess.exercises.length >= 2;
 
   let html = `
@@ -210,7 +211,7 @@ export function renderSession() {
       <div class="session-header-top">
         <div>
           <div class="session-day-name">${sess.dayTitle}</div>
-          <div class="session-meta-row">${metaTag} · ${sess.exercises.length} EXERCISE${sess.exercises.length !== 1 ? 'S' : ''}</div>
+          <div class="session-meta-row">${metaTag} · ${sess.exercises.length} exercise${sess.exercises.length !== 1 ? 's' : ''}</div>
         </div>
         <div style="display:flex;gap:8px;align-items:center;">
           ${canReorder ? `
@@ -222,14 +223,9 @@ export function renderSession() {
         </div>
       </div>
       <div class="bw-input-wrap">
-        <span class="bw-label">Workout Date</span>
+        <span class="bw-label">Date</span>
         <input type="date" class="bw-input" id="sessionDateInput" value="${sess.date}"
                style="width:150px;font-size:12px;" onchange="updateSessionDate(this.value)">
-      </div>
-      <div class="bw-input-wrap">
-        <span class="bw-label">Bodyweight (lb)</span>
-        <input type="number" inputmode="decimal" class="bw-input" id="bwInput" value="${sess.bw}"
-               placeholder="196" onchange="updateBw(this.value)">
       </div>
     </div>
   `;
@@ -287,17 +283,17 @@ export function renderSession() {
             ${suggestion ? `
               <div class="suggestion">
                 <svg class="suggestion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                <span>Suggestion: <strong>${suggestion.msg}</strong></span>
+                <span><strong>${suggestion.msg}</strong></span>
               </div>
             ` : `
               <div class="suggestion" style="background:color-mix(in srgb, var(--accent) 5%, transparent);color:var(--text-dimmer);">
                 <svg class="suggestion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                <span>First time — start at a comfortable weight</span>
+                <span>First time. Pick a weight you can control.</span>
               </div>
             `}
             ${lastNote ? `
               <div class="ex-last-note">
-                <span class="ex-last-note-label">📝 Last note (${lastNote.date})</span>
+                <span class="ex-last-note-label">Last note, ${lastNote.date}</span>
                 <span class="ex-last-note-text">${lastNote.note}</span>
               </div>
             ` : ''}
@@ -322,7 +318,7 @@ export function renderSession() {
               </div>
             ` : `
               <div class="set-input-wrap">
-                <span class="set-input-label">Lb</span>
+                <span class="set-input-label">lb</span>
                 <input type="number" inputmode="decimal" class="set-input" value="${set.weight}" placeholder="—"
                        onchange="updateSet(${exIdx}, ${setIdx}, 'weight', this.value)">
               </div>
@@ -352,7 +348,7 @@ export function renderSession() {
         `;
       });
 
-      html += `<button class="add-set-btn" onclick="addSet(${exIdx})">+ Add Set</button>`;
+      html += `<button class="add-set-btn" onclick="addSet(${exIdx})">+ Add set</button>`;
 
       if (lastInfo) {
         html += `
@@ -365,7 +361,7 @@ export function renderSession() {
       html += `
         <div class="ex-note-wrap">
           <textarea class="ex-note-input"
-                    placeholder="Notes for next time (technique, soreness, etc.)"
+                    placeholder="Note for next time"
                     oninput="updateExerciseNote(${exIdx}, this.value)"
                     rows="2">${ex.note}</textarea>
         </div>
@@ -636,7 +632,7 @@ export function confirmFinishSession() {
   saveData();
   state.currentSession = null;
   saveCurrentSession();
-  showToast('Session saved 💪', 'success');
+  showToast('Session saved', 'success');
   window.switchTab('progress');
 }
 

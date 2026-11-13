@@ -152,14 +152,14 @@ Other localStorage keys:
 }
 ```
 
-**Migration:** `loadData()` (and `importData()`) run each step in order:
+**Migration:** `migrateToLatest()` runs each step in order; `loadData()`, `importData()` and the onboarding import all use it:
 - v2→v3: creates default program, tags history with programId, normalizes set notes
 - v3→v4: remaps `leg_ext_a`/`leg_ext_b` → `leg_extension`
 - v4→v5: remaps the old split-specific exercise IDs (e.g. `db_press_b` → `db_shoulder_press`, `machine_t` → `chest_supported_row`) to their exercise-library IDs, in both programs and history
 
 New users (no localStorage) see onboarding instead.
 
-**Backup/restore:** Export downloads a JSON file (profile, programs, history, custom exercises); import migrates it, then replaces history, profile and programs after confirmation.
+**Backup/restore:** Export downloads a JSON file (profile, programs, history, custom exercises). Both import paths (onboarding and Profile → Data) migrate it, then `applyImportedData()` replaces history, profile and programs and merges custom exercises (the backup wins on matching IDs).
 
 ---
 
@@ -206,14 +206,15 @@ Light theme: white cards with soft shadows on a cool grey page, ink text, one co
 --success: #0fa678  --danger: #e5484d  --warm: #e07a14  --cool: #0f9f72
 
 /* Shape & type */
---radius-card: 18px  --shadow-card  --shadow-raised
+--radius-card: 12px  --shadow-card (unused on cards)  --shadow-raised
 --font-display: Bricolage Grotesque   --font-body / --font-mono: Manrope (tabular figures on body)
 ```
 
 **Rules:**
 - Never hard-code colours. For tints use `color-mix(in srgb, var(--token) N%, transparent)`.
 - Text on an `--accent` background uses `--on-accent`, never `--bg`.
-- Cards: white surface, no visible border, `--shadow-card`. Pop-ups and sheets: `--shadow-raised`.
+- Cards: flat white surface, 1px `--border` hairline, no drop shadow, 12px radius. Pop-ups and sheets: `--shadow-raised`.
+- Labels are sentence case with normal letter spacing; no ALL-CAPS eyebrows, tinted pills, emoji or italic helper text. Overrides live in the `SHARPEN —` block at the end of `main.css`.
 - Charts read colours at runtime with `cssVar()` from `charts.js`, so they follow the theme.
 - Daylight overrides (card shadows, set rows, calendar, page titles) live in labelled `DAYLIGHT —` blocks at the end of `main.css`.
 - Rest timer: red (resting) → amber (last third) → green "READY", via `--timer-red/amber/green` on `.rest-timer-pill`.
@@ -257,7 +258,7 @@ Splash screen shown on every app open. Tap to dismiss (no auto-dismiss).
 ## Service worker
 
 - Cache name must be bumped (v1 → v2 → v3...) on **every deploy** that changes JS/CSS files
-- Currently: `lift-tracker-v22`
+- Currently: `lift-tracker-v24`
 - Every JS file must be listed in the `ASSETS` array — add new modules there, remove deleted ones
 - SW is **disabled on localhost** — the hostname check in `app.js` prevents re-registration during development
 - When a new SW takes control, `app.js` reloads the page automatically (`controllerchange`)

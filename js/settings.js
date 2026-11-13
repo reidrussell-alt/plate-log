@@ -292,7 +292,7 @@ export function editProfileName() {
     state.profile.name = trimmed;
     saveData();
     renderSettings();
-    showToast('Name updated ✓', 'success');
+    showToast('Name updated', 'success');
   });
 }
 
@@ -438,7 +438,7 @@ export function editProgram(programId) {
     saveData();
     window.renderMyPlans();
     window.renderMyPlans();
-    showToast('Program renamed ✓', 'success');
+    showToast('Program renamed', 'success');
   });
 }
 
@@ -524,7 +524,7 @@ export function toggleRestAlert(enabled) {
 export async function connectHealth() {
   const granted = await requestHealthPermissions();
   if (granted) {
-    showToast('Apple Health connected ✓', 'success');
+    showToast('Apple Health connected', 'success');
   } else {
     showToast('Health permission denied or unavailable');
   }

@@ -189,7 +189,7 @@ graph LR
 | `home.js` | `data.js`, `session.js` | Home tab. Week streak, readiness strip (48h rule), split progress grid (3 cell states: completed/today/future), momentum row (most recent PR computed from history + coaching via `getSuggestion`), yesterday card with volume, stat footer. |
 | `myplans.js` | `data.js`, `programTemplates.js` | My Plans tab — program management workshop only (no Start buttons). Active program day cards with exercise preview + chevron → program builder. Library section with Set Active / Duplicate / Delete overflow. |
 | `program.js` | `exerciseLibrary.js` | Static data: original 4-day split, `MUSCLE_GROUPS` mapping (covers all exercise library IDs), display metadata. |
-| `data.js` | `utils.js`, `program.js` | `state` object (profile, programs, history, customExercises, currentSession). `loadData()` with v2→v3→v4→v5 migrations, `saveData()`, `saveCurrentSession()`, `exportData()`, `importData()`. |
+| `data.js` | `utils.js`, `program.js` | `state` object (profile, programs, history, customExercises, currentSession). `loadData()` with v2→v3→v4→v5 migrations (`migrateToLatest()`), `applyImportedData()` shared by both import paths, `saveData()`, `saveCurrentSession()`, `exportData()`, `importData()`. |
 | `utils.js` | _(none)_ | `todayDateString()`, `isoDateOnly()`, `formatDate()`, `formatDateShort()`, `showToast()`, `showConfirm()`, `showPrompt()`. |
 | `exerciseLibrary.js` | _(none)_ | 127 exercises with id, name, muscleGroup, loadType. `MUSCLE_GROUP_ORDER`, `MUSCLE_GROUP_META`, `getExerciseById()` and search helpers. |
 | `programTemplates.js` | `exerciseLibrary.js` | 6 program templates (3-day full body, 4-day upper/lower, 4-day PPL, 5-day PPL, 6-day PPL 2×, 5-day bro split). `getTemplateById()`. |
@@ -325,7 +325,7 @@ erDiagram
 **loadType values:** `'weight'` (barbell/dumbbell) | `'bw'` (bodyweight)  
 **trainingMode values:** `'structured'` | `'trackAsYouGo'`  
 **repType values:** `'range'` | `'fixed'` | `'amrap'`  
-**Migrations** (run in order by `loadData()` and `importData()`):
+**Migrations** (run in order by `migrateToLatest()`, used by `loadData()`, `importData()` and the onboarding import):
 - v2 → v3: builds default program from program.js, tags history with programId, creates profile with name "Reid"
 - v3 → v4: `leg_ext_a` / `leg_ext_b` → `leg_extension`
 - v4 → v5: old split-specific exercise IDs remapped to exercise-library IDs in programs and history
@@ -449,7 +449,7 @@ The app uses the **Daylight** theme: white cards with soft shadows on a cool gre
 | `--on-accent` | `#ffffff` | Text on accent backgrounds |
 | `--push` / `--pull` / `--legs` / `--recovery` | `#e8572a` / `#1a8fe0` / `#0fa678` / `#7c4dff` | Workout types |
 | `--success` / `--danger` | `#0fa678` / `#e5484d` | Logged sets, destructive actions |
-| `--radius-card`, `--shadow-card`, `--shadow-raised` | 18px, soft shadows | Card and pop-up shape |
+| `--radius-card`, `--shadow-raised` | 12px, soft shadow | Cards are flat with a hairline border; only pop-ups and sheets get a shadow |
 
 **Typography:** `Bricolage Grotesque` for titles and big numbers (`--font-display`), `Manrope` for everything else (`--font-body`, `--font-mono`), with tabular figures so numbers line up.
 
@@ -479,7 +479,7 @@ flowchart TD
 
 **Remote:** `https://github.com/reidrussell-alt/plate-log.git` (live at `https://reidrussell-alt.github.io/plate-log/`; the old `lifting-tracker-Application` repository is kept as an archive)  
 **Auth:** Personal Access Token (GitHub no longer accepts passwords)  
-**Current SW cache version:** `lift-tracker-v22`  
+**Current SW cache version:** `lift-tracker-v24`  
 **Auto-update:** when a new service worker takes control, the app reloads itself. On iOS a delete + re-add is still the reliable way to force fresh code.
 
 ---
@@ -510,6 +510,8 @@ flowchart TD
 
 | Date | Change |
 |------|--------|
+| 2026-11-13 | Look sharpened so it feels less generic: plain sentence-case labels instead of small capitals, flat cards with a thin edge instead of floating shadows, no coloured badges or emoji, Home leads with the date and a "Start Lower A"-style button, clearer coaching wording ("Go up to 70 lb"); SW bumped to v24 |
+| 2026-11-13 | Restoring a backup now fully updates older backups whether you restore during first-time setup or from the Profile tab, and keeps your custom exercises; SW bumped to v23 |
 | 2026-11-11 | Moved to a new GitHub repository, `plate-log`, with full history; new web address |
 | 2026-11-11 | Daylight theme: light surfaces, cobalt accent, Bricolage Grotesque + Manrope, card shadows, bolder set-logging tick, light rest-timer colours, plate logo on welcome screen; status bar set to default; SW bumped to v22 |
 | 2026-11-11 | App icon added (red weight plate stamped "LBS", on white): iOS home-screen icon, manifest icons, favicon; home-screen name "Lift"; SW bumped to v21 |
