@@ -18,6 +18,7 @@
   --legs: #0fa678;
   --recovery: #7c4dff;
   --success: #0fa678;
+  --success-ink: #0b7a58;   /* darker green for small text on white (passes 4.5:1) */
   --danger: #e5484d;
   /* 5-step gray scale (dark → light) */
   --text: #0f1a2b;          /* primary text */
@@ -3424,3 +3425,77 @@ body {
 
 .finish-btn, .add-set-btn { font-family: var(--font-body); }
 .finish-btn { border-radius: 12px; }
+
+/* ===== SHARPEN — screens from the Nov 2026 design canvas ===== */
+/* Small green text uses the darker ink so it stays readable on white */
+.home-momentum-delta, .trend-up, .set-row.logged .set-num { color: var(--success-ink); }
+
+/* Home: the number on each card is the headline */
+.home-momentum-value {
+  font-family: var(--font-display); font-weight: 800;
+  font-size: 26px; color: var(--text); margin-top: 6px; line-height: 1.1;
+}
+.home-momentum-delta--muted { color: var(--text-dim); font-weight: 600; }
+
+/* Workout: progress bar, one open exercise, the rest one line each */
+.session-progress { height: 4px; background: var(--border); border-radius: 2px; margin: -4px 2px 14px; overflow: hidden; }
+.session-progress-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.25s ease; }
+.exercise-block { border-radius: var(--radius-card); }
+.suggestion span { color: var(--text-secondary); }
+.exercise-collapsed {
+  width: 100%; min-height: 64px; margin-bottom: 10px; padding: 14px 16px;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-card);
+  font-family: var(--font-body); color: var(--text); text-align: left; cursor: pointer;
+}
+.exercise-collapsed:active { background: var(--surface-2); }
+.exercise-collapsed-main { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.exercise-collapsed-name { font-size: 16px; font-weight: 700; }
+.exercise-collapsed-sub { font-size: 13px; color: var(--text-secondary); }
+.exercise-collapsed-target { font-size: 13px; font-weight: 600; color: var(--text-dim); white-space: nowrap; }
+.exercise-collapsed.complete .exercise-collapsed-sub { color: var(--success-ink); font-weight: 600; }
+.exercise-collapsed.complete .exercise-collapsed-name { color: var(--text-secondary); }
+.add-exercise-fab { border: 1px dashed var(--border-bright); color: var(--text-secondary); border-radius: var(--radius-card); font-family: var(--font-body); font-size: 14px; }
+/* Finish stays on screen just above the tab bar. Fixed, not sticky: body's
+   overflow-x: hidden makes sticky positioning do nothing. */
+.session-finish-bar {
+  position: fixed; left: 0; right: 0; z-index: 15;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 75px);
+  padding: 10px 16px;
+  background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(12px);
+  border-top: 1px solid var(--border);
+}
+#sessionPage { padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 160px); }
+.session-finish-bar .finish-btn { margin: 0; width: 100%; }
+body:has(.session-finish-bar) .rest-timer-pill { bottom: calc(env(safe-area-inset-bottom, 0px) + 148px); }
+
+/* Progress: one row of three numbers */
+.progress-title { font-size: 30px; letter-spacing: -0.02em; margin: 12px 4px 14px; }
+.stat-row {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-card);
+  margin-bottom: 16px;
+}
+.stat-cell { padding: 14px; }
+.stat-cell + .stat-cell { border-left: 1px solid var(--border); }
+.stat-cell .stat-value { font-size: 26px; line-height: 1.1; }
+.stat-cell .stat-label { font-size: 12px; font-weight: 600; color: var(--text-dim); margin: 2px 0 0; }
+.stat-unit { font-family: var(--font-body); font-size: 13px; font-weight: 600; color: var(--text-dim); }
+/* Range filter as a segmented control */
+.range-selector { border: 0; border-radius: 10px; background: var(--surface-2); padding: 3px; gap: 2px; }
+.range-btn { border: 0; border-radius: 8px; min-width: 38px; min-height: 32px; font-family: var(--font-body); font-size: 13px; font-weight: 700; color: var(--text-dim); }
+.range-btn.active { background: var(--surface); color: var(--text); box-shadow: 0 1px 2px color-mix(in srgb, var(--text) 12%, transparent); }
+
+/* My Plans: the days are one grouped list; the next one is marked */
+.myplans-section-label { font-family: var(--font-body); font-size: 13px; font-weight: 600; color: var(--text-dim); }
+.myplans-day-list { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-card); margin-bottom: 28px; overflow: hidden; }
+.myplans-day-list .myplans-day-card { border: 0; border-radius: 0; margin: 0; padding: 14px 12px 14px 16px; }
+.myplans-day-list .myplans-day-card + .myplans-day-card { border-top: 1px solid var(--border); }
+.myplans-day-badge { background: none; width: 22px; font-family: var(--font-display); font-weight: 800; font-size: 18px; color: var(--text-dimmer); }
+.myplans-day-badge--next { color: var(--accent); }
+.myplans-day-chevron { min-width: 44px; min-height: 44px; }
+.myplans-empty-box { border: 1px dashed var(--border-bright); border-radius: var(--radius-card); padding: 16px; display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
+.myplans-empty-box .myplans-empty-library { margin: 0; padding: 0; font-size: 14px; color: var(--text-secondary); text-align: left; }
+.myplans-empty-box .myplans-create-cta { width: auto; margin: 0; min-height: 44px; padding: 0 16px; border: 1px solid var(--border-bright); border-radius: 10px; background: var(--surface); color: var(--text); font-family: var(--font-body); font-size: 14px; }
+.myplans-create-cta { font-family: var(--font-body); font-size: 14px; }
+.myplans-add-btn { width: 44px; height: 44px; border-radius: 12px; background: var(--surface); border: 1px solid var(--border); color: var(--text); }

@@ -135,6 +135,7 @@ graph LR
     home.js --> session.js
 
     myplans.js --> data.js
+    myplans.js --> home.js
     myplans.js --> programTemplates.js
 
     session.js --> data.js
@@ -187,7 +188,7 @@ graph LR
 |--------|---------|-----------------|
 | `app.js` | All modules | Entry point. Binds all `window.*` handlers. Calls `loadData()`, shows onboarding if new user, otherwise `switchTab('home')` + `showWelcomeScreen()`. Registers service worker (non-localhost only). |
 | `home.js` | `data.js`, `session.js` | Home tab. Week streak, readiness strip (48h rule), split progress grid (3 cell states: completed/today/future), momentum row (most recent PR computed from history + coaching via `getSuggestion`), yesterday card with volume, stat footer. |
-| `myplans.js` | `data.js`, `programTemplates.js` | My Plans tab — program management workshop only (no Start buttons). Active program day cards with exercise preview + chevron → program builder. Library section with Set Active / Duplicate / Delete overflow. |
+| `myplans.js` | `data.js`, `programTemplates.js`, `home.js` (next day) | My Plans tab — program management workshop only (no Start buttons). Active program day cards with exercise preview + chevron → program builder. Library section with Set Active / Duplicate / Delete overflow. |
 | `program.js` | `exerciseLibrary.js` | Static data: original 4-day split, `MUSCLE_GROUPS` mapping (covers all exercise library IDs), display metadata. |
 | `data.js` | `utils.js`, `program.js` | `state` object (profile, programs, history, customExercises, currentSession). `loadData()` with v2→v3→v4→v5 migrations (`migrateToLatest()`), `applyImportedData()` shared by both import paths, `saveData()`, `saveCurrentSession()`, `exportData()`, `importData()`. |
 | `utils.js` | _(none)_ | `todayDateString()`, `isoDateOnly()`, `formatDate()`, `formatDateShort()`, `showToast()`, `showConfirm()`, `showPrompt()`. |
@@ -414,11 +415,12 @@ getSuggestion(exercise, last?)
   → top rep = upper end of the exercise's rep range (default 10)
   → if loadType === 'bw':
       best reps ≥ top rep  → "Try for <top+1>+ reps"
-      otherwise            → "Match <best> reps"
+      otherwise            → "Beat <best> reps"
+  → returns { msg, value, why, bump } — msg for the workout screen, value + why for Home
   → if loadType === 'weight':
       every set hit the top rep (and enough sets were done)
-                           → "Bump up: <w> → <w+5> lb"
-      otherwise            → "Last: <w> × <reps>"
+                           → "Go up to <w+5> lb"
+      otherwise            → "Repeat <w> lb, beat <reps> reps"
 
 getLastExerciseNote(exerciseId)
   → returns { date, note } from most recent session
@@ -479,7 +481,7 @@ flowchart TD
 
 **Remote:** `https://github.com/reidrussell-alt/plate-log.git` (live at `https://reidrussell-alt.github.io/plate-log/`; the old `lifting-tracker-Application` repository is kept as an archive)  
 **Auth:** Personal Access Token (GitHub no longer accepts passwords)  
-**Current SW cache version:** `lift-tracker-v24`  
+**Current SW cache version:** `lift-tracker-v25`  
 **Auto-update:** when a new service worker takes control, the app reloads itself. On iOS a delete + re-add is still the reliable way to force fresh code.
 
 ---
@@ -510,6 +512,7 @@ flowchart TD
 
 | Date | Change |
 |------|--------|
+| 2026-11-13 | Screens from the design canvas: Home cards lead with the number ("230 lb") and say why; the workout screen shows a progress bar, keeps one exercise open and folds finished ones to a single line, puts the target next to last time's sets, and keeps Finish on screen; Progress shows three numbers in one row and a segmented range picker; My Plans groups the days in one list and marks the next one; small green text is darker so it is readable; SW bumped to v25 |
 | 2026-11-13 | Look sharpened so it feels less generic: plain sentence-case labels instead of small capitals, flat cards with a thin edge instead of floating shadows, no coloured badges or emoji, Home leads with the date and a "Start Lower A"-style button, clearer coaching wording ("Go up to 70 lb"); SW bumped to v24 |
 | 2026-11-13 | Restoring a backup now fully updates older backups whether you restore during first-time setup or from the Profile tab, and keeps your custom exercises; SW bumped to v23 |
 | 2026-11-11 | Moved to a new GitHub repository, `plate-log`, with full history; new web address |

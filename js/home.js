@@ -246,7 +246,7 @@ function buildPrCard() {
 
 function buildCoachingCard(activeProgram, suggestedDay) {
   let exerciseName = null;
-  let suggestionMsg = null;
+  let suggestion = null;
 
   if (activeProgram && suggestedDay) {
     for (const ex of suggestedDay.exercises) {
@@ -255,7 +255,7 @@ function buildCoachingCard(activeProgram, suggestedDay) {
       if (s) {
         if (!exerciseName || s.bump) {
           exerciseName = ex.name;
-          suggestionMsg = s.msg;
+          suggestion = s;
           if (s.bump) break;
         }
       }
@@ -264,7 +264,8 @@ function buildCoachingCard(activeProgram, suggestedDay) {
 
   const content = exerciseName
     ? `<div class="home-momentum-name">${exerciseName}</div>
-       <div class="home-momentum-value">${suggestionMsg}</div>`
+       <div class="home-momentum-value">${suggestion.value}</div>
+       <div class="home-momentum-delta home-momentum-delta--muted">${suggestion.why}</div>`
     : `<div class="home-momentum-name home-momentum-empty">Stick with current weights</div>`;
 
   return `
@@ -367,7 +368,7 @@ function abbreviateDay(title) {
   return base.split(' ').filter(Boolean).map(w => w[0].toUpperCase()).join('');
 }
 
-function getSuggestedDay(program) {
+export function getSuggestedDay(program) {
   const sessions = (state.history || []).filter(s => s.programId === program.id);
   if (sessions.length === 0) return program.days[0];
   const last = sessions.reduce((a, b) => new Date(a.date) > new Date(b.date) ? a : b);

@@ -6,6 +6,71 @@ import { openExerciseSelector } from './exerciseSelector.js';
 import { getExerciseById } from './exerciseLibrary.js';
 
 let _reorderMode = false;
+// Which exercise is expanded. null = the first one not finished yet.
+let _openIdx = null;
+// The exercise that is expanded on screen right now (set on every render).
+let _renderedOpenIdx = null;
+
+function _isComplete(ex) {
+  const target = ex.targetSets || ex.sets.length;
+  return ex.sets.length > 0 && ex.sets.length >= target && ex.sets.every(s => s.logged);
+}
+
+function _currentIdx(sess) {
+  if (_openIdx !== null && _openIdx < sess.exercises.length) return _openIdx;
+  const i = sess.exercises.findIndex(ex => !_isComplete(ex));
+  return i === -1 ? null : i;
+}
+
+function _setCounts(sess) {
+  let total = 0, logged = 0;
+  for (const ex of sess.exercises) {
+    total += Math.max(ex.targetSets || 0, ex.sets.length);
+    logged += ex.sets.filter(s => s.logged).length;
+  }
+  return { total, logged };
+}
+
+function _setCountText(sess) {
+  const { total, logged } = _setCounts(sess);
+  return `${logged} of ${total} sets done`;
+}
+
+function _updateProgress() {
+  const sess = state.currentSession;
+  if (!sess) return;
+  const { total, logged } = _setCounts(sess);
+  const fill = document.getElementById('sessionProgressFill');
+  if (fill) fill.style.width = total ? `${Math.round(logged / total * 100)}%` : '0%';
+  const label = document.getElementById('sessionSetCount');
+  if (label) label.textContent = _setCountText(sess);
+}
+
+// After a set changes: refresh the progress bar, and when the open exercise is
+// finished, collapse it and open the next unfinished one.
+function _afterSetChange(exIdx) {
+  _updateProgress();
+  const sess = state.currentSession;
+  const ex = sess.exercises[exIdx];
+  if (ex && _isComplete(ex) && _renderedOpenIdx === exIdx) {
+    _openIdx = null;
+    renderSession();
+  }
+}
+
+// "225×10 · 225×9" → "225 × 10, 9"; mixed weights stay listed set by set.
+function _formatLastSets(exercise) {
+  const sets = exercise.sets.filter(s => s.reps !== '');
+  if (sets.length === 0) return '';
+  const weights = new Set(sets.map(s => s.weight || ''));
+  if (weights.size === 1 && sets[0].weight) return `${sets[0].weight} × ${sets.map(s => s.reps).join(', ')}`;
+  return sets.map(s => s.weight ? `${s.weight} × ${s.reps}` : `${s.reps}`).join(', ');
+}
+
+export function openExercise(exIdx) {
+  _openIdx = exIdx;
+  renderSession();
+}
 
 export function getLastPerformance(exerciseId) {
   for (let i = state.history.length - 1; i >= 0; i--) {
@@ -23,7 +88,7 @@ export function getSuggestion(exercise, last = getLastPerformance(exercise.id)) 
   const validSets = last.exercise.sets.filter(s => s.reps !== '' && (s.weight !== '' || exercise.loadType === 'bw'));
   if (validSets.length === 0) return null;
 
-  let topRep = 10;
+  let topRep = exercise.repRangeMax || 10;
   if (exercise.repRange) {
     const m = exercise.repRange.match(/(\d+)-(\d+)/);
     if (m) topRep = parseInt(m[2]);
@@ -34,8 +99,8 @@ export function getSuggestion(exercise, last = getLastPerformance(exercise.id)) 
 
   if (exercise.loadType === 'bw') {
     const bestReps = Math.max(...validSets.map(s => parseInt(s.reps) || 0));
-    if (bestReps >= topRep) return { msg: `Try for ${topRep + 1}+ reps`, bump: true };
-    return { msg: `Beat ${bestReps} reps` };
+    if (bestReps >= topRep) return { msg: `Try for ${topRep + 1}+ reps`, bump: true, value: `${topRep + 1}+ reps`, why: `You hit ${bestReps} last time` };
+    return { msg: `Beat ${bestReps} reps`, value: `${bestReps + 1} reps`, why: `Best last time was ${bestReps}` };
   }
 
   const lastWeight = parseFloat(topSet.weight);
@@ -44,19 +109,9 @@ export function getSuggestion(exercise, last = getLastPerformance(exercise.id)) 
   const targetSets = exercise.targetSets || 3;
 
   if (allHitTop && validSets.length >= targetSets - 1) {
-    return { msg: `Go up to ${lastWeight + 5} lb`, bump: true };
+    return { msg: `Go up to ${lastWeight + 5} lb`, bump: true, value: `${lastWeight + 5} lb`, why: `Every set hit ${topRep} last time` };
   }
-  return { msg: `Repeat ${lastWeight} lb, beat ${lastTopReps} reps` };
-}
-
-export function getLastSetsString(exerciseId, last = getLastPerformance(exerciseId)) {
-  if (!last) return null;
-  const dateStr = formatDate(last.session.date);
-  const setsStr = last.exercise.sets
-    .filter(s => s.reps !== '')
-    .map(s => s.weight ? `${s.weight}×${s.reps}` : `${s.reps}`)
-    .join(' · ');
-  return { date: dateStr, sets: setsStr };
+  return { msg: `Repeat ${lastWeight} lb, beat ${lastTopReps} reps`, value: `${lastWeight} lb`, why: `Beat ${lastTopReps} reps this time` };
 }
 
 export function getLastExerciseNote(exerciseId, last = getLastPerformance(exerciseId)) {
@@ -121,7 +176,7 @@ function _buildStructuredSession(dayId, date) {
       id: ex.id,
       name: ex.name,
       loadType: ex.loadType,
-      repRange: ex.repRange || '',
+      repRange: ex.repRange || (ex.repRangeMin && ex.repRangeMax ? `${ex.repRangeMin}-${ex.repRangeMax}` : ''),
       targetSets: ex.sets,
       note: '',
       sets: Array.from({ length: ex.sets }, () => ({ weight: '', reps: '', logged: false, note: '', noteOpen: false }))
@@ -146,6 +201,7 @@ function _buildTrackAsYouGoSession(date) {
 }
 
 function _doStartSession(dayId) {
+  _openIdx = null;
   const session = _buildStructuredSession(dayId, todayDateString());
   if (!session) return;
   state.currentSession = session;
@@ -166,6 +222,7 @@ export function startTrackAsYouGoWorkout() {
 }
 
 function _doStartTrackAsYouGo() {
+  _openIdx = null;
   state.currentSession = _buildTrackAsYouGoSession(todayDateString());
   saveCurrentSession();
   window.switchTab('session');
@@ -173,6 +230,7 @@ function _doStartTrackAsYouGo() {
 
 export function leaveSession() {
   _reorderMode = false;
+  _openIdx = null;
   stopRestTimer();
   window.switchTab('home');
 }
@@ -190,6 +248,7 @@ export function startManualEntry(dayId, dateKey) {
 }
 
 function _doStartManualEntry(dayId, dateKey) {
+  _openIdx = null;
   const session = dayId
     ? _buildStructuredSession(dayId, dateKey)
     : _buildTrackAsYouGoSession(dateKey);
@@ -211,7 +270,7 @@ export function renderSession() {
       <div class="session-header-top">
         <div>
           <div class="session-day-name">${sess.dayTitle}</div>
-          <div class="session-meta-row">${metaTag} · ${sess.exercises.length} exercise${sess.exercises.length !== 1 ? 's' : ''}</div>
+          <div class="session-meta-row">${metaTag} · ${sess.exercises.length} exercise${sess.exercises.length !== 1 ? 's' : ''} · <span id="sessionSetCount">${_setCountText(sess)}</span></div>
         </div>
         <div style="display:flex;gap:8px;align-items:center;">
           ${canReorder ? `
@@ -258,15 +317,41 @@ export function renderSession() {
     });
     html += `</div>`;
   } else {
-    // Normal mode — full exercise blocks
+    // Normal mode — one exercise open, the rest collapsed to a single line
+    const { total: setTotal, logged: setLogged } = _setCounts(sess);
+    html += `<div class="session-progress" aria-hidden="true"><div class="session-progress-fill" id="sessionProgressFill" style="width:${setTotal ? Math.round(setLogged / setTotal * 100) : 0}%"></div></div>`;
+    const openIdx = _currentIdx(sess);
+    _renderedOpenIdx = openIdx;
+
     sess.exercises.forEach((ex, exIdx) => {
       const allLogged = ex.sets.every(s => s.logged);
       const last = getLastPerformance(ex.id);
       const suggestion = getSuggestion(ex, last);
-      const lastInfo = getLastSetsString(ex.id, last);
       const lastNote = getLastExerciseNote(ex.id, last);
       const targetSets = ex.targetSets || ex.sets.length;
-      const pillLabel = ex.repRange ? `${targetSets}×${ex.repRange}` : `${targetSets} sets`;
+      const pillLabel = ex.repRange ? `${targetSets} × ${ex.repRange.replace('-', '–')}` : `${targetSets} sets`;
+
+      if (exIdx !== openIdx) {
+        const done = _isComplete(ex);
+        const loggedCount = ex.sets.filter(s => s.logged).length;
+        const sub = done
+          ? `Done · ${loggedCount} set${loggedCount !== 1 ? 's' : ''}`
+          : loggedCount > 0
+            ? `${loggedCount} of ${targetSets} sets done`
+            : (suggestion ? suggestion.msg : 'First time logging this');
+        html += `
+          <button type="button" class="exercise-collapsed${done ? ' complete' : ''}" onclick="openExercise(${exIdx})">
+            <span class="exercise-collapsed-main">
+              <span class="exercise-collapsed-name">${ex.name}</span>
+              <span class="exercise-collapsed-sub">${sub}</span>
+            </span>
+            <span class="exercise-collapsed-target">${pillLabel}</span>
+          </button>
+        `;
+        return;
+      }
+      const lastText = last ? _formatLastSets(last.exercise) : '';
+      const lastDate = last ? formatDate(last.session.date) : '';
 
       html += `
         <div class="exercise-block ${allLogged && ex.sets.length >= targetSets ? 'complete' : ''}">
@@ -283,7 +368,7 @@ export function renderSession() {
             ${suggestion ? `
               <div class="suggestion">
                 <svg class="suggestion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                <span><strong>${suggestion.msg}</strong></span>
+                <span><strong>${suggestion.msg}.</strong>${lastText ? ` Last time (${lastDate}): ${lastText}` : ''}</span>
               </div>
             ` : `
               <div class="suggestion" style="background:color-mix(in srgb, var(--accent) 5%, transparent);color:var(--text-dimmer);">
@@ -350,14 +435,6 @@ export function renderSession() {
 
       html += `<button class="add-set-btn" onclick="addSet(${exIdx})">+ Add set</button>`;
 
-      if (lastInfo) {
-        html += `
-          <div class="last-time-row">
-            <span><strong>Last (${lastInfo.date}):</strong></span>
-            <span>${lastInfo.sets}</span>
-          </div>
-        `;
-      }
       html += `
         <div class="ex-note-wrap">
           <textarea class="ex-note-input"
@@ -368,11 +445,13 @@ export function renderSession() {
       </div></div>`;
     });
 
-    html += `<button class="add-exercise-fab" onclick="showExercisePicker()">+ Add Exercise</button>`;
+    html += `<button class="add-exercise-fab" onclick="showExercisePicker()">+ Add exercise</button>`;
 
     html += `
-      <button class="finish-btn" onclick="finishSession()">Finish & Save Session</button>
-      <button class="abandon-link" onclick="abandonSession()">Discard Session</button>
+      <button class="abandon-link" onclick="abandonSession()">Discard workout</button>
+      <div class="session-finish-bar">
+        <button class="finish-btn" onclick="finishSession()">Finish workout</button>
+      </div>
     `;
   }
 
@@ -403,6 +482,7 @@ function _initSortable() {
       if (oldIndex === newIndex) return;
       const moved = state.currentSession.exercises.splice(oldIndex, 1)[0];
       state.currentSession.exercises.splice(newIndex, 0, moved);
+      _openIdx = null;
       saveCurrentSession();
       // DOM already updated by Sortable — no re-render needed
     }
@@ -434,6 +514,9 @@ export function updateSet(exIdx, setIdx, field, value) {
       if (checkBtn) checkBtn.classList.add('logged');
     }
     startRestTimer(exIdx, setIdx);
+    saveCurrentSession();
+    _afterSetChange(exIdx);
+    return;
   }
   saveCurrentSession();
 }
@@ -462,6 +545,7 @@ export function toggleSetLogged(exIdx, setIdx) {
 
   if (set.logged) startRestTimer(exIdx, setIdx);
   saveCurrentSession();
+  _afterSetChange(exIdx);
 }
 
 export function addSet(exIdx) {
@@ -476,7 +560,7 @@ export function removeExercise(exIdx) {
     ? `Remove "${ex.name}"? This is the only exercise in this session.`
     : `Remove "${ex.name}" from this session?`;
   showConfirm(msg, () => {
-    state.currentSession.exercises.splice(exIdx, 1);
+    state.currentSession.exercises.splice(exIdx, 1); _openIdx = null;
     saveCurrentSession();
     renderSession();
   }, 'Remove');
@@ -545,7 +629,7 @@ export function removeSet(exIdx, setIdx) {
     showConfirm(
       'You are about to remove the entire exercise from this workout. Are you sure?',
       () => {
-        state.currentSession.exercises.splice(exIdx, 1);
+        state.currentSession.exercises.splice(exIdx, 1); _openIdx = null;
         saveCurrentSession();
         renderSession();
       },

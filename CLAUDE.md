@@ -203,7 +203,7 @@ Light theme: white cards with soft shadows on a cool grey page, ink text, one co
 
 /* Workout types & states */
 --push: #e8572a  --pull: #1a8fe0  --legs: #0fa678  --recovery: #7c4dff
---success: #0fa678  --danger: #e5484d  --warm: #e07a14  --cool: #0f9f72
+--success: #0fa678  --success-ink: #0b7a58 (small green text)  --danger: #e5484d  --warm: #e07a14  --cool: #0f9f72
 
 /* Shape & type */
 --radius-card: 12px  --shadow-card (unused on cards)  --shadow-raised
@@ -258,7 +258,7 @@ Splash screen shown on every app open. Tap to dismiss (no auto-dismiss).
 ## Service worker
 
 - Cache name must be bumped (v1 → v2 → v3...) on **every deploy** that changes JS/CSS files
-- Currently: `lift-tracker-v24`
+- Currently: `lift-tracker-v25`
 - Every JS file must be listed in the `ASSETS` array — add new modules there, remove deleted ones
 - SW is **disabled on localhost** — the hostname check in `app.js` prevents re-registration during development
 - When a new SW takes control, `app.js` reloads the page automatically (`controllerchange`)

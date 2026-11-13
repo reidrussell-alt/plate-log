@@ -261,29 +261,19 @@ export function renderProgress() {
   });
 
   let html = `
-    <div class="progress-summary">
-      <div class="progress-title">All time</div>
-      <div class="stat-grid">
-        <div class="stat-box">
-          <div class="stat-label">Sessions</div>
-          <div class="stat-value">${totalSessions}</div>
-        </div>
-        <div class="stat-box">
-          <div class="stat-label">Sets logged</div>
-          <div class="stat-value">${totalSets}</div>
-        </div>
-        <div class="stat-box">
-          <div class="stat-label">Bodyweight</div>
-          <div class="stat-value">${currentBw}</div>
-          <div class="stat-sub">lb</div>
-        </div>
-        <div class="stat-box">
-          <div class="stat-label">Most trained</div>
-          <div class="stat-value" style="font-size: 16px; font-family: var(--font-body); font-weight: 900;">
-            ${getMostTrainedDay(sessionsByDay)}
-          </div>
-          <div class="stat-sub">${Math.max(...Object.values(sessionsByDay).map(s => s.count), 0)} sessions</div>
-        </div>
+    <div class="progress-title">Progress</div>
+    <div class="stat-row" aria-label="All time">
+      <div class="stat-cell">
+        <div class="stat-value">${totalSessions}</div>
+        <div class="stat-label">Sessions</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-value">${totalSets}</div>
+        <div class="stat-label">Sets logged</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-value">${currentBw}${currentBw !== '—' ? '<span class="stat-unit"> lb</span>' : ''}</div>
+        <div class="stat-label">Bodyweight</div>
       </div>
     </div>
   `;

@@ -1,5 +1,6 @@
 import { state } from './data.js';
 import { PROGRAM_TEMPLATES } from './programTemplates.js';
+import { getSuggestedDay } from './home.js';
 
 export const MAX_CUSTOM_PROGRAMS = 5;
 
@@ -43,37 +44,36 @@ function buildHeader() {
 // ─── Active Program Section ───────────────────────────────────────────────────
 
 function buildActiveSection(program) {
-  const dayCards = program.days.map((d, i) => buildDayCard(d, i, program.id)).join('');
+  const next = program.days.length ? getSuggestedDay(program) : null;
+  const dayCards = program.days.map((d, i) => buildDayCard(d, i, program.id, next && d.id === next.id)).join('');
+  const nextText = next ? ` · next up is ${next.name.split(' - ')[0]}` : '';
 
   return `
-    <div class="myplans-section-label myplans-section-label--active">
-      <span class="myplans-active-dot"></span>
-      Active Program
-    </div>
+    <div class="myplans-section-label">Active</div>
     <div class="myplans-program-identity">
       <div class="myplans-program-name">${program.name}</div>
-      <div class="myplans-program-subtitle">${program.days.length} workout${program.days.length !== 1 ? 's' : ''} · rotate freely</div>
+      <div class="myplans-program-subtitle">${program.days.length} workout${program.days.length !== 1 ? 's' : ''}${nextText}</div>
     </div>
-    ${dayCards}
+    <div class="myplans-day-list">${dayCards}</div>
   `;
 }
 
-function buildDayCard(day, idx, programId) {
+function buildDayCard(day, idx, programId, isNext) {
   const exCount = day.exercises.length;
   const setCount = day.exercises.reduce((s, e) => s + (e.sets || 0), 0);
   const preview = buildExercisePreview(day.exercises);
 
   return `
     <div class="myplans-day-card">
-      <div class="myplans-day-badge">${idx + 1}</div>
+      <div class="myplans-day-badge${isNext ? ' myplans-day-badge--next' : ''}">${idx + 1}</div>
       <div class="myplans-day-content">
         <div class="myplans-day-row">
           <span class="myplans-day-name">${day.name}</span>
-          <span class="myplans-day-meta">${exCount} ex · ${setCount} sets</span>
+          <span class="myplans-day-meta">${exCount} exercises · ${setCount} sets</span>
         </div>
         <div class="myplans-day-preview">${preview}</div>
       </div>
-      <button class="myplans-day-chevron" onclick="window.showProgramBuilder('${programId}', '${day.id}')">
+      <button class="myplans-day-chevron" aria-label="Edit ${day.name}" onclick="window.showProgramBuilder('${programId}', '${day.id}')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;">
           <polyline points="9 18 15 12 9 6"/>
         </svg>
@@ -94,10 +94,7 @@ function buildExercisePreview(exercises) {
 
 function buildNoProgramSection() {
   return `
-    <div class="myplans-section-label myplans-section-label--active">
-      <span class="myplans-active-dot"></span>
-      Active Program
-    </div>
+    <div class="myplans-section-label">Active</div>
     <div class="myplans-no-program">No active program — set one from your library or create a new plan.</div>
   `;
 }
@@ -105,10 +102,7 @@ function buildNoProgramSection() {
 function buildTAYGSection() {
   const count = (state.history || []).length;
   return `
-    <div class="myplans-section-label myplans-section-label--active">
-      <span class="myplans-active-dot"></span>
-      Active Program
-    </div>
+    <div class="myplans-section-label">Active</div>
     <div class="myplans-no-program">You're in Track As You Go mode — ${count} session${count !== 1 ? 's' : ''} logged. Switch to Structured in <button class="myplans-inline-link" onclick="window.switchTab('profile')">Profile</button> to use a program.</div>
   `;
 }
@@ -120,17 +114,23 @@ function buildLibrarySection(libraryPrograms) {
   const atLimit = customCount >= MAX_CUSTOM_PROGRAMS;
 
   const libraryCards = libraryPrograms.length === 0
-    ? `<div class="myplans-empty-library">No other plans saved yet</div>`
+    ? `<div class="myplans-empty-library">No other plans yet. Start from a template or build your own.</div>`
     : libraryPrograms.map(buildLibraryCard).join('');
 
   const createCta = atLimit
     ? `<div class="myplans-at-limit">Max ${MAX_CUSTOM_PROGRAMS} custom plans reached — delete one to create another.</div>`
     : `<button class="myplans-create-cta" onclick="window.showCreatePlanSheet()">
-        + Create a New Plan
+        Create a plan
       </button>`;
 
+  if (libraryPrograms.length === 0) {
+    return `
+    <div class="myplans-section-label">Library</div>
+    <div class="myplans-empty-box">${libraryCards}${createCta}</div>
+  `;
+  }
   return `
-    <div class="myplans-section-label">Your Library</div>
+    <div class="myplans-section-label">Library</div>
     ${libraryCards}
     ${createCta}
   `;

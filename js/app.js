@@ -1,7 +1,7 @@
 import { loadData, exportData, importData, confirmReset, openResetModal, closeResetModal } from './data.js';
 import { showWelcomeScreen } from './welcome.js';
 import { renderProgress, updateMuscleGroupExercise, setChartRange, toggleHistoryBlock, openEditModal, closeEditModal, saveEdit, deleteEditSession, navigateCalendar, openCalendarDay, closeCalendarDay, openManualWorkoutSelect, openSessionEdit, closeSessionEdit, saveSessionEdit, sessionEditDeleteExercise, sessionEditDeleteSet, deleteSession, _liveSessionIdx } from './progress.js';
-import { startSession, startTrackAsYouGoWorkout, abandonSession, finishSession, confirmFinishSession, closeModal, updateBw, updateSessionDate, updateSet, toggleNote, toggleSetLogged, addSet, removeExercise, updateExerciseNote, showExercisePicker, renderSession, leaveSession, toggleReorderMode, startManualEntry, showExerciseOptions, closeExerciseOptions, replaceExercise, removeSet } from './session.js';
+import { startSession, startTrackAsYouGoWorkout, abandonSession, finishSession, confirmFinishSession, closeModal, updateBw, updateSessionDate, updateSet, toggleNote, toggleSetLogged, addSet, removeExercise, updateExerciseNote, showExercisePicker, renderSession, leaveSession, toggleReorderMode, startManualEntry, showExerciseOptions, closeExerciseOptions, replaceExercise, removeSet, openExercise } from './session.js';
 import { updateSessionBanner, hideSessionBanner, resumeSession } from './sessionBanner.js';
 import { renderSettings, editProfileName, switchTrainingMode, setActiveProgram, deleteProgram, duplicateProgram, activateTemplate, duplicateTemplate, editProgram, showCreateProgram, closeCreateProgram, confirmCreateProgram, toggleRestTimer, onRestDurationChange, toggleRestAlert, connectHealth, toggleHealthEnabled, toggleHealthSteps, toggleHealthWeight } from './settings.js';
 import { initRestTimer, pauseTimer, skipTimer, resetTimer, toggleTimerExpanded, updatePillVisibility, reconcileTimer } from './restTimer.js';
@@ -175,6 +175,7 @@ window.showWelcomeScreen = showWelcomeScreen;
 window.resumeSession = resumeSession;
 window.leaveSession = leaveSession;
 window.toggleReorderMode = toggleReorderMode;
+window.openExercise = openExercise;
 window.startManualEntry = startManualEntry;
 
 // Register service worker (skipped on localhost)
