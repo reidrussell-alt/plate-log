@@ -1,4 +1,4 @@
-import { state, saveData, migrateV2ToV3, migrateV3ToV4 } from './data.js';
+import { state, saveData, migrateToLatest, applyImportedData } from './data.js';
 import { PROGRAM_TEMPLATES, buildProgramFromTemplate } from './programTemplates.js';
 import { showToast } from './utils.js';
 
@@ -193,21 +193,13 @@ export function obProcessImport() {
         showToast('Invalid backup file');
         return;
       }
-      if (!data.version || data.version < 3) {
-        data = migrateV2ToV3(data);
-      }
-      if (data.version < 4) {
-        data = migrateV3ToV4(data);
-      }
+      data = migrateToLatest(data);
       const name = onboardingData.name;
       if (name && data.profile) data.profile.name = name;
 
-      state.history = data.history;
-      if (data.profile) state.profile = data.profile;
-      if (data.programs) state.programs = data.programs;
-      saveData();
+      applyImportedData(data);
 
-      showToast(`Imported ${data.history.length} sessions ✓`, 'success');
+      showToast(`Imported ${data.history.length} sessions`, 'success');
       hideOnboarding();
       window.switchTab('home');
       window.showWelcomeScreen();

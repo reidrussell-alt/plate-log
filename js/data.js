@@ -150,26 +150,39 @@ export function migrateV4ToV5(data) {
   };
 }
 
+// Runs every migration step the data still needs, in order. Used for saved data and
+// for imported backups (Profile and onboarding), so every path ends at SCHEMA_VERSION.
+export function migrateToLatest(data) {
+  if (!data.version || data.version < 3) data = migrateV2ToV3(data);
+  if (data.version < 4) data = migrateV3ToV4(data);
+  if (data.version < 5) data = migrateV4ToV5(data);
+  return data;
+}
+
+// Puts migrated backup data into state. Custom exercises are kept: any in the backup
+// replace one with the same id, and ones only on this device stay.
+export function applyImportedData(data) {
+  state.history = data.history;
+  if (data.profile) state.profile = data.profile;
+  if (data.programs) state.programs = data.programs;
+  if (Array.isArray(data.customExercises)) {
+    const incomingIds = new Set(data.customExercises.map(e => e.id));
+    state.customExercises = [
+      ...(state.customExercises || []).filter(e => !incomingIds.has(e.id)),
+      ...data.customExercises
+    ];
+  }
+  saveData();
+}
+
 export function loadData() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return;
-    let data = JSON.parse(raw);
+    const original = JSON.parse(raw);
+    const data = migrateToLatest(original);
 
-    let migrated = false;
-    if (!data.version || data.version < 3) {
-      data = migrateV2ToV3(data);
-      migrated = true;
-    }
-    if (data.version < 4) {
-      data = migrateV3ToV4(data);
-      migrated = true;
-    }
-    if (data.version < 5) {
-      data = migrateV4ToV5(data);
-      migrated = true;
-    }
-    if (migrated) {
+    if (data !== original) {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
     }
 
@@ -211,7 +224,7 @@ export function exportData() {
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
-  showToast(`Exported ${state.history.length} sessions ✓`, 'success');
+  showToast(`Exported ${state.history.length} sessions`, 'success');
 }
 
 export function importData(event, onSuccess) {
@@ -225,26 +238,15 @@ export function importData(event, onSuccess) {
         showToast('Invalid backup file');
         return;
       }
-      if (!data.version || data.version < 3) {
-        data = migrateV2ToV3(data);
-      }
-      if (data.version < 4) {
-        data = migrateV3ToV4(data);
-      }
-      if (data.version < 5) {
-        data = migrateV4ToV5(data);
-      }
+      data = migrateToLatest(data);
       const incomingCount = data.history.length;
       const currentCount = state.history.length;
       const confirmMsg = currentCount === 0
         ? `Import ${incomingCount} sessions?`
         : `You have ${currentCount} sessions. Replace with ${incomingCount} imported sessions?`;
       showConfirm(confirmMsg, () => {
-        state.history = data.history;
-        if (data.profile) state.profile = data.profile;
-        if (data.programs) state.programs = data.programs;
-        saveData();
-        showToast(`Imported ${incomingCount} sessions ✓`, 'success');
+        applyImportedData(data);
+        showToast(`Imported ${incomingCount} sessions`, 'success');
         onSuccess?.();
       }, 'Import');
     } catch (err) {

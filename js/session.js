@@ -71,11 +71,9 @@ export function getLastExerciseNote(exerciseId, last = getLastPerformance(exerci
 }
 
 function getLastBw() {
-  // Prefer the most recently logged manual bodyweight entry
-  const last = state.history[state.history.length - 1];
-  if (last?.bw) return last.bw;
-
-  // Fallback: use weight pre-fetched from Apple Health at startup (iOS only)
+  // Bodyweight isn't entered during a workout any more. Only record it when Apple Health
+  // has a reading — copying the last session's value forward would make the Progress
+  // bodyweight chart look flat. It can still be set when editing a past workout.
   if (isHealthKitAvailable()) {
     const hw = getCachedWeight();
     if (hw?.value) return Math.round(hw.value).toString();
