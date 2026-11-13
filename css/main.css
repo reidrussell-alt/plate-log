@@ -43,6 +43,7 @@ html, body {
   font-family: var(--font-body);
   min-height: 100vh;
   overflow-x: hidden;
+  overflow-x: clip; /* clips like hidden but keeps position: sticky working */
   -webkit-font-smoothing: antialiased;
   font-variant-numeric: tabular-nums;
 }
@@ -3438,7 +3439,7 @@ body {
 .home-momentum-delta--muted { color: var(--text-dim); font-weight: 600; }
 
 /* Workout: progress bar, one open exercise, the rest one line each */
-.session-progress { height: 4px; background: var(--border); border-radius: 2px; margin: -4px 2px 14px; overflow: hidden; }
+.session-progress { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
 .session-progress-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.25s ease; }
 .exercise-block { border-radius: var(--radius-card); }
 .suggestion span { color: var(--text-secondary); }
@@ -3499,3 +3500,63 @@ body:has(.session-finish-bar) .rest-timer-pill { bottom: calc(env(safe-area-inse
 .myplans-empty-box .myplans-create-cta { width: auto; margin: 0; min-height: 44px; padding: 0 16px; border: 1px solid var(--border-bright); border-radius: 10px; background: var(--surface); color: var(--text); font-family: var(--font-body); font-size: 14px; }
 .myplans-create-cta { font-family: var(--font-body); font-size: 14px; }
 .myplans-add-btn { width: 44px; height: 44px; border-radius: 12px; background: var(--surface); border: 1px solid var(--border); color: var(--text); }
+
+/* ===== SHARPEN — workout screen, round 2 ===== */
+/* Frozen strip: workout name, sets-done count and progress bar stay put while
+   the exercises scroll underneath. */
+.session-sticky {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 10;
+  margin: -16px -16px 12px; padding: 16px 16px 14px;
+  background: var(--bg); border-bottom: 1px solid var(--border);
+}
+.session-sticky .session-header-top { margin-bottom: 12px; }
+.session-date-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-card);
+  padding: 10px 14px; margin-bottom: 12px;
+}
+
+/* Set numbers sit in a box like the weight and reps fields, under a "Set" label */
+.set-row { grid-template-columns: 40px 1fr 1fr 34px 52px 26px; }
+.set-row.bw-row { grid-template-columns: 40px 1fr 34px 52px 26px; }
+.set-num, .set-row.extra .set-num {
+  position: relative; height: 46px; border-radius: 12px;
+  background: var(--surface-2); border: 0;
+  font-family: var(--font-body); font-size: 15px; font-weight: 700; color: var(--text-dim);
+}
+.set-row.logged .set-num, .set-row.extra.logged .set-num {
+  height: 46px; border: 0;
+  background: color-mix(in srgb, var(--success) 8%, var(--surface)); color: var(--success-ink);
+}
+.set-row.extra .set-num { color: var(--recovery); }
+.set-num .set-input-label { left: 0; right: 0; text-align: center; }
+
+/* Set-done celebration: pop, ring, burst of dots, then a pill for 2 seconds */
+.set-row .icon-btn--check { position: relative; overflow: visible; }
+.icon-btn--check.set-pop { animation: set-pop 0.45s ease-out; }
+.set-burst { position: absolute; inset: -2px; pointer-events: none; }
+.set-burst-ring { position: absolute; inset: 0; border-radius: 14px; border: 2px solid var(--success); animation: set-ring 0.55s ease-out forwards; }
+.set-burst-dot {
+  position: absolute; left: 50%; top: 50%; width: 7px; height: 7px; margin: -3.5px 0 0 -3.5px;
+  border-radius: 50%; animation: set-dot 0.6s cubic-bezier(0.2, 0.7, 0.3, 1) forwards;
+}
+.set-toast {
+  position: fixed; left: 50%; top: calc(env(safe-area-inset-top, 0px) + 12px); z-index: 250;
+  display: flex; align-items: center; gap: 8px; padding: 8px 14px 8px 10px;
+  border-radius: 999px; background: var(--text); color: var(--surface);
+  font-size: 13px; font-weight: 700; white-space: nowrap;
+  box-shadow: var(--shadow-raised); pointer-events: none;
+  opacity: 0; transform: translate(-50%, -8px);
+}
+.set-toast.show { animation: set-toast 2s ease forwards; }
+.set-toast-tick { width: 22px; height: 22px; border-radius: 50%; background: var(--success); display: flex; align-items: center; justify-content: center; }
+.set-toast-tick svg { width: 13px; height: 13px; fill: none; stroke: var(--on-accent); stroke-width: 3.5; stroke-linecap: round; stroke-linejoin: round; }
+@keyframes set-pop { 0% { transform: scale(1); } 30% { transform: scale(1.2); } 65% { transform: scale(0.95); } 100% { transform: scale(1); } }
+@keyframes set-ring { 0% { transform: scale(0.7); opacity: 0.8; } 100% { transform: scale(2); opacity: 0; } }
+@keyframes set-dot { 0% { transform: rotate(var(--a)) translateY(0) scale(1); opacity: 1; } 100% { transform: rotate(var(--a)) translateY(-38px) scale(0.3); opacity: 0; } }
+@keyframes set-toast { 0% { opacity: 0; transform: translate(-50%, 10px); } 12% { opacity: 1; transform: translate(-50%, 0); } 82% { opacity: 1; transform: translate(-50%, 0); } 100% { opacity: 0; transform: translate(-50%, -6px); } }
+@media (prefers-reduced-motion: reduce) {
+  .icon-btn--check.set-pop, .set-burst-ring, .set-burst-dot { animation: none; }
+  .set-burst { display: none; }
+  .set-toast.show { animation: none; opacity: 1; transform: translate(-50%, 0); }
+}

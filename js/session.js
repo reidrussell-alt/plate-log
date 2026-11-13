@@ -53,8 +53,12 @@ function _afterSetChange(exIdx) {
   const sess = state.currentSession;
   const ex = sess.exercises[exIdx];
   if (ex && _isComplete(ex) && _renderedOpenIdx === exIdx) {
-    _openIdx = null;
-    renderSession();
+    setTimeout(() => {
+      const now = state.currentSession;
+      if (!now || now !== sess || !_isComplete(now.exercises[exIdx] || { sets: [] }) || _renderedOpenIdx !== exIdx) return;
+      _openIdx = null;
+      renderSession();
+    }, 700);
   }
 }
 
@@ -65,6 +69,56 @@ function _formatLastSets(exercise) {
   const weights = new Set(sets.map(s => s.weight || ''));
   if (weights.size === 1 && sets[0].weight) return `${sets[0].weight} × ${sets.map(s => s.reps).join(', ')}`;
   return sets.map(s => s.weight ? `${s.weight} × ${s.reps}` : `${s.reps}`).join(', ');
+}
+
+// Quick, celebratory feedback when a set is logged: the tick pops, a ring and
+// a burst of dots spread from it, and a pill names the set for 2 seconds.
+const BURST_COLORS = ['var(--accent)', 'var(--success)', 'var(--push)', 'var(--warm)'];
+let _toastTimer = null;
+
+function _celebrateSet(exIdx, setIdx) {
+  const sess = state.currentSession;
+  const ex = sess?.exercises[exIdx];
+  const set = ex?.sets[setIdx];
+  if (!set) return;
+
+  const btn = document.querySelector(`.set-row[data-ex="${exIdx}"][data-set="${setIdx}"] .icon-btn--check`);
+  if (btn) {
+    btn.classList.remove('set-pop');
+    void btn.offsetWidth; // restart the animation if it is already running
+    btn.classList.add('set-pop');
+    btn.querySelector('.set-burst')?.remove();
+    const burst = document.createElement('span');
+    burst.className = 'set-burst';
+    burst.setAttribute('aria-hidden', 'true');
+    let dots = '<span class="set-burst-ring"></span>';
+    for (let i = 0; i < 8; i++) {
+      dots += `<span class="set-burst-dot" style="--a:${i * 45}deg;background:${BURST_COLORS[i % 4]}"></span>`;
+    }
+    burst.innerHTML = dots;
+    btn.appendChild(burst);
+    setTimeout(() => burst.remove(), 700);
+  }
+
+  const targetSets = ex.targetSets || ex.sets.length;
+  const label = setIdx >= targetSets ? `Extra set` : `Set ${setIdx + 1}`;
+  const detail = ex.loadType === 'bw'
+    ? (set.reps ? ` · ${set.reps} reps` : '')
+    : (set.weight && set.reps ? ` · ${set.weight} × ${set.reps}` : '');
+  let toast = document.getElementById('setToast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'setToast';
+    toast.className = 'set-toast';
+    toast.setAttribute('role', 'status');
+    document.body.appendChild(toast);
+  }
+  toast.innerHTML = `<span class="set-toast-tick" aria-hidden="true"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span>${label} done${detail}`;
+  toast.classList.remove('show');
+  void toast.offsetWidth;
+  toast.classList.add('show');
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(() => toast.classList.remove('show'), 2000);
 }
 
 export function openExercise(exIdx) {
@@ -265,8 +319,9 @@ export function renderSession() {
   const metaTag = tag.charAt(0).toUpperCase() + tag.slice(1);
   const canReorder = sess.exercises.length >= 2;
 
+  const { total: setTotal, logged: setLogged } = _setCounts(sess);
   let html = `
-    <div class="session-header">
+    <div class="session-sticky">
       <div class="session-header-top">
         <div>
           <div class="session-day-name">${sess.dayTitle}</div>
@@ -278,14 +333,15 @@ export function renderSession() {
               ${_reorderMode ? 'Done' : '⇅'}
             </button>
           ` : ''}
-          <button class="back-btn" onclick="leaveSession()">←</button>
+          <button class="back-btn" onclick="leaveSession()" aria-label="Back to Home">←</button>
         </div>
       </div>
-      <div class="bw-input-wrap">
-        <span class="bw-label">Date</span>
-        <input type="date" class="bw-input" id="sessionDateInput" value="${sess.date}"
-               style="width:150px;font-size:12px;" onchange="updateSessionDate(this.value)">
-      </div>
+      ${_reorderMode ? '' : `<div class="session-progress" aria-hidden="true"><div class="session-progress-fill" id="sessionProgressFill" style="width:${setTotal ? Math.round(setLogged / setTotal * 100) : 0}%"></div></div>`}
+    </div>
+    <div class="session-date-row">
+      <label class="bw-label" for="sessionDateInput">Date</label>
+      <input type="date" class="bw-input" id="sessionDateInput" value="${sess.date}"
+             style="width:150px;font-size:12px;" onchange="updateSessionDate(this.value)">
     </div>
   `;
 
@@ -318,8 +374,6 @@ export function renderSession() {
     html += `</div>`;
   } else {
     // Normal mode — one exercise open, the rest collapsed to a single line
-    const { total: setTotal, logged: setLogged } = _setCounts(sess);
-    html += `<div class="session-progress" aria-hidden="true"><div class="session-progress-fill" id="sessionProgressFill" style="width:${setTotal ? Math.round(setLogged / setTotal * 100) : 0}%"></div></div>`;
     const openIdx = _currentIdx(sess);
     _renderedOpenIdx = openIdx;
 
@@ -394,7 +448,7 @@ export function renderSession() {
 
         html += `
           <div class="${rowCls}" data-ex="${exIdx}" data-set="${setIdx}">
-            <div class="set-num">${setNumLabel}</div>
+            <div class="set-num"><span class="set-input-label">Set</span>${setNumLabel}</div>
             ${ex.loadType === 'bw' ? `
               <div class="set-input-wrap">
                 <span class="set-input-label">Reps</span>
@@ -515,6 +569,7 @@ export function updateSet(exIdx, setIdx, field, value) {
     }
     startRestTimer(exIdx, setIdx);
     saveCurrentSession();
+    _celebrateSet(exIdx, setIdx);
     _afterSetChange(exIdx);
     return;
   }
@@ -545,6 +600,7 @@ export function toggleSetLogged(exIdx, setIdx) {
 
   if (set.logged) startRestTimer(exIdx, setIdx);
   saveCurrentSession();
+  if (set.logged) _celebrateSet(exIdx, setIdx);
   _afterSetChange(exIdx);
 }
 

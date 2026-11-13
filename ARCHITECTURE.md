@@ -481,7 +481,7 @@ flowchart TD
 
 **Remote:** `https://github.com/reidrussell-alt/plate-log.git` (live at `https://reidrussell-alt.github.io/plate-log/`; the old `lifting-tracker-Application` repository is kept as an archive)  
 **Auth:** Personal Access Token (GitHub no longer accepts passwords)  
-**Current SW cache version:** `lift-tracker-v25`  
+**Current SW cache version:** `lift-tracker-v26`  
 **Auto-update:** when a new service worker takes control, the app reloads itself. On iOS a delete + re-add is still the reliable way to force fresh code.
 
 ---
@@ -512,6 +512,7 @@ flowchart TD
 
 | Date | Change |
 |------|--------|
+| 2026-11-13 | Workout screen: logging a set now gives a quick celebration (the tick pops, a burst of dots, and a "Set 2 done · 70 × 9" pill for 2 seconds; skipped when the phone asks for reduced motion); set numbers sit in boxes under a "Set" label; the workout name, sets-done count and progress bar stay frozen at the top while exercises scroll; SW bumped to v26 |
 | 2026-11-13 | Screens from the design canvas: Home cards lead with the number ("230 lb") and say why; the workout screen shows a progress bar, keeps one exercise open and folds finished ones to a single line, puts the target next to last time's sets, and keeps Finish on screen; Progress shows three numbers in one row and a segmented range picker; My Plans groups the days in one list and marks the next one; small green text is darker so it is readable; SW bumped to v25 |
 | 2026-11-13 | Look sharpened so it feels less generic: plain sentence-case labels instead of small capitals, flat cards with a thin edge instead of floating shadows, no coloured badges or emoji, Home leads with the date and a "Start Lower A"-style button, clearer coaching wording ("Go up to 70 lb"); SW bumped to v24 |
 | 2026-11-13 | Restoring a backup now fully updates older backups whether you restore during first-time setup or from the Profile tab, and keeps your custom exercises; SW bumped to v23 |

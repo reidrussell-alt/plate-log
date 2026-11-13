@@ -217,6 +217,8 @@ Light theme: white cards with soft shadows on a cool grey page, ink text, one co
 - Labels are sentence case with normal letter spacing; no ALL-CAPS eyebrows, tinted pills, emoji or italic helper text. Overrides live in the `SHARPEN —` block at the end of `main.css`.
 - Charts read colours at runtime with `cssVar()` from `charts.js`, so they follow the theme.
 - Daylight overrides (card shadows, set rows, calendar, page titles) live in labelled `DAYLIGHT —` blocks at the end of `main.css`.
+- Set logged: `_celebrateSet()` in `session.js` pops the tick, bursts dots and shows a 2-second pill (`.set-toast`); reduced motion turns the animation off.
+- `html, body` use `overflow-x: clip` (after a `hidden` fallback) so `position: sticky` works — the workout header (`.session-sticky`) relies on it.
 - Rest timer: red (resting) → amber (last third) → green "READY", via `--timer-red/amber/green` on `.rest-timer-pill`.
 
 ---
@@ -258,7 +260,7 @@ Splash screen shown on every app open. Tap to dismiss (no auto-dismiss).
 ## Service worker
 
 - Cache name must be bumped (v1 → v2 → v3...) on **every deploy** that changes JS/CSS files
-- Currently: `lift-tracker-v25`
+- Currently: `lift-tracker-v26`
 - Every JS file must be listed in the `ASSETS` array — add new modules there, remove deleted ones
 - SW is **disabled on localhost** — the hostname check in `app.js` prevents re-registration during development
 - When a new SW takes control, `app.js` reloads the page automatically (`controllerchange`)
