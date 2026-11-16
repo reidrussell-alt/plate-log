@@ -40,7 +40,7 @@ graph TD
     ImportStep --> SaveProfile
     SaveProfile --> Welcome
 
-    Welcome[Welcome Screen\nGreeting + Next Workout] -->|Tap| Main
+    Welcome[Welcome Screen\nLogo, dot plate, Welcome in name] -->|Let's get moving| Main
 
     Main{Main App} --> HomeTab[Home Tab]
     Main --> MyPlansTab[My Plans Tab]
@@ -204,7 +204,7 @@ graph LR
 | `healthkit.js` | _(none)_ | iOS Capacitor HealthKit integration (steps, weight). No-ops on non-iOS. |
 | `progress.js` | `data.js`, `program.js`, `exerciseLibrary.js`, `utils.js`, `charts.js` | Stats, calendar (dynamic colors by dayId hash), per-muscle charts with 10/20/30/All range (re-renders only the changed chart), sets-per-session and bodyweight charts, session history, edit modals. |
 | `charts.js` | `utils.js` | `drawSingleLineChart()` — canvas-based line chart. |
-| `welcome.js` | `data.js` | Splash screen using `state.profile.name` and active program's next workout. |
+| `welcome.js` | `data.js` | Welcome screen: plate logo, then a turning canvas disc of dots, "Welcome in, {name}" and a "Let's get moving" button that goes to Home. Respects reduced motion. |
 
 ---
 
@@ -343,7 +343,7 @@ erDiagram
 ```mermaid
 flowchart TD
     A[Open App] --> B[Welcome Screen]
-    B -->|Tap| C[Home Tab]
+    B -->|Let's get moving| C[Home Tab]
     C --> D[Tap Start Workout\npick a day]
     D --> E[Active Session View]
     E --> F{For each exercise}
@@ -453,7 +453,7 @@ The app uses the **Daylight** theme: white cards with soft shadows on a cool gre
 | `--success` / `--danger` | `#0fa678` / `#e5484d` | Logged sets, destructive actions |
 | `--radius-card`, `--shadow-raised` | 12px, soft shadow | Cards are flat with a hairline border; only pop-ups and sheets get a shadow |
 
-**Typography:** `Bricolage Grotesque` for titles and big numbers (`--font-display`), `Manrope` for everything else (`--font-body`, `--font-mono`), with tabular figures so numbers line up.
+**Typography:** `Bricolage Grotesque` for titles and big numbers (`--font-display`), `Manrope` for everything else (`--font-body`, `--font-mono`), with tabular figures so numbers line up. `IBM Plex Sans` (`--font-welcome`) is used only for the welcome screen headline.
 
 **Rest timer:** floating circle above the tab bar; red while resting, amber in the last third, green "READY".
 
@@ -481,7 +481,7 @@ flowchart TD
 
 **Remote:** `https://github.com/reidrussell-alt/plate-log.git` (live at `https://reidrussell-alt.github.io/plate-log/`; the old `lifting-tracker-Application` repository is kept as an archive)  
 **Auth:** Personal Access Token (GitHub no longer accepts passwords)  
-**Current SW cache version:** `lift-tracker-v26`  
+**Current SW cache version:** `lift-tracker-v27`  
 **Auto-update:** when a new service worker takes control, the app reloads itself. On iOS a delete + re-add is still the reliable way to force fresh code.
 
 ---
@@ -512,6 +512,7 @@ flowchart TD
 
 | Date | Change |
 |------|--------|
+| 2026-11-16 | New welcome screen, inspired by the How We Feel app: the red plate logo on its own, then a calm, slowly turning ring of dots shaped like a weight plate, a simple "Welcome in, Reid" and one green "Let's get moving" button that opens Home. No workout suggestion or small print; it waits for you instead of disappearing on a timer; still for people who turn down motion. Design ideas now collected in a design-reference folder; SW bumped to v27 |
 | 2026-11-13 | Workout screen: logging a set now gives a quick celebration (the tick pops, a burst of dots, and a "Set 2 done · 70 × 9" pill for 2 seconds; skipped when the phone asks for reduced motion); set numbers sit in boxes under a "Set" label; the workout name, sets-done count and progress bar stay frozen at the top while exercises scroll; SW bumped to v26 |
 | 2026-11-13 | Screens from the design canvas: Home cards lead with the number ("230 lb") and say why; the workout screen shows a progress bar, keeps one exercise open and folds finished ones to a single line, puts the target next to last time's sets, and keeps Finish on screen; Progress shows three numbers in one row and a segmented range picker; My Plans groups the days in one list and marks the next one; small green text is darker so it is readable; SW bumped to v25 |
 | 2026-11-13 | Look sharpened so it feels less generic: plain sentence-case labels instead of small capitals, flat cards with a thin edge instead of floating shadows, no coloured badges or emoji, Home leads with the date and a "Start Lower A"-style button, clearer coaching wording ("Go up to 70 lb"); SW bumped to v24 |

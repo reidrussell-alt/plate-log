@@ -6,6 +6,13 @@ A detailed architecture doc with Mermaid diagrams lives at `ARCHITECTURE.md` in 
 
 **Keep it in sync.** After any structural code change, update the relevant sections in `ARCHITECTURE.md` and include it in the same commit.
 
+## Design reference
+
+`design-reference/` holds designs extracted from other apps that we plan to bring into Plate Log (reference only — not loaded by the app, not in the service worker).
+- `design-reference/patterns.md` — the catalog: each pattern, its capture, target screen, Daylight mapping and status. **Read it before UI work** and check for a matching pattern.
+- `design-reference/captures/` — raw screenshots (`<source-app>_<screen>_<what>.png`).
+- When building a pattern, restyle it with the Daylight tokens (never copy another app's colours, icons or wording) and update its status in `patterns.md`.
+
 ---
 
 ## What this is
@@ -203,11 +210,15 @@ Light theme: white cards with soft shadows on a cool grey page, ink text, one co
 
 /* Workout types & states */
 --push: #e8572a  --pull: #1a8fe0  --legs: #0fa678  --recovery: #7c4dff
---success: #0fa678  --success-ink: #0b7a58 (small green text)  --danger: #e5484d  --warm: #e07a14  --cool: #0f9f72
+--success: #0fa678  --success-ink: #0b7a58 (small green text)  --on-success: #ffffff  --danger: #e5484d  --warm: #e07a14  --cool: #0f9f72
 
 /* Shape & type */
 --radius-card: 12px  --shadow-card (unused on cards)  --shadow-raised
 --font-display: Bricolage Grotesque   --font-body / --font-mono: Manrope (tabular figures on body)
+--font-welcome: IBM Plex Sans (welcome headline only)
+
+/* Brand mark */
+--plate: #d9342b  --plate-ink: #ffffff   /* red weight-plate logo (welcome screen, dots) */
 ```
 
 **Rules:**
@@ -232,11 +243,11 @@ Light theme: white cards with soft shadows on a cool grey page, ink text, one co
 - `homeStartWorkout()` — opens the day-picker sheet (structured) or starts track-as-you-go
 
 ### `welcome.js`
-Splash screen shown on every app open. Tap to dismiss (no auto-dismiss).
-- `getGreeting()` — time-based "Good morning/afternoon/evening"
-- `getWelcomeWorkoutLabel()` — next workout from the active program's rotation; falls back to "TODAY'S SESSION"
-- Name comes from `state.profile.name`
-- Dismissal: fades out, then removes the element from DOM
+Welcome screen shown on every app open (design: `design-reference/patterns.md`, patterns 1–2).
+- Plate logo alone for 1.2s, then a slowly turning canvas disc of dots shaped like a weight plate, the headline "Welcome in, {name}" (`--font-welcome`) and a green "Let's get moving" button
+- Only the button dismisses it: switches to Home, fades out, stops the animation and empties `#welcomeScreen` (the element stays, so it can be shown again)
+- Name comes from `state.profile.name` (escaped); without one the headline is just "Welcome in"
+- Reduced motion: no logo pop, dots drawn once and still
 
 ### `session.js`
 - `getLastPerformance(exerciseId)` — finds most recent session containing that exercise
@@ -260,7 +271,7 @@ Splash screen shown on every app open. Tap to dismiss (no auto-dismiss).
 ## Service worker
 
 - Cache name must be bumped (v1 → v2 → v3...) on **every deploy** that changes JS/CSS files
-- Currently: `lift-tracker-v26`
+- Currently: `lift-tracker-v27`
 - Every JS file must be listed in the `ASSETS` array — add new modules there, remove deleted ones
 - SW is **disabled on localhost** — the hostname check in `app.js` prevents re-registration during development
 - When a new SW takes control, `app.js` reloads the page automatically (`controllerchange`)
@@ -291,6 +302,7 @@ git push origin main
 Loaded from Google Fonts (link in `index.html`), always referenced through the font tokens:
 - `Bricolage Grotesque` (`--font-display`, weight 800) — page titles, big numbers
 - `Manrope` (`--font-body`, `--font-mono`) — everything else, including labels and numbers
+- `IBM Plex Sans` (`--font-welcome`, weight 700) — the welcome screen headline only
 
 ---
 

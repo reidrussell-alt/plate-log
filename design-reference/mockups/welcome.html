@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Welcome mock-up</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Sans:wght@600;700&display=swap" rel="stylesheet">
+<style>
+/* Mock-up of a new Plate Log welcome screen, from patterns 1 + 2 in ../patterns.md.
+   Standalone: not loaded by the app. Tokens copied from css/main.css (Daylight). */
+:root {
+  --bg: #f2f4f8; --surface: #ffffff; --border: #e3e8ef;
+  --text: #0f1a2b; --text-dim: #5f6b7d; --text-dimmer: #8792a3;
+  --accent: #2453ff; --on-accent: #ffffff;
+  --success: #0fa678; --on-success: #ffffff;
+  --plate: #d9342b; --plate-ink: #ffffff;
+  --font-display: 'Bricolage Grotesque', system-ui, sans-serif;
+  --font-body: 'Manrope', system-ui, sans-serif;
+  /* Welcome headline font — chosen 16 Nov from Manrope / Inter / IBM Plex Sans / Sora */
+  --font-welcome: 'IBM Plex Sans', system-ui, sans-serif;
+  --page: #dfe3ea;
+}
+/* A possible dark version, for the dark-mode roadmap item */
+.phone.dark {
+  --bg: #07090d; --surface: #131820; --border: #222a36;
+  --text: #f2f4f8; --text-dim: #9aa4b4; --text-dimmer: #6b7586;
+  --accent: #4a6bff;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --page: #1a1e25; }
+}
+:root[data-theme="dark"] { --page: #1a1e25; }
+
+* { box-sizing: border-box; margin: 0; }
+body {
+  background: var(--page); font-family: var(--font-body); color: #0f1a2b;
+  min-height: 100vh; padding: 24px 16px 40px;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) body { color: #e9edf3; } }
+
+header { max-width: 1200px; margin: 0 auto 20px; display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; }
+header h1 { font-family: var(--font-display); font-weight: 800; font-size: 22px; }
+header p { font-size: 13px; opacity: .7; margin-top: 2px; }
+.controls { display: flex; gap: 8px; flex-wrap: wrap; }
+.controls button, .controls label {
+  font: 600 13px var(--font-body); padding: 8px 14px; border-radius: 999px;
+  border: 1px solid #cdd5e1; background: #fff; color: #0f1a2b; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+
+.phones {
+  max-width: 1200px; margin: 0 auto;
+  display: grid; gap: 24px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+figure { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+figcaption { font-size: 14px; font-weight: 700; }
+figcaption span { font-weight: 500; opacity: .65; }
+
+.phone {
+  width: 100%; max-width: 300px; aspect-ratio: 390 / 844; container-type: inline-size;
+  background: var(--bg); color: var(--text);
+  border-radius: 44px; border: 8px solid #0f1a2b; overflow: hidden;
+  position: relative; display: flex; flex-direction: column;
+  box-shadow: 0 20px 50px -20px rgba(15,26,43,.35);
+}
+.status { height: 44px; flex: none; display: flex; justify-content: space-between; align-items: center; padding: 0 26px; font: 700 14px var(--font-body); }
+
+/* Phase 1 — logo alone */
+.splash {
+  position: absolute; inset: 0; display: grid; place-items: center;
+  transition: opacity .5s ease;
+}
+.splash svg { width: 46%; animation: logoIn .7s cubic-bezier(.2,.8,.2,1) both; }
+@keyframes logoIn { from { transform: scale(.86); opacity: 0; } to { transform: none; opacity: 1; } }
+.phone.phase2 .splash { opacity: 0; pointer-events: none; }
+
+/* Phase 2 — dot plate, one headline, one button */
+.main { flex: 1; display: flex; flex-direction: column; padding: 0 22px 26px; opacity: 0; transition: opacity .4s ease; }
+.phone.phase2 .main { opacity: 1; }
+.dots { flex: 1; min-height: 0; display: grid; place-items: center; }
+.dots canvas { width: 82%; aspect-ratio: 1; }
+.copy { text-align: center; }
+.copy .kicker { font-size: 14px; font-weight: 600; color: var(--text-dim); }
+.copy h2 {
+  font-family: var(--font-welcome); font-weight: 700; font-size: clamp(26px, 13.5cqi, 44px);
+  letter-spacing: -.03em; line-height: 1.06; margin-top: 6px;
+}
+.copy .meta { font-size: 14px; color: var(--text-dim); margin-top: 10px; }
+.rise { opacity: 0; transform: translateY(10px); transition: opacity .5s ease, transform .5s ease; }
+.phone.phase3 .rise { opacity: 1; transform: none; }
+.phone.phase3 .rise.d2 { transition-delay: .12s; }
+.phone.phase3 .rise.d3 { transition-delay: .24s; }
+
+.start {
+  margin-top: 30px; width: 100%; padding: 17px; border: 0; border-radius: 999px;
+  background: var(--success); color: var(--on-success);
+  font: 700 17px var(--font-body); cursor: pointer;
+}
+.skip {
+  display: block; margin: 14px auto 0; background: none; border: 0;
+  font: 600 14px var(--font-body); color: var(--text-dim); cursor: pointer;
+}
+
+.notes { max-width: 1200px; margin: 28px auto 0; font-size: 14px; line-height: 1.55; }
+.notes h3 { font-family: var(--font-display); font-weight: 700; font-size: 16px; margin-bottom: 6px; }
+.notes ul { padding-left: 18px; }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>Welcome screen mock-up</h1>
+    <p>Patterns 1 + 2 from How We Feel, rebuilt in Plate Log's style · headline in IBM Plex Sans</p>
+  </div>
+  <div class="controls">
+    <button id="replay" type="button">Replay</button>
+    <label><input id="still" type="checkbox"> Reduce motion</label>
+  </div>
+</header>
+
+<div class="phones">
+  <figure><div class="phone" data-phone></div><figcaption>Daylight <span>· today's theme</span></figcaption></figure>
+  <figure><div class="phone dark" data-phone></div><figcaption>Dark version</figcaption></figure>
+</div>
+
+<section class="notes">
+  <h3>What happens</h3>
+  <ul>
+    <li>0–1.2s: the plate logo on its own, nothing else.</li>
+    <li>Then the logo hands over to a disc of dots shaped like a weight plate. It turns slowly; dots are bigger and brighter on the lit side and fade away on the other, like the source's sphere.</li>
+    <li>One headline: "Welcome in, Reid" (the name from the profile). No workout suggestion here.</li>
+    <li>One green "Let's get moving" button that takes you to Home. Without a name, the headline is just "Welcome in".</li>
+    <li>With reduce motion on, the dots stay still and nothing slides in.</li>
+  </ul>
+</section>
+
+<template id="phoneTpl">
+  <div class="status"><span>9:41</span><span>●●●</span></div>
+  <div class="splash">
+    <svg viewBox="0 0 60 60" aria-hidden="true">
+      <circle cx="30" cy="30" r="27" fill="var(--plate)"/>
+      <circle cx="30" cy="30" r="20.5" fill="none" stroke="var(--plate-ink)" stroke-opacity=".45" stroke-width="1.2"/>
+      <circle cx="30" cy="30" r="8" fill="var(--plate-ink)"/>
+      <circle cx="30" cy="30" r="3.4" fill="var(--plate)"/>
+      <rect x="25.5" y="6.5" width="9" height="4.2" rx="2.1" fill="var(--plate-ink)"/>
+      <rect x="25.5" y="49.3" width="9" height="4.2" rx="2.1" fill="var(--plate-ink)"/>
+    </svg>
+  </div>
+  <div class="main">
+    <div class="dots"><canvas></canvas></div>
+    <div class="copy">
+      <h2 class="rise d2">Welcome in,<br><span data-name>Reid</span></h2>
+    </div>
+    <div class="rise d3">
+      <button class="start" type="button">Let's get moving</button>
+    </div>
+  </div>
+</template>
+
+<script>
+(() => {
+  const tpl = document.getElementById('phoneTpl');
+  const stillBox = document.getElementById('still');
+  const prefersStill = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  stillBox.checked = prefersStill;
+
+  // Dot layout: concentric rings like a plate, a gap for the rim groove, an empty hub.
+  const RINGS = [];
+  const ringRadii = [0.32, 0.42, 0.52, 0.62, 0.72, /* groove */ 0.88, 0.98];
+  ringRadii.forEach((r, i) => {
+    const n = Math.round((2 * Math.PI * r) / 0.105);
+    for (let k = 0; k < n; k++) {
+      RINGS.push({ r, a: (k / n) * Math.PI * 2 + (i % 2) * (Math.PI / n) });
+    }
+  });
+
+  const phones = [...document.querySelectorAll('[data-phone]')].map(el => {
+    el.appendChild(tpl.content.cloneNode(true));
+    const canvas = el.querySelector('canvas');
+    return { el, canvas, ctx: canvas.getContext('2d'), t0: 0 };
+  });
+
+  function size(p) {
+    const dpr = window.devicePixelRatio || 1;
+    const w = p.canvas.clientWidth;
+    p.canvas.width = w * dpr; p.canvas.height = w * dpr;
+    p.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    p.w = w;
+  }
+
+  const LIGHT = Math.PI * 1.05;   // lit from the left, like the source
+  function draw(p, now) {
+    const { ctx, w } = p;
+    if (!w) return;
+    const color = getComputedStyle(p.el).getPropertyValue('--plate').trim();
+    const still = stillBox.checked;
+    const t = (now - p.t0) / 1000;
+    const spin = still ? 0 : t * 0.12;           // slow turn
+    const reveal = still ? 1 : Math.min(1, t / 1.1); // dots grow out from the hub
+    ctx.clearRect(0, 0, w, w);
+    ctx.fillStyle = color;
+    const c = w / 2, R = w * 0.47;
+    for (const d of RINGS) {
+      const a = d.a + spin * (d.r > 0.8 ? 1 : -0.6);   // rim and inner rings turn opposite ways
+      const lit = 0.5 + 0.5 * Math.cos(a - LIGHT);       // 0..1
+      const appear = Math.max(0, Math.min(1, (reveal - (d.r - 0.3) * 0.9) * 4));
+      if (appear <= 0) continue;
+      const rad = (0.7 + 3.6 * lit * lit) * (w / 300) * appear;
+      ctx.globalAlpha = (0.08 + 0.92 * lit) * appear;
+      ctx.beginPath();
+      ctx.arc(c + Math.cos(a) * d.r * R, c + Math.sin(a) * d.r * R, rad, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  let timers = [];
+  function play() {
+    timers.forEach(clearTimeout); timers = [];
+    const still = stillBox.checked;
+    phones.forEach(p => {
+      p.el.classList.remove('phase2', 'phase3');
+      const svg = p.el.querySelector('.splash svg');
+      svg.style.animation = 'none'; void svg.offsetWidth; svg.style.animation = still ? 'none' : '';
+    });
+    timers.push(setTimeout(() => {
+      phones.forEach(p => { p.el.classList.add('phase2'); size(p); p.t0 = performance.now(); });
+    }, still ? 600 : 1200));
+    timers.push(setTimeout(() => phones.forEach(p => p.el.classList.add('phase3')), still ? 600 : 2000));
+  }
+
+  function loop(now) { phones.forEach(p => draw(p, now)); requestAnimationFrame(loop); }
+  requestAnimationFrame(loop);
+  addEventListener('resize', () => phones.forEach(size));
+  document.getElementById('replay').addEventListener('click', play);
+  stillBox.addEventListener('change', play);
+  play();
+})();
+</script>
+</body>
+</html>

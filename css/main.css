@@ -19,6 +19,10 @@
   --recovery: #7c4dff;
   --success: #0fa678;
   --success-ink: #0b7a58;   /* darker green for small text on white (passes 4.5:1) */
+  --on-success: #ffffff;    /* text on --success backgrounds */
+  /* Brand mark — the red weight plate (app icon, welcome screen) */
+  --plate: #d9342b;
+  --plate-ink: #ffffff;
   --danger: #e5484d;
   /* 5-step gray scale (dark → light) */
   --text: #0f1a2b;          /* primary text */
@@ -34,6 +38,7 @@
   --font-display: 'Bricolage Grotesque', 'Manrope', system-ui, sans-serif;
   --font-body: 'Manrope', system-ui, -apple-system, sans-serif;
   --font-mono: 'Manrope', system-ui, -apple-system, sans-serif;  /* labels & numbers; tabular figures set on body */
+  --font-welcome: 'IBM Plex Sans', 'Manrope', system-ui, sans-serif;  /* welcome screen headline only */
   color-scheme: light;
 }
 
@@ -936,151 +941,98 @@ body {
 }
 
 /* ===== WELCOME SCREEN ===== */
+/* Logo alone, then a turning disc of dots, "Welcome in, {name}" and one button.
+   Phases: .visible → .phase-main → .fading. Design: design-reference/patterns.md */
 #welcomeScreen {
   position: fixed;
   inset: 0;
   z-index: 1000;
   display: none;
-  flex-direction: column;
-  align-items: center;
   background: var(--bg);
-  cursor: pointer;
+  color: var(--text);
   -webkit-tap-highlight-color: transparent;
   user-select: none;
   transition: opacity 400ms ease;
   overflow: hidden;
 }
+#welcomeScreen.visible { display: block; }
+#welcomeScreen.fading  { opacity: 0; pointer-events: none; }
 
-#welcomeScreen::before {
-  content: '';
+.welcome-splash {
   position: absolute;
-  top: -80px;
-  left: -80px;
-  width: 420px;
-  height: 420px;
-  background: none;
-  pointer-events: none;
-  border-radius: 50%;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  transition: opacity 500ms ease;
 }
+.welcome-splash svg {
+  width: min(46vw, 220px);
+  animation: wLogoIn 700ms cubic-bezier(.2, .8, .2, 1) both;
+}
+#welcomeScreen.phase-main .welcome-splash { opacity: 0; pointer-events: none; }
 
-#welcomeScreen.visible { display: flex; }
-#welcomeScreen.fading  { opacity: 0; }
-
-.welcome-inner {
-  position: relative;
+.welcome-main {
+  position: absolute;
+  inset: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding: calc(env(safe-area-inset-top, 0px) + 24px) 24px calc(env(safe-area-inset-bottom, 0px) + 28px);
+  opacity: 0;
+  transition: opacity 400ms ease;
+}
+#welcomeScreen.phase-main .welcome-main { opacity: 1; }
+
+.welcome-dots {
+  flex: 1;
+  min-height: 0;
   width: 100%;
-  min-height: 100dvh;
-  padding-top: env(safe-area-inset-top, 0px);
-  padding-bottom: env(safe-area-inset-bottom, 0px);
-  box-sizing: border-box;
+  display: grid;
+  place-items: center;
+}
+.welcome-dots canvas {
+  width: min(82vw, 52vh, 360px);
+  aspect-ratio: 1;
 }
 
-.welcome-logo-wrap {
-  margin-top: 26vh;
-  animation: wFadeScale 500ms ease-out both;
-  animation-delay: 0ms;
-}
-
-.welcome-logo {
-  width: 64px;
-  height: 56px;
-}
-
-.welcome-logo svg { width: 100%; height: 100%; }
-
-.welcome-content {
-  margin-top: 9vh;
+.welcome-title {
+  margin: 0;
+  font-family: var(--font-welcome);
+  font-weight: 700;
+  font-size: clamp(34px, 11vw, 48px);
+  letter-spacing: -0.03em;
+  line-height: 1.06;
   text-align: center;
-  padding: 0 36px;
-}
-
-.welcome-greeting {
-  font-family: var(--font-display); font-weight: 800;
-  line-height: 1.15;
-  margin-bottom: 14px;
-  animation: wFadeIn 400ms ease-out both;
-  animation-delay: 180ms;
-}
-
-.welcome-greeting-text {
-  font-size: clamp(26px, 7vw, 36px);
   color: var(--text);
 }
 
-.welcome-name {
-  font-size: clamp(32px, 8.5vw, 44px);
-  color: var(--accent);
-}
-
-.welcome-tagline {
-  font-family: var(--font-body);
-  font-size: clamp(13px, 3.5vw, 16px);
-  color: var(--text-dim);
-  font-weight: 500;
-  margin-bottom: 28px;
-  animation: wFadeIn 400ms ease-out both;
-  animation-delay: 330ms;
-}
-
-.welcome-label-wrap {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  animation: wFadeIn 400ms ease-out both;
-  animation-delay: 450ms;
-}
-
-.welcome-label-line {
-  flex: 0 0 28px;
-  height: 1px;
-  background: color-mix(in srgb, var(--accent) 30%, transparent);
-}
-
-.welcome-label {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--accent);
-}
-
-.welcome-progress {
-  position: absolute;
-  bottom: 0; left: 0;
-  height: 2px;
+.welcome-start {
   width: 100%;
-  background: var(--accent);
-  opacity: 0.45;
-  transform-origin: left center;
-  animation: welcomeProgress 2.5s linear forwards;
+  max-width: 420px;
+  margin-top: 30px;
+  padding: 17px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--success);
+  color: var(--on-success);
+  font: 700 17px var(--font-body);
+  cursor: pointer;
 }
 
-@keyframes welcomeProgress {
-  from { transform: scaleX(1); }
-  to   { transform: scaleX(0); }
+.welcome-rise {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 500ms ease, transform 500ms ease;
 }
+#welcomeScreen.phase-main .welcome-rise { opacity: 1; transform: none; transition-delay: 500ms; }
+#welcomeScreen.phase-main .welcome-start { transition-delay: 620ms; }
 
-.welcome-hint {
-  position: absolute;
-  bottom: calc(env(safe-area-inset-bottom, 20px) + 28px);
-  font-family: var(--font-mono);
-  font-size: 11px;
-  color: var(--text-dimmer);
-  animation: wFadeIn 400ms ease-out both;
-  animation-delay: 650ms;
-}
+#welcomeScreen.still .welcome-splash svg { animation: none; }
+#welcomeScreen.still .welcome-rise { transform: none; }
 
-@keyframes wFadeIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
-
-@keyframes wFadeScale {
-  from { opacity: 0; transform: scale(0.94); }
-  to   { opacity: 1; transform: scale(1); }
+@keyframes wLogoIn {
+  from { opacity: 0; transform: scale(0.86); }
+  to   { opacity: 1; transform: none; }
 }
 
 /* ===== PLAN MODE HEADER ===== */
