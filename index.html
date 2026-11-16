@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="theme-color" content="#f2f4f8">
+  <meta name="theme-color" content="#ffffff">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta name="apple-mobile-web-app-title" content="Lift">
   <title>Lift Tracker</title>
@@ -88,7 +88,7 @@
     <div class="modal-text">This will delete all your logged workouts and history. This cannot be undone.</div>
     <div class="modal-actions">
       <button class="modal-btn" onclick="closeResetModal()">Cancel</button>
-      <button class="modal-btn primary" onclick="confirmReset()">Delete All</button>
+      <button class="modal-btn primary danger" onclick="confirmReset()">Delete All</button>
     </div>
   </div>
 </div>
@@ -99,7 +99,7 @@
     <div id="editModalBody"></div>
     <div class="modal-actions" style="margin-top: 20px;">
       <button class="modal-btn" onclick="closeEditModal()">Cancel</button>
-      <button class="modal-btn" onclick="deleteEditSession()" style="background: rgba(255,107,53,0.15); border-color: rgba(255,107,53,0.4); color: var(--push);">Delete</button>
+      <button class="modal-btn danger-outline" onclick="deleteEditSession()">Delete</button>
       <button class="modal-btn primary" onclick="saveEdit()">Save</button>
     </div>
   </div>

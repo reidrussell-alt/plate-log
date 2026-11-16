@@ -166,14 +166,14 @@ export const EXERCISE_LIBRARY = [
 export const MUSCLE_GROUP_ORDER = ['chest', 'back', 'shoulders', 'biceps', 'triceps', 'legs', 'core'];
 
 export const MUSCLE_GROUP_META = {
-  chest:     { label: 'Chest',     color: '#e8572a' },
+  chest:     { label: 'Chest',     color: '#9c3587' },  // = --push
   back:      { label: 'Back',      color: '#1a8fe0' },
   shoulders: { label: 'Shoulders', color: '#7c4dff' },
   biceps:    { label: 'Biceps',    color: '#16a34a' },
   triceps:   { label: 'Triceps',   color: '#db2777' },
   legs:      { label: 'Legs',      color: '#0fa678' },
-  core:      { label: 'Core',      color: '#d97706' },
-  other:     { label: 'Other',     color: '#5f6b7d' }
+  core:      { label: 'Core',      color: '#0b7f8c' },
+  other:     { label: 'Other',     color: '#687078' }
 };
 
 export function getExerciseById(id) {

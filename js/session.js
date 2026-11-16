@@ -73,7 +73,7 @@ function _formatLastSets(exercise) {
 
 // Quick, celebratory feedback when a set is logged: the tick pops, a ring and
 // a burst of dots spread from it, and a pill names the set for 2 seconds.
-const BURST_COLORS = ['var(--accent)', 'var(--success)', 'var(--push)', 'var(--warm)'];
+const BURST_COLORS = ['var(--accent)', 'var(--text-dimmer)', 'var(--accent-ink)', 'var(--border-bright)'];
 let _toastTimer = null;
 
 function _celebrateSet(exIdx, setIdx) {

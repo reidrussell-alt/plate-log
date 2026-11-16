@@ -46,6 +46,8 @@ export function showConfirm(message, onConfirm, confirmLabel = 'Confirm') {
 
   textEl.textContent = message;
   okBtn.textContent = confirmLabel;
+  // Destructive confirmations use the red danger button, never the orange primary
+  okBtn.classList.toggle('danger', /^(delete|discard|remove|reset)/i.test(confirmLabel));
   modal.classList.add('active');
 
   const close = () => modal.classList.remove('active');

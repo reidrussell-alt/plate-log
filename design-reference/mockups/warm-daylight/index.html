@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Warm Daylight screens</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* Screens of the real app in the Warm Daylight palette, captured 16 Nov 2026
+   at iPhone size (375 × 812). Colours mirror the :root tokens in css/main.css. */
+:root {
+  --bg: #ffffff; --surface: #f7f6f3; --surface-2: #efede9; --border: #e7e5e1;
+  --text: #202326; --text-dim: #687078; --accent: #bd552f; --accent-ink: #a84a27;
+  --select: #202326; --danger: #cc3339; --success: #0fa678;
+  --font-display: 'Bricolage Grotesque', system-ui, sans-serif;
+  --font-body: 'Manrope', system-ui, sans-serif;
+}
+* { box-sizing: border-box; margin: 0; }
+body { background: var(--bg); color: var(--text); font-family: var(--font-body); padding: 32px 16px 48px; }
+.wrap { max-width: 1280px; margin: 0 auto; }
+h1 { font-family: var(--font-display); font-weight: 800; font-size: 30px; letter-spacing: -.01em; }
+.lede { color: var(--text-dim); font-size: 15px; margin-top: 6px; max-width: 640px; line-height: 1.5; }
+
+.palette { display: flex; flex-wrap: wrap; gap: 10px; margin: 24px 0 36px; }
+.swatch { display: flex; align-items: center; gap: 10px; padding: 8px 14px 8px 8px; border: 1px solid var(--border); border-radius: 12px; background: var(--bg); }
+.swatch i { width: 28px; height: 28px; border-radius: 8px; border: 1px solid var(--border); flex: none; }
+.swatch b { display: block; font-size: 13px; }
+.swatch span { font-size: 12px; color: var(--text-dim); }
+.icon-swatch img { width: 28px; height: 28px; border-radius: 8px; border: 1px solid var(--border); }
+
+.grid { display: grid; gap: 32px 24px; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); }
+figure { display: flex; flex-direction: column; gap: 12px; }
+.phone {
+  border-radius: 34px; border: 7px solid var(--text); overflow: hidden; background: var(--bg);
+  aspect-ratio: 375 / 812; box-shadow: 0 18px 40px -22px rgba(32, 35, 38, .45);
+}
+.phone img { width: 100%; height: 100%; object-fit: cover; display: block; }
+figcaption b { font-size: 15px; display: block; }
+figcaption span { font-size: 13px; color: var(--text-dim); line-height: 1.45; display: block; margin-top: 3px; }
+.dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); margin-right: 6px; vertical-align: 1px; }
+
+.notes { margin-top: 40px; padding: 20px 22px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; font-size: 14px; line-height: 1.55; }
+.notes h2 { font-family: var(--font-display); font-weight: 700; font-size: 17px; margin-bottom: 8px; }
+.notes ul { padding-left: 18px; }
+.notes li + li { margin-top: 4px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Warm Daylight</h1>
+  <p class="lede">The real app in the new palette, captured at iPhone size. White page, warm off-white cards, and burnt orange only where it matters: the main button, your progress during a workout, and the logo.</p>
+
+  <div class="palette">
+    <div class="swatch"><i style="background:var(--bg)"></i><div><b>Page</b><span>#FFFFFF</span></div></div>
+    <div class="swatch"><i style="background:var(--surface)"></i><div><b>Cards</b><span>#F7F6F3</span></div></div>
+    <div class="swatch"><i style="background:var(--border)"></i><div><b>Borders</b><span>#E7E5E1</span></div></div>
+    <div class="swatch"><i style="background:var(--text)"></i><div><b>Text · selected</b><span>#202326</span></div></div>
+    <div class="swatch"><i style="background:var(--text-dim)"></i><div><b>Secondary text</b><span>#687078</span></div></div>
+    <div class="swatch"><i style="background:var(--accent)"></i><div><b>Burnt orange</b><span>#BD552F</span></div></div>
+    <div class="swatch"><i style="background:var(--accent-ink)"></i><div><b>Orange text on cards</b><span>#A84A27</span></div></div>
+    <div class="swatch"><i style="background:var(--danger)"></i><div><b>Delete / errors</b><span>#CC3339</span></div></div>
+    <div class="swatch"><i style="background:#9c3587"></i><div><b>Push days · Chest</b><span>#9C3587 (was orange)</span></div></div>
+    <div class="swatch"><i style="background:#0b7f8c"></i><div><b>Core chart</b><span>#0B7F8C (was amber)</span></div></div>
+    <div class="swatch icon-swatch"><img src="app-icon.png" alt="App icon"><div><b>App icon</b><span>same orange</span></div></div>
+  </div>
+
+  <div class="grid">
+    <figure>
+      <div class="phone"><img src="1-welcome.jpg" alt="Welcome screen"></div>
+      <figcaption><b>Welcome</b><span><span class="dot"></span>Logo dots and the "Let's get moving" button. Was red and green.</span></figcaption>
+    </figure>
+    <figure>
+      <div class="phone"><img src="2-home.jpg" alt="Home"></div>
+      <figcaption><b>Home</b><span><span class="dot"></span>Start button and the in-progress banner. Today's marker and the active tab are dark ink.</span></figcaption>
+    </figure>
+    <figure>
+      <div class="phone"><img src="3-start-sheet.jpg" alt="Start workout sheet"></div>
+      <figcaption><b>Start workout sheet</b><span><span class="dot"></span>"Next up" is tinted orange; the other days stay neutral.</span></figcaption>
+    </figure>
+    <figure>
+      <div class="phone"><img src="4-workout.jpg" alt="Workout in progress"></div>
+      <figcaption><b>Workout</b><span><span class="dot"></span>Progress bar, ticked sets, set numbers and Finish. Was green ticks and a blue bar.</span></figcaption>
+    </figure>
+    <figure>
+      <div class="phone"><img src="5-progress.jpg" alt="Progress"></div>
+      <figcaption><b>Progress</b><span>No orange here except the banner. Upper A (push) dots are now plum, so they no longer look like the brand orange.</span></figcaption>
+    </figure>
+    <figure>
+      <div class="phone"><img src="6-charts.jpg" alt="Charts"></div>
+      <figcaption><b>Charts</b><span>Core is now teal (was amber) and Chest plum. The sets-per-session line stays orange as overall progress; bodyweight is ink.</span></figcaption>
+    </figure>
+    <figure>
+      <div class="phone"><img src="7-my-plans.jpg" alt="My Plans"></div>
+      <figcaption><b>My Plans</b><span>All neutral; the next workout is marked in bold ink.</span></figcaption>
+    </figure>
+  </div>
+
+  <section class="notes">
+    <h2>Worth a look</h2>
+    <ul>
+      <li><b>Push</b> is now plum and the <b>Core</b> chart teal, so orange only ever means "main action", "workout progress" or the logo.</li>
+      <li>Delete, Discard, Remove and form errors are red everywhere — several of them used to borrow the push colour.</li>
+      <li>The banner at the top of most screens is there because this browser has an unfinished workout saved.</li>
+    </ul>
+  </section>
+</div>
+</body>
+</html>

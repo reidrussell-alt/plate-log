@@ -4,7 +4,7 @@ import { MUSCLE_GROUP_ORDER, MUSCLE_GROUP_META } from './exerciseLibrary.js';
 import { formatDate, formatDateShort, isoDateOnly, todayDateString, showToast, showConfirm } from './utils.js';
 import { drawSingleLineChart, cssVar } from './charts.js';
 
-const FALLBACK_COLORS = ['#e8572a','#0fa678','#1a8fe0','#7c4dff','#2453ff','#db2777','#e07a14','#0891b2'];
+const FALLBACK_COLORS = ['#9c3587','#0fa678','#1a8fe0','#7c4dff','#687078','#db2777','#0b7f8c','#0891b2'];
 
 const CHART_RANGES_KEY = 'liftTrackerChartRanges';
 const RANGE_OPTIONS = [10, 20, 30, 'all'];
@@ -46,7 +46,10 @@ function _subtitleText(loadType, visibleCount, totalCount) {
 }
 
 function dayColor(dayId) {
-  const known = { upperA:'#e8572a', lowerA:'#0fa678', upperB:'#1a8fe0', lowerB:'#7c4dff' };  // push, legs, pull, posterior
+  const known = {   // follow the workout-type tokens in main.css
+    upperA: cssVar('--push', '#9c3587'), lowerA: cssVar('--legs', '#0fa678'),
+    upperB: cssVar('--pull', '#1a8fe0'), lowerB: cssVar('--recovery', '#7c4dff')
+  };
   if (known[dayId]) return known[dayId];
   let h = 0;
   for (const c of dayId) h = (h * 31 + c.charCodeAt(0)) & 0x7fffffff;
@@ -424,14 +427,14 @@ export function renderVolumeChart() {
     date: s.date,
     sets: s.exercises.reduce((sum, ex) => sum + ex.sets.length, 0)
   }));
-  drawSingleLineChart(canvas, dataPoints, 'sets', cssVar('--accent', '#2453ff'));
+  drawSingleLineChart(canvas, dataPoints, 'sets', cssVar('--accent', '#bd552f'));
 }
 
 export function renderBwChart(bwData) {
   const canvas = document.getElementById('bwChart');
   if (!canvas) return;
   const dataPoints = bwData.map(s => ({ date: s.date, bw: parseFloat(s.bw) }));
-  drawSingleLineChart(canvas, dataPoints, 'bw', cssVar('--push', '#e8572a'));
+  drawSingleLineChart(canvas, dataPoints, 'bw', cssVar('--text-secondary', '#3f454b'));
 }
 
 export function getMostTrainedDay(sessionsByDay) {

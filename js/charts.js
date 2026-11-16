@@ -31,10 +31,10 @@ export function drawSingleLineChart(canvas, points, yKey, color) {
   const yMin = Math.max(0, minV - padYRange);
   const yMax = maxV + padYRange;
 
-  ctx.strokeStyle = cssVar('--border', '#e3e8ef');
+  ctx.strokeStyle = cssVar('--border', '#e7e5e1');
   ctx.lineWidth = 1;
   ctx.font = '600 10px Manrope, system-ui, sans-serif';
-  ctx.fillStyle = cssVar('--text-dimmer', '#8792a3');
+  ctx.fillStyle = cssVar('--text-dimmer', '#8c939a');
   for (let i = 0; i <= 3; i++) {
     const y = padT + (chartH / 3) * i;
     ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(w - padR, y); ctx.stroke();
@@ -42,7 +42,7 @@ export function drawSingleLineChart(canvas, points, yKey, color) {
     ctx.fillText(Math.round(v), 4, y + 3);
   }
 
-  ctx.fillStyle = cssVar('--text-dim', '#5f6b7d');
+  ctx.fillStyle = cssVar('--text-dim', '#687078');
   if (points.length === 1) {
     ctx.fillText(formatDateShort(points[0].date), padL, h - 8);
   } else {
@@ -75,7 +75,7 @@ export function drawSingleLineChart(canvas, points, yKey, color) {
     const y = padT + chartH - ((p[yKey] - yMin) / (yMax - yMin)) * chartH;
     ctx.fillStyle = color;
     ctx.beginPath(); ctx.arc(x, y, 4, 0, Math.PI * 2); ctx.fill();
-    ctx.fillStyle = cssVar('--surface', '#ffffff');
+    ctx.fillStyle = cssVar('--surface', '#f7f6f3');
     ctx.beginPath(); ctx.arc(x, y, 2, 0, Math.PI * 2); ctx.fill();
   });
 }

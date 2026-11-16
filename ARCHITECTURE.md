@@ -436,21 +436,24 @@ These are displayed in the session view as "Last session" hints above each exerc
 
 ## 9. Styling & Theming
 
-The app uses the **Daylight** theme: white cards with soft shadows on a cool grey page, dark ink text and one cobalt accent. All design tokens live in `:root` in `css/main.css`. **Never hardcode colours** — use the variables, and `color-mix(in srgb, var(--token) N%, transparent)` for tints.
+The app uses the **Warm Daylight** theme (16 Nov 2026): a white page, warm off-white cards with light neutral borders, dark ink text and one burnt-orange accent used sparingly. All design tokens live in `:root` in `css/main.css`. **Never hardcode colours** — use the variables, and `color-mix(in srgb, var(--token) N%, transparent)` for tints. No large colour fades or gradients, except a soft burnt-orange fade behind the top of Home (`--home-fade`, half-strength orange to white).
 
 | Variable | Value | Usage |
 |----------|-------|-------|
-| `--bg` | `#f2f4f8` | Page background |
-| `--surface` | `#ffffff` | Cards |
-| `--surface-2` | `#f3f5f9` | Inputs, nested cards |
-| `--surface-3` | `#e9edf3` | Pressed / deeply nested |
-| `--border` / `--border-bright` | `#e3e8ef` / `#cdd5e1` | Dividers, outlines |
-| `--text` … `--text-faint` | `#0f1a2b` → `#c5ccd8` | 5-step ink scale |
-| `--accent` | `#2453ff` | Cobalt — primary buttons, active tab, key numbers |
-| `--accent-dim` | `#4a63d8` | Supporting accent |
-| `--on-accent` | `#ffffff` | Text on accent backgrounds |
-| `--push` / `--pull` / `--legs` / `--recovery` | `#e8572a` / `#1a8fe0` / `#0fa678` / `#7c4dff` | Workout types |
-| `--success` / `--danger` | `#0fa678` / `#e5484d` | Logged sets, destructive actions |
+| `--bg` | `#ffffff` | Page background |
+| `--surface` | `#f7f6f3` | Cards, grouped sections, tab bar |
+| `--surface-2` | `#efede9` | Inputs, nested cards |
+| `--surface-3` | `#e7e5e1` | Pressed / deeply nested |
+| `--border` / `--border-bright` | `#e7e5e1` / `#d6d3cd` | Dividers, outlines |
+| `--text` … `--text-faint` | `#202326` → `#c9cdd1` | 5-step neutral scale |
+| `--accent` | `#bd552f` | Burnt orange — primary actions, active-workout progress, logo |
+| `--accent-ink` | `#a84a27` | Small orange text on cards |
+| `--on-accent` | `#ffffff` | Text on orange (4.66:1) |
+| `--select` / `--on-select` | `#202326` / `#ffffff` | Selected tab, active pills and segments, toggles, focus, today |
+| `--accent-dim` | `#3f454b` | Supporting labels and badges (neutral) |
+| `--push` / `--pull` / `--legs` / `--recovery` | `#9c3587` / `#1a8fe0` / `#0fa678` / `#7c4dff` | Workout types only (push is plum so it can't be confused with the orange accent) |
+| `--success` / `--danger` | `#0fa678` / `#cc3339` | Improvement signals; errors and destructive actions |
+| `--plate` | = `--accent` | Logo mark (welcome screen; app icons drawn by `scripts/make_icons.py`) |
 | `--radius-card`, `--shadow-raised` | 12px, soft shadow | Cards are flat with a hairline border; only pop-ups and sheets get a shadow |
 
 **Typography:** `Bricolage Grotesque` for titles and big numbers (`--font-display`), `Manrope` for everything else (`--font-body`, `--font-mono`), with tabular figures so numbers line up. `IBM Plex Sans` (`--font-welcome`) is used only for the welcome screen headline.
@@ -481,7 +484,7 @@ flowchart TD
 
 **Remote:** `https://github.com/reidrussell-alt/plate-log.git` (live at `https://reidrussell-alt.github.io/plate-log/`; the old `lifting-tracker-Application` repository is kept as an archive)  
 **Auth:** Personal Access Token (GitHub no longer accepts passwords)  
-**Current SW cache version:** `lift-tracker-v27`  
+**Current SW cache version:** `lift-tracker-v28`  
 **Auto-update:** when a new service worker takes control, the app reloads itself. On iOS a delete + re-add is still the reliable way to force fresh code.
 
 ---
@@ -512,6 +515,9 @@ flowchart TD
 
 | Date | Change |
 |------|--------|
+| 2026-11-16 | Home gets a soft burnt-orange glow at the top of the screen that fades to white by the "This week" card, inspired by the Copilot app. The date and day stay black, and the Start button turns white with orange text so it stands out against the colour. Only Home has it; the other tabs stay plain white |
+| 2026-11-16 | Push days and the Chest chart change from orange to plum, and the Core chart from amber to teal, so orange only ever means the main action, workout progress or the logo. Remove, discard, delete and form-error messages that had borrowed the push colour now use the red danger colour everywhere. The home streak badge and a few labels lose their amber tint |
+| 2026-11-16 | New colour palette, "Warm Daylight": a white page with warm off-white cards and one burnt-orange accent instead of grey and cobalt. Orange now marks only the main button on each screen, your progress during a workout (progress bar, ticked sets, finished exercises) and the logo, which changes from red to the same orange (app icon too). Tabs, filters and toggles show selection in dark ink. Delete and discard buttons are red so they can't be mistaken for the main action. All text and buttons meet contrast guidelines; SW bumped to v28 |
 | 2026-11-16 | New welcome screen, inspired by the How We Feel app: the red plate logo on its own, then a calm, slowly turning ring of dots shaped like a weight plate, a simple "Welcome in, Reid" and one green "Let's get moving" button that opens Home. No workout suggestion or small print; it waits for you instead of disappearing on a timer; still for people who turn down motion. Design ideas now collected in a design-reference folder; SW bumped to v27 |
 | 2026-11-13 | Workout screen: logging a set now gives a quick celebration (the tick pops, a burst of dots, and a "Set 2 done · 70 × 9" pill for 2 seconds; skipped when the phone asks for reduced motion); set numbers sit in boxes under a "Set" label; the workout name, sets-done count and progress bar stay frozen at the top while exercises scroll; SW bumped to v26 |
 | 2026-11-13 | Screens from the design canvas: Home cards lead with the number ("230 lb") and say why; the workout screen shows a progress bar, keeps one exercise open and folds finished ones to a single line, puts the target next to last time's sets, and keeps Finish on screen; Progress shows three numbers in one row and a segmented range picker; My Plans groups the days in one list and marks the next one; small green text is darker so it is readable; SW bumped to v25 |

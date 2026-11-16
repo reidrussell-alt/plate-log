@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Home colour fade</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<!-- Uses the app's real stylesheet, so the phones show today's Home exactly -->
+<link rel="stylesheet" href="../../css/main.css">
+<style>
+/* Mock-up of pattern 3 (../patterns.md): strong colour at the top that fades
+   lighter down the screen. Home markup below was copied from the running app. */
+
+/* ---------- Mock-up page chrome (not part of the design) ---------- */
+html, body { background: #eceae6; overflow-x: hidden; }
+body { padding: 24px 16px 40px; min-height: 100vh; }
+.mock-head { max-width: 1260px; margin: 0 auto 20px; }
+.mock-head h1 { font-family: var(--font-display); font-weight: 800; font-size: 22px; color: var(--text); }
+.mock-head p { font-size: 13px; color: var(--text-dim); margin-top: 2px; }
+.phones {
+  max-width: 1260px; margin: 0 auto;
+  display: grid; gap: 28px; grid-template-columns: repeat(auto-fit, minmax(391px, 1fr));
+  justify-items: center;
+}
+figure { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+figcaption { font-size: 14px; font-weight: 700; color: var(--text); text-align: center; }
+figcaption span { display: block; font-weight: 500; color: var(--text-dim); font-size: 13px; }
+.phone {
+  width: 391px; max-width: calc(100vw - 32px); height: 828px; /* 375 × 812 screen inside an 8px bezel */
+  border-radius: 44px; border: 8px solid #202326; overflow: hidden;
+  position: relative; background: var(--bg);
+  transform: translateZ(0); /* keeps the app's fixed tab bar inside the phone */
+  box-shadow: 0 20px 50px -20px rgba(32,35,38,.35);
+}
+.phone .page { animation: none; } /* the app fades pages in; not needed here */
+.phone .scroll { height: 100%; overflow-y: auto; scrollbar-width: none; }
+.phone .scroll::-webkit-scrollbar { display: none; }
+.status {
+  height: 44px; display: flex; justify-content: space-between; align-items: center;
+  padding: 0 26px; font: 700 14px var(--font-body); color: var(--text);
+}
+.notes { max-width: 1260px; margin: 28px auto 0; font-size: 14px; line-height: 1.55; color: var(--text); }
+.notes h3 { font-family: var(--font-display); font-weight: 700; font-size: 16px; margin-bottom: 6px; }
+.notes ul { padding-left: 18px; }
+
+/* ---------- The design: colour fade behind the page (Warm Daylight, 16 Nov) ---------- */
+.fade .scroll {
+  background:
+    linear-gradient(to bottom,
+      var(--fade-top) 0px,
+      color-mix(in srgb, var(--fade-top) 80%, var(--bg)) 120px,
+      color-mix(in srgb, var(--fade-top) 40%, var(--bg)) 230px,
+      color-mix(in srgb, var(--fade-top) 12%, var(--bg)) 330px,
+      var(--bg) 420px) no-repeat,
+    var(--bg);
+}
+/* A — strong burnt orange at the top, like the Copilot reference */
+.fade.strong { --fade-top: var(--accent); }
+.fade.strong .status,
+.fade.strong .home-greeting,
+.fade.strong .home-day-label { color: var(--on-accent); }
+.fade.strong .home-day-label { opacity: .85; }
+.fade.strong .home-start-meta { color: color-mix(in srgb, var(--on-accent) 85%, transparent); }
+/* An orange button on orange would vanish, so it flips to white with orange text */
+.fade.strong .home-start-btn { background: var(--bg); color: var(--accent-ink); box-shadow: var(--shadow-raised); }
+/* B — a soft orange wash: same orange, about a fifth of the strength; text stays dark */
+.fade.soft { --fade-top: color-mix(in srgb, var(--accent) 22%, var(--bg)); }
+/* In-between strengths (Reid, 16 Nov): date and weekday stay black */
+.fade.p35 { --fade-top: color-mix(in srgb, var(--accent) 35%, var(--bg)); }
+.fade.p50 { --fade-top: color-mix(in srgb, var(--accent) 50%, var(--bg)); }
+.fade.p65 { --fade-top: color-mix(in srgb, var(--accent) 65%, var(--bg)); }
+.fade.p75 { --fade-top: color-mix(in srgb, var(--accent) 75%, var(--bg)); }
+.fade.ink .home-day-label { color: var(--text); }
+.fade.ink .home-greeting, .fade.ink .status { color: var(--text); }
+.fade.ink .home-start-meta { color: var(--text-secondary); }
+/* From 50% the orange button blends into the background, so it flips to white */
+.fade.flip .home-start-btn { background: var(--bg); color: var(--accent-ink); box-shadow: var(--shadow-raised); }
+/* C — warm sand: the card colour deepened, no orange at all */
+.fade.sand { --fade-top: color-mix(in srgb, var(--surface-3) 70%, #d9cfc2); }
+</style>
+</head>
+<body>
+<header class="mock-head">
+  <h1>Home with a colour fade — Warm Daylight</h1>
+  <p>Pattern 3 (Copilot, background only), redone in the new palette. Each phone scrolls; the fade scrolls away with the page.</p>
+</header>
+
+<div class="phones">
+  <figure><div class="phone" data-phone></div><figcaption>Today<span>plain white, for comparison</span></figcaption></figure>
+  <figure><div class="phone fade strong" data-phone></div><figcaption>A · Strong orange<span>closest to the Copilot reference; white text at the top</span></figcaption></figure>
+  <figure><div class="phone fade soft" data-phone></div><figcaption>B · Soft orange wash<span>same orange, gentle; nothing else changes</span></figcaption></figure>
+  <figure><div class="phone fade p35 ink" data-phone></div><figcaption>35% orange<span>black date; orange button kept</span></figcaption></figure>
+  <figure><div class="phone fade p50 ink flip" data-phone></div><figcaption>50% orange<span>black date; button flips to white</span></figcaption></figure>
+  <figure><div class="phone fade p65 ink flip" data-phone></div><figcaption>65% orange<span>black date; button flips to white</span></figcaption></figure>
+  <figure><div class="phone fade p75 ink flip" data-phone></div><figcaption>75% orange<span>strongest that keeps black text readable</span></figcaption></figure>
+  <figure><div class="phone fade sand" data-phone></div><figcaption>C · Warm sand<span>no orange — a deeper version of the card colour</span></figcaption></figure>
+</div>
+
+<section class="notes">
+  <h3>What changes</h3>
+  <ul>
+    <li>The colour sits behind the date and Start button and fades to plain white by the "This week" card. Cards, tab bar and everything below are unchanged.</li>
+    <li>A: the date, weekday and status bar turn white, and the Start button flips to white with orange text so it doesn't disappear into the orange.</li>
+    <li>B and C: text and the orange Start button stay exactly as they are today.</li>
+</ul>
+</section>
+
+<template id="homeTpl">
+  <div class="scroll">
+    <div class="status"><span>9:41</span><span>●●●</span></div>
+    <div class="page active">
+    <div class="home-header">
+      <div class="home-header-left">
+        <div class="home-day-label">16 November</div>
+        <div class="home-greeting">Monday</div>
+      </div>
+    </div>
+    <button class="home-start-btn">Start Lower A</button>
+    <div class="home-start-meta">7 exercises · about 45 min · last trained 4 days ago</div>
+    <div class="home-split-card">
+      <div class="home-split-header">
+        <span class="home-split-label">This week</span>
+        <span class="home-split-status">0 of 4 done</span>
+      </div>
+      <div class="home-week-grid">
+        <div class="home-week-cell"><div class="home-week-dow">S</div><div class="home-week-badge home-week-badge--skipped"></div></div>
+        <div class="home-week-cell"><div class="home-week-dow home-week-dow--today">M</div><div class="home-week-badge home-week-badge--today">LA</div></div>
+        <div class="home-week-cell"><div class="home-week-dow">T</div><div class="home-week-badge home-week-badge--future"></div></div>
+        <div class="home-week-cell"><div class="home-week-dow">W</div><div class="home-week-badge home-week-badge--future"></div></div>
+        <div class="home-week-cell"><div class="home-week-dow">T</div><div class="home-week-badge home-week-badge--future"></div></div>
+        <div class="home-week-cell"><div class="home-week-dow">F</div><div class="home-week-badge home-week-badge--future"></div></div>
+        <div class="home-week-cell"><div class="home-week-dow">S</div><div class="home-week-badge home-week-badge--future"></div></div>
+      </div>
+    </div>
+    <div class="home-section-label">Lately</div>
+    <div class="home-momentum-row">
+      <div class="home-momentum-card home-momentum-card--warm">
+        <div class="home-momentum-tag">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:11px;height:11px;flex-shrink:0;"><path d="M6 9H4.5a2.5 2.5 0 010-5H6"/><path d="M18 9h1.5a2.5 2.5 0 000-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0012 0V2z"/></svg>
+          Personal best</div>
+        <div class="home-momentum-name">Tricep Extensions (Rope Up)</div>
+        <div class="home-momentum-value">175 lb</div>
+        <div class="home-momentum-delta">Up from 170 lb</div>
+      </div>
+      <div class="home-momentum-card home-momentum-card--cool">
+        <div class="home-momentum-tag home-momentum-tag--cool">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:11px;height:11px;flex-shrink:0;"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+          Next session</div>
+        <div class="home-momentum-name">Hanging Leg Raises</div>
+        <div class="home-momentum-value">11+ reps</div>
+        <div class="home-momentum-delta home-momentum-delta--muted">You hit 12 last time</div>
+      </div>
+    </div>
+    <div class="home-stat-footer">25 sessions total</div>
+    </div>
+  </div>
+  <div class="tab-nav">
+    <div class="tabs">
+      <button class="tab active"><svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span class="tab-label">Home</span></button>
+      <button class="tab"><svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="8" y1="16" x2="12" y2="16"/></svg><span class="tab-label">My Plans</span></button>
+      <button class="tab"><svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg><span class="tab-label">Progress</span></button>
+      <button class="tab"><svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span class="tab-label">Profile</span></button>
+    </div>
+  </div>
+</template>
+
+<script>
+  const tpl = document.getElementById('homeTpl');
+  document.querySelectorAll('[data-phone]').forEach(p => p.appendChild(tpl.content.cloneNode(true)));
+</script>
+</body>
+</html>

@@ -1,4 +1,4 @@
-"""Render the Lift Tracker app icon (red weight plate stamped LBS, on white) at every size the app needs.
+"""Render the Lift Tracker app icon (burnt-orange weight plate stamped LBS, on white) at every size the app needs.
 
 Artwork is defined on a 100x100 grid, drawn at 8x supersampling, then downscaled
 for smooth edges. Usage (from the project folder): python3 scripts/make_icons.py icons
@@ -8,10 +8,10 @@ from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont
 
 BG = (255, 255, 255)
-RED = (217, 52, 43)          # #d9342b, bumper-plate red
+RED = (189, 85, 47)          # #bd552f, burnt orange — same as --accent / --plate in main.css
 FONT = "/System/Library/Fonts/Supplemental/Arial Black.ttf"
 PLATE_R, RING_R, RING_W, HUB_R, HOLE_R = 36, 27.5, 1.6, 10.5, 4.5   # on the 100-grid, centred at 50,50
-RING = tuple(round(c * 0.45 + 255 * 0.55) for c in RED)            # pale red: white at ~55% over the plate
+RING = tuple(round(c * 0.45 + 255 * 0.55) for c in RED)            # pale orange: white at ~55% over the plate
 SLOT_W, SLOT_H = 12, 5.5                                          # white grip slots, top and bottom
 SLOTS_Y = (18.5, 76)                                              # top edge of each slot
 TEXT, TEXT_SIZE, TEXT_TRACK, TEXT_BASELINE = "LBS", 8.5, 1.6, 70.5

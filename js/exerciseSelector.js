@@ -216,7 +216,7 @@ function _createFormHtml() {
         >
       </div>
       <div class="ex-sel-field">
-        <label class="ex-sel-label">Muscle Group <span style="color:var(--push)">*</span></label>
+        <label class="ex-sel-label">Muscle Group <span style="color:var(--danger)">*</span></label>
         <select id="exSelCustomGroup" class="ex-sel-select">
           <option value="">Select muscle group</option>
           ${groupOptions}

@@ -187,30 +187,37 @@ This is Reid's original default program. New users pick from 6 templates in `pro
 
 ---
 
-## Theme — "Daylight" (CSS variables in :root)
+## Theme — "Warm Daylight" (CSS variables in :root)
 
-Light theme: white cards with soft shadows on a cool grey page, ink text, one cobalt accent. Chosen 11 Nov 2026 from four options (Graphite, Daylight, Chalk & Iron, Matchday).
+White-first, warm and grounded: white page, warm off-white cards with light neutral borders, ink text, one burnt-orange accent. Chosen 16 Nov 2026, replacing the cool-grey + cobalt Daylight of 11 Nov. No large colour fades, with one deliberate exception: the top of Home (below).
 
 ```css
 /* Surfaces */
---bg: #f2f4f8            /* page */
---surface: #ffffff       /* cards */
---surface-2: #f3f5f9     /* inputs, nested cards */
---surface-3: #e9edf3     /* deeply nested / pressed */
---border: #e3e8ef
---border-bright: #cdd5e1
+--bg: #ffffff            /* page */
+--surface: #f7f6f3       /* cards, grouped sections, tab bar */
+--surface-2: #efede9     /* inputs, nested cards */
+--surface-3: #e7e5e1     /* deeply nested / pressed */
+--border: #e7e5e1
+--border-bright: #d6d3cd
 
 /* Text (dark → light) */
---text: #0f1a2b  --text-secondary: #34405a  --text-dim: #5f6b7d  --text-dimmer: #8792a3  --text-faint: #c5ccd8
+--text: #202326  --text-secondary: #3f454b  --text-dim: #687078  --text-dimmer: #8c939a  --text-faint: #c9cdd1
 
-/* Accent */
---accent: #2453ff        /* cobalt — primary buttons, active tab, key numbers */
---accent-dim: #4a63d8    /* supporting — pills, badges, section labels */
---on-accent: #ffffff     /* text/icons on accent backgrounds */
+/* Accent — burnt orange, used selectively */
+--accent: #bd552f        /* primary actions, active-workout progress (bar, ticks, logged sets), logo */
+--accent-ink: #a84a27    /* small orange text on cards (4.5:1+ on --surface) */
+--on-accent: #ffffff     /* text on orange (4.66:1) */
+--accent-dim: #3f454b    /* supporting labels, pills, badges — neutral ink, not a second accent */
+
+/* Selection — neutral */
+--select: #202326  --on-select: #ffffff   /* active tab, active pill/segment, toggles, focus, today marker */
+--home-fade: accent at 50% on white      /* top colour of the Home fade */
 
 /* Workout types & states */
---push: #e8572a  --pull: #1a8fe0  --legs: #0fa678  --recovery: #7c4dff
---success: #0fa678  --success-ink: #0b7a58 (small green text)  --on-success: #ffffff  --danger: #e5484d  --warm: #e07a14  --cool: #0f9f72
+--push: #9c3587 (plum)  --pull: #1a8fe0  --legs: #0fa678  --recovery: #7c4dff
+--success: #0fa678  --success-ink: #0b7a58   /* "improved" signals only (trend up, PR delta) */
+--danger: #cc3339  --on-danger: #ffffff      /* errors and destructive actions — never orange */
+--cool: #0f9f72   /* --warm (amber) removed 16 Nov — too close to the orange */
 
 /* Shape & type */
 --radius-card: 12px  --shadow-card (unused on cards)  --shadow-raised
@@ -218,19 +225,24 @@ Light theme: white cards with soft shadows on a cool grey page, ink text, one co
 --font-welcome: IBM Plex Sans (welcome headline only)
 
 /* Brand mark */
---plate: #d9342b  --plate-ink: #ffffff   /* red weight-plate logo (welcome screen, dots) */
+--plate: var(--accent)  --plate-ink: #ffffff   /* weight-plate logo — same orange as the interface */
 ```
 
 **Rules:**
 - Never hard-code colours. For tints use `color-mix(in srgb, var(--token) N%, transparent)`.
 - Text on an `--accent` background uses `--on-accent`, never `--bg`.
-- Cards: flat white surface, 1px `--border` hairline, no drop shadow, 12px radius. Pop-ups and sheets: `--shadow-raised`.
+- Orange (`--accent`) only for: the primary action on a screen, active-workout progress (progress bar, logged-set ticks and numbers, finished exercises, the session banner), and the logo. Selected/active states in secondary controls use `--select` (ink). Destructive confirms use `--danger`: `showConfirm()` turns its OK button red when the label starts with Delete/Discard/Remove/Reset.
+- Workout-type colours are for workout types only (calendar dots, week badges, day cards, Chest chart). Never use `--push` for delete/remove/errors — that's `--danger`. Muscle-chart colours live in `MUSCLE_GROUP_META` (`exerciseLibrary.js`); keep them off the orange (Chest = push plum, Core = teal `#0b7f8c`).
+- Home top fade: `body:has(#homePage.active)` paints `--home-fade` at the top, fading to white by ~420px (the "This week" card); it scrolls with the page and only Home has it. On Home the date stays black, the line under the button uses `--text-secondary`, and the Start button is white with `--accent-ink` text (an orange button would blend into the fade). Rules are in the `WARM DAYLIGHT — Home top fade` block at the end of `main.css`.
+- Small orange text on a card uses `--accent-ink` (plain `--accent` is only 4.3:1 on `--surface`).
+- Cards: flat warm off-white (`--surface`), 1px `--border` hairline, no drop shadow, 12px radius. Pop-ups and sheets: `--shadow-raised`.
 - Labels are sentence case with normal letter spacing; no ALL-CAPS eyebrows, tinted pills, emoji or italic helper text. Overrides live in the `SHARPEN —` block at the end of `main.css`.
 - Charts read colours at runtime with `cssVar()` from `charts.js`, so they follow the theme.
 - Daylight overrides (card shadows, set rows, calendar, page titles) live in labelled `DAYLIGHT —` blocks at the end of `main.css`.
 - Set logged: `_celebrateSet()` in `session.js` pops the tick, bursts dots and shows a 2-second pill (`.set-toast`); reduced motion turns the animation off.
 - `html, body` use `overflow-x: clip` (after a `hidden` fallback) so `position: sticky` works — the workout header (`.session-sticky`) relies on it.
-- Rest timer: red (resting) → amber (last third) → green "READY", via `--timer-red/amber/green` on `.rest-timer-pill`.
+- Rest timer: red (resting) → amber (last third) → green "READY", via `--timer-red/amber/green` on `.rest-timer-pill` (a status signal, deliberately not the brand orange).
+- App icons: `scripts/make_icons.py` draws the plate in the same burnt orange; rerun it (`python3 scripts/make_icons.py icons`) if `--accent` changes.
 
 ---
 
@@ -271,7 +283,7 @@ Welcome screen shown on every app open (design: `design-reference/patterns.md`, 
 ## Service worker
 
 - Cache name must be bumped (v1 → v2 → v3...) on **every deploy** that changes JS/CSS files
-- Currently: `lift-tracker-v27`
+- Currently: `lift-tracker-v28`
 - Every JS file must be listed in the `ASSETS` array — add new modules there, remove deleted ones
 - SW is **disabled on localhost** — the hostname check in `app.js` prevents re-registration during development
 - When a new SW takes control, `app.js` reloads the page automatically (`controllerchange`)
