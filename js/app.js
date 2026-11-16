@@ -197,7 +197,8 @@ if (state.currentSession) {
   document.getElementById('sessionPage').classList.add('active');
   renderSession();
 } else if (!state.profile) {
-  showOnboarding();
+  // New users get the same welcome screen; its button opens the setup steps
+  showWelcomeScreen(showOnboarding);
 } else {
   switchTab('home');
   showWelcomeScreen();

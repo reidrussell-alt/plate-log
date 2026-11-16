@@ -164,7 +164,7 @@ Other localStorage keys:
 - v3→v4: remaps `leg_ext_a`/`leg_ext_b` → `leg_extension`
 - v4→v5: remaps the old split-specific exercise IDs (e.g. `db_press_b` → `db_shoulder_press`, `machine_t` → `chest_supported_row`) to their exercise-library IDs, in both programs and history
 
-New users (no localStorage) see onboarding instead.
+New users (no localStorage) see the same welcome screen; its button opens the onboarding steps (name → training mode → template / track as you go / import) instead of Home.
 
 **Backup/restore:** Export downloads a JSON file (profile, programs, history, custom exercises). Both import paths (onboarding and Profile → Data) migrate it, then `applyImportedData()` replaces history, profile and programs and merges custom exercises (the backup wins on matching IDs).
 
@@ -257,7 +257,7 @@ White-first, warm and grounded: white page, warm off-white cards with light neut
 ### `welcome.js`
 Welcome screen shown on every app open (design: `design-reference/patterns.md`, patterns 1–2).
 - Plate logo alone for 1.2s, then a slowly turning canvas disc of dots shaped like a weight plate, the headline "Welcome in, {name}" (`--font-welcome`) and a green "Let's get moving" button
-- Only the button dismisses it: switches to Home, fades out, stops the animation and empties `#welcomeScreen` (the element stays, so it can be shown again)
+- Only the button dismisses it: switches to Home (or, for a new user with no profile, opens onboarding via the optional `onStart` callback), fades out, stops the animation and empties `#welcomeScreen` (the element stays, so it can be shown again)
 - Name comes from `state.profile.name` (escaped); without one the headline is just "Welcome in"
 - Reduced motion: no logo pop, dots drawn once and still
 
@@ -283,7 +283,7 @@ Welcome screen shown on every app open (design: `design-reference/patterns.md`, 
 ## Service worker
 
 - Cache name must be bumped (v1 → v2 → v3...) on **every deploy** that changes JS/CSS files
-- Currently: `lift-tracker-v28`
+- Currently: `lift-tracker-v29`
 - Every JS file must be listed in the `ASSETS` array — add new modules there, remove deleted ones
 - SW is **disabled on localhost** — the hostname check in `app.js` prevents re-registration during development
 - When a new SW takes control, `app.js` reloads the page automatically (`controllerchange`)

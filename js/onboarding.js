@@ -8,7 +8,7 @@ export function showOnboarding() {
   const container = document.getElementById('onboardingContainer');
   if (!container) return;
   container.classList.add('active');
-  renderStep(welcomeStepHtml());
+  obGoTo('name');
 }
 
 export function hideOnboarding() {
@@ -18,17 +18,6 @@ export function hideOnboarding() {
 
 function renderStep(html) {
   document.getElementById('onboardingBody').innerHTML = html;
-}
-
-function welcomeStepHtml() {
-  return `
-    <div class="ob-step">
-      <div class="ob-big-icon">🏋️</div>
-      <h1 class="ob-title">Welcome to<br>Lift Tracker</h1>
-      <p class="ob-sub">Let's get you set up in a few quick steps.</p>
-      <button class="ob-btn-primary" onclick="obGoTo('name')">Get Started</button>
-    </div>
-  `;
 }
 
 function nameStepHtml() {
@@ -50,12 +39,10 @@ function modeStepHtml() {
       <h2 class="ob-title">How do you train?</h2>
       <div class="ob-mode-options">
         <div class="ob-mode-option" onclick="obSelectMode('structured')">
-          <div class="ob-mode-icon">📋</div>
           <div class="ob-mode-title">Structured Plan</div>
           <div class="ob-mode-desc">Set up a weekly schedule with specific exercises for each day</div>
         </div>
         <div class="ob-mode-option" onclick="obSelectMode('trackAsYouGo')">
-          <div class="ob-mode-icon">⚡</div>
           <div class="ob-mode-title">Track As You Go</div>
           <div class="ob-mode-desc">Log whatever you do each session — no preset schedule needed</div>
         </div>
@@ -97,7 +84,6 @@ function trackConfirmStepHtml() {
   return `
     <div class="ob-step">
       <div class="ob-step-num">3 of 3</div>
-      <div class="ob-big-icon" style="margin: 24px 0;">⚡</div>
       <h2 class="ob-title">Ready to track!</h2>
       <p class="ob-sub">Log workouts as you go. After you've built up some history, you can create a structured plan from Settings.</p>
       <button class="ob-btn-primary" onclick="obFinish('trackAsYouGo', null)">Start Tracking</button>
@@ -178,7 +164,6 @@ export function obFinish(mode, template) {
   saveData();
   hideOnboarding();
   window.switchTab('home');
-  window.showWelcomeScreen();
 }
 
 export function obProcessImport() {
@@ -202,7 +187,6 @@ export function obProcessImport() {
       showToast(`Imported ${data.history.length} sessions`, 'success');
       hideOnboarding();
       window.switchTab('home');
-      window.showWelcomeScreen();
     } catch (err) {
       showToast('Error reading file. Check the format.');
     }

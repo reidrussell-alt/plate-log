@@ -26,9 +26,10 @@ graph TD
     Cache --> LoadData
     Network --> LoadData
 
-    LoadData[loadData\nv2→v5 migrations] --> HasProfile{state.profile\nexists?}
+    LoadData[loadData\nv2→v5 migrations] --> Welcome
+    Welcome[Welcome Screen\nLogo, dot plate, Welcome in name] -->|Let's get moving| HasProfile{state.profile\nexists?}
     HasProfile -->|No| Onboarding[Onboarding Flow\nNew User Setup]
-    HasProfile -->|Yes| Welcome
+    HasProfile -->|Yes| Main
 
     Onboarding --> NameStep[Enter Name]
     NameStep --> ModeStep[Choose Mode]
@@ -38,9 +39,7 @@ graph TD
     TemplateStep --> SaveProfile[Save Profile + Program]
     TrackConfirm --> SaveProfile
     ImportStep --> SaveProfile
-    SaveProfile --> Welcome
-
-    Welcome[Welcome Screen\nLogo, dot plate, Welcome in name] -->|Let's get moving| Main
+    SaveProfile --> Main
 
     Main{Main App} --> HomeTab[Home Tab]
     Main --> MyPlansTab[My Plans Tab]
@@ -186,7 +185,7 @@ graph LR
 
 | Module | Imports | Responsibilities |
 |--------|---------|-----------------|
-| `app.js` | All modules | Entry point. Binds all `window.*` handlers. Calls `loadData()`, shows onboarding if new user, otherwise `switchTab('home')` + `showWelcomeScreen()`. Registers service worker (non-localhost only). |
+| `app.js` | All modules | Entry point. Binds all `window.*` handlers. Calls `loadData()`, then `showWelcomeScreen()` — for a new user its button opens onboarding, otherwise Home. Registers service worker (non-localhost only). |
 | `home.js` | `data.js`, `session.js` | Home tab. Week streak, readiness strip (48h rule), split progress grid (3 cell states: completed/today/future), momentum row (most recent PR computed from history + coaching via `getSuggestion`), yesterday card with volume, stat footer. |
 | `myplans.js` | `data.js`, `programTemplates.js`, `home.js` (next day) | My Plans tab — program management workshop only (no Start buttons). Active program day cards with exercise preview + chevron → program builder. Library section with Set Active / Duplicate / Delete overflow. |
 | `program.js` | `exerciseLibrary.js` | Static data: original 4-day split, `MUSCLE_GROUPS` mapping (covers all exercise library IDs), display metadata. |
@@ -194,7 +193,7 @@ graph LR
 | `utils.js` | _(none)_ | `todayDateString()`, `isoDateOnly()`, `formatDate()`, `formatDateShort()`, `showToast()`, `showConfirm()`, `showPrompt()`. |
 | `exerciseLibrary.js` | _(none)_ | 127 exercises with id, name, muscleGroup, loadType. `MUSCLE_GROUP_ORDER`, `MUSCLE_GROUP_META`, `getExerciseById()` and search helpers. |
 | `programTemplates.js` | `exerciseLibrary.js` | 6 program templates (3-day full body, 4-day upper/lower, 4-day PPL, 5-day PPL, 6-day PPL 2×, 5-day bro split). `getTemplateById()`. |
-| `onboarding.js` | `data.js`, `programTemplates.js`, `utils.js` | Multi-step new-user onboarding: welcome → name → mode → template/track-as-you-go → save. Also handles backup import during onboarding. |
+| `onboarding.js` | `data.js`, `programTemplates.js`, `utils.js` | Multi-step new-user onboarding, opened from the welcome screen's button: name → mode → template/track-as-you-go → save, then Home. Also handles backup import during onboarding. |
 | `settings.js` | `data.js`, `programTemplates.js`, `myplans.js`, `restTimer.js`, `healthkit.js`, `utils.js` | Profile tab: stats card, profile editing, rest timer settings, HealthKit toggles, data backup/restore. Also holds program activate/duplicate/delete actions used by My Plans. |
 | `session.js` | `data.js`, `exerciseLibrary.js`, `exerciseSelector.js`, `restTimer.js`, `healthkit.js`, `utils.js` | Structured and TAYG session lifecycle. `startSession()`, `startTrackAsYouGoWorkout()`, `renderSession()`, add/replace/remove exercise, add/remove set, reorder, `getSuggestion()` (progressive overload), `getLastPerformance()`. In-progress session persisted separately so it survives app close. |
 | `programBuilder.js` | `data.js`, `exerciseSelector.js`, `utils.js` | Full-screen program editor overlay. `showProgramBuilder(editingId, focusDayId?)` — optional `focusDayId` pre-expands and scrolls to the target day. Drag-to-reorder via Sortable.js. Per-exercise sets and rep type (range / fixed / AMRAP). |
@@ -484,7 +483,7 @@ flowchart TD
 
 **Remote:** `https://github.com/reidrussell-alt/plate-log.git` (live at `https://reidrussell-alt.github.io/plate-log/`; the old `lifting-tracker-Application` repository is kept as an archive)  
 **Auth:** Personal Access Token (GitHub no longer accepts passwords)  
-**Current SW cache version:** `lift-tracker-v28`  
+**Current SW cache version:** `lift-tracker-v29`  
 **Auto-update:** when a new service worker takes control, the app reloads itself. On iOS a delete + re-add is still the reliable way to force fresh code.
 
 ---
@@ -515,6 +514,7 @@ flowchart TD
 
 | Date | Change |
 |------|--------|
+| 2026-11-16 | First-time users now see the same welcome screen as everyone else (plate logo, turning dots, "Welcome in") instead of the old "Welcome to Lift Tracker" page with a weightlifter emoji. Tapping "Let's get moving" walks them through setup — their name, then structured plan or track as you go — and lands them on Home. Emoji removed from the setup steps; SW bumped to v29 |
 | 2026-11-16 | Home gets a soft burnt-orange glow at the top of the screen that fades to white by the "This week" card, inspired by the Copilot app. The date and day stay black, and the Start button turns white with orange text so it stands out against the colour. Only Home has it; the other tabs stay plain white |
 | 2026-11-16 | Push days and the Chest chart change from orange to plum, and the Core chart from amber to teal, so orange only ever means the main action, workout progress or the logo. Remove, discard, delete and form-error messages that had borrowed the push colour now use the red danger colour everywhere. The home streak badge and a few labels lose their amber tint |
 | 2026-11-16 | New colour palette, "Warm Daylight": a white page with warm off-white cards and one burnt-orange accent instead of grey and cobalt. Orange now marks only the main button on each screen, your progress during a workout (progress bar, ticked sets, finished exercises) and the logo, which changes from red to the same orange (app icon too). Tabs, filters and toggles show selection in dark ink. Delete and discard buttons are red so they can't be mistaken for the main action. All text and buttons meet contrast guidelines; SW bumped to v28 |

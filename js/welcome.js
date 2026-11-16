@@ -2,7 +2,8 @@ import { state } from './data.js';
 
 // Welcome screen shown on every app open: the plate logo on its own, then a
 // slowly turning disc of dots shaped like a weight plate, "Welcome in, {name}"
-// and one button that goes to Home. Design notes: design-reference/patterns.md.
+// and one button that goes to Home. For a brand-new user the button opens the
+// setup steps instead (onStart). Design notes: design-reference/patterns.md.
 
 const LOGO_MS = 1200;        // how long the logo shows on its own
 const LIGHT = Math.PI * 1.05; // dots are lit from the left
@@ -29,7 +30,7 @@ const PLATE_SVG = `
     <rect x="25.5" y="49.3" width="9" height="4.2" rx="2.1" fill="var(--plate-ink)"/>
   </svg>`;
 
-export function showWelcomeScreen() {
+export function showWelcomeScreen(onStart) {
   const el = document.getElementById('welcomeScreen');
   if (!el) return;
 
@@ -102,7 +103,8 @@ export function showWelcomeScreen() {
     clearTimeout(reveal);
     cancelAnimationFrame(frame);
     window.removeEventListener('resize', onResize);
-    window.switchTab('home');
+    if (typeof onStart === 'function') onStart();
+    else window.switchTab('home');
     el.classList.add('fading');
     let cleaned = false;
     const cleanup = () => {
