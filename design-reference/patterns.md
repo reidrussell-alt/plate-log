@@ -10,6 +10,7 @@ One row per design idea taken from another app. Keep the newest at the top of ea
 
 | Source app | Platform | Captured on | Notes |
 |------------|----------|-------------|-------|
+| Ladder (via Mobbin) | iOS | 2026-11-16 | Fitness app profile. Only the cover photo + centred profile photo layout is wanted. |
 | Copilot (via Mobbin) | iOS | 2026-11-16 | Money app. Only the background colour is of interest — the screen's content is ignored. |
 | How We Feel (via Mobbin) | iOS | 2026-11-16 | Mood-tracking app. Opening screens: calm, near-empty, one moving element. |
 
@@ -17,6 +18,7 @@ One row per design idea taken from another app. Keep the newest at the top of ea
 
 | # | Pattern | Source + capture | Plate Log screen | How it maps to Daylight | Status |
 |---|---------|------------------|------------------|--------------------------|--------|
+| 4 | Profile header: a cover photo across the top, the profile photo half over it, name below | Ladder · `captures/ladder_profile_cover-photo-centred-avatar.webp` | Profile | Default cover is the Home orange fade (`--home-fade`); photos fade into `--bg` at the bottom; profile photo centred (not left like the source) with a `--bg` ring; camera badge in `--select` ink; curated cities + nature backgrounds | Built 16 Nov (not yet deployed): 240px cover (Reid picked medium), profile photo, 36-photo background library |
 | 3 | Background colour that is strong at the top and fades lighter down the screen, behind the content | Copilot · `captures/copilot_dashboard_top-gradient-background.webp` | Main tabs (Home first; maybe all four) | Fade from `--accent` (our cobalt, already very close to theirs) at the top into `--bg`; white cards sit on top as now | Built 16 Nov (not yet deployed) — Home only, 50% burnt orange, black date, white Start button. Had been dropped for the palette brief, then brought back at Reid's request |
 | 2 | Logo-only splash: the app mark centred on a plain background, nothing else | How We Feel · `captures/how-we-feel_splash_logo-mark.webp` | Welcome screen (first moment on open) | Our plate icon centred on `--bg`; no text | Built 16 Nov (not yet deployed) |
 | 1 | One quiet animation, one short headline, one button | How We Feel · `captures/how-we-feel_welcome_dot-sphere-headline.webp` | Welcome screen | Dots in `--plate` (now burnt orange) on `--bg`; headline in `--font-welcome` (IBM Plex Sans); full-width `--accent` button (was green until the 16 Nov palette change) | Built 16 Nov (not yet deployed) |
@@ -83,3 +85,20 @@ One row per design idea taken from another app. Keep the newest at the top of ea
 ### Progress
 
 ### Profile
+
+**Pattern 4 — cover photo + profile photo.** Description, since the screenshot isn't in git:
+- A photo (a Brooklyn street with the Manhattan Bridge) fills the top quarter of the screen, behind the status bar, with round icon buttons on it.
+- A large circular profile photo overlaps the bottom edge of the cover, on the left, with a small badge on it.
+- Name in big bold type under it, then a line of small facts (gym, join date, city), a two-line bio, and a row of four stat rings.
+- Black page; everything below the cover is on black.
+
+**What Reid wants (16 Nov)**
+- The same idea, with the profile photo **centred** at the same height.
+- Profile photo: take one with the camera or choose one from the phone.
+- Background: pick from a curated library only (no uploading your own): clean, iconic shots of major cities and landmarks around the world, and nature (forests, waterfalls, mountains, scenery).
+- Default cover when nothing is picked: the soft orange fade from Home.
+- Not in this update: the stat rings, a bio or a location line. The existing stats card stays.
+
+**Mock-up (16 Nov):** [`mockups/profile-header.html`](mockups/profile-header.html), served through the local server; screenshots in `mockups/profile-header/`. Six screens: no background (orange fade), a photo cover at 200 / 240 / 280px, the profile-photo options sheet, and the background picker (Cities / Nature / None). The city photo is a stand-in cropped from the capture (kept in `captures/`, not in git); picker tiles are placeholders until the real photos are downloaded.
+
+**Background library (16 Nov):** 36 photos from Wikimedia Commons featured / quality pictures — Unsplash's API doesn't allow keeping copies in an app, so Reid chose Commons. Licences are CC BY, CC BY-SA, CC0 or public domain; the credit shows in the picker and at the bottom of Profile. Dubai had no usable photo (swapped for Budapest) and "rainforest" only found animal close-ups (swapped for Plitvice Lakes). Contact sheet: `mockups/profile-header/backgrounds-contact-sheet.jpg`. Scripts: `scripts/backgrounds/`.

@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Profile header</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<!-- Uses the app's real stylesheet, so serve it through localhost:8082 -->
+<link rel="stylesheet" href="../../css/main.css">
+<style>
+/* Mock-up of pattern 4 (../patterns.md): cover photo, centred profile photo.
+   The stand-in cover photo lives in captures/ (git-ignored), so the photo
+   phones show an empty cover on a fresh checkout. Real photos come later. */
+
+/* ---------- Mock-up page chrome (not part of the design) ---------- */
+html, body { background: #eceae6; overflow-x: hidden; }
+body { padding: 24px 16px 40px; min-height: 100vh; }
+.mock-head { max-width: 1260px; margin: 0 auto 20px; }
+.mock-head h1 { font-family: var(--font-display); font-weight: 800; font-size: 22px; color: var(--text); }
+.mock-head p { font-size: 13px; color: var(--text-dim); margin-top: 2px; }
+.phones {
+  max-width: 1260px; margin: 0 auto;
+  display: grid; gap: 28px; grid-template-columns: repeat(auto-fit, minmax(391px, 1fr));
+  justify-items: center;
+}
+figure { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+figcaption { font-size: 14px; font-weight: 700; color: var(--text); text-align: center; }
+figcaption span { display: block; font-weight: 500; color: var(--text-dim); font-size: 13px; }
+.phone {
+  width: 391px; max-width: calc(100vw - 32px); height: 828px;
+  border-radius: 44px; border: 8px solid #202326; overflow: hidden;
+  position: relative; background: var(--bg);
+  transform: translateZ(0);
+  box-shadow: 0 20px 50px -20px rgba(32,35,38,.35);
+}
+.phone .page { animation: none; }
+.phone .scroll { height: 100%; overflow-y: auto; scrollbar-width: none; }
+.phone .scroll::-webkit-scrollbar { display: none; }
+.status {
+  position: absolute; top: 0; left: 0; right: 0; z-index: 3;
+  height: 44px; display: flex; justify-content: space-between; align-items: center;
+  padding: 0 26px; font: 700 14px var(--font-body); color: var(--text);
+}
+.photo .status { color: #fff; }
+.notes { max-width: 1260px; margin: 28px auto 0; font-size: 14px; line-height: 1.55; color: var(--text); }
+.notes h3 { font-family: var(--font-display); font-weight: 700; font-size: 16px; margin-bottom: 6px; }
+.notes ul { padding-left: 18px; }
+/* For screenshots: ?shot=N shows only phone N, without the bezel */
+body.shot { padding: 0; background: var(--bg); }
+body.shot .mock-head, body.shot .notes, body.shot figcaption { display: none; }
+body.shot .phones { display: block; max-width: none; }
+body.shot figure:not(.on) { display: none; }
+body.shot figure { display: block; }
+body.shot .phone { position: fixed; top: 0; left: 0; width: 375px; max-width: none; height: 812px; border: 0; border-radius: 0; box-shadow: none; }
+
+/* ---------- The design ---------- */
+.profile-page { padding-top: 0; }
+.pf-cover {
+  --cover-h: 240px;
+  position: relative; height: var(--cover-h);
+  margin: 0 -16px;
+  /* Default: the Home fade, orange at half strength into white */
+  background:
+    linear-gradient(to bottom,
+      var(--home-fade) 0%,
+      color-mix(in srgb, var(--home-fade) 75%, var(--bg)) 45%,
+      color-mix(in srgb, var(--home-fade) 30%, var(--bg)) 80%,
+      var(--bg) 100%);
+}
+.pf-cover.h200 { --cover-h: 200px; }
+.pf-cover.h280 { --cover-h: 280px; }
+.photo .pf-cover {
+  background: url('../captures/standin-cover-photo.jpg') center 40% / cover no-repeat, var(--surface-3);
+}
+/* Photos: a soft dark band behind the status bar, and a fade into the page at the bottom */
+.photo .pf-cover::before,
+.photo .pf-cover::after { content: ''; position: absolute; left: 0; right: 0; pointer-events: none; }
+.photo .pf-cover::before { top: 0; height: 90px; background: linear-gradient(to bottom, color-mix(in srgb, var(--text) 45%, transparent), transparent); }
+.photo .pf-cover::after { bottom: 0; height: 45%; background: linear-gradient(to bottom, transparent, color-mix(in srgb, var(--bg) 70%, transparent) 70%, var(--bg)); }
+
+.pf-cover-btn {
+  position: absolute; top: 52px; right: 16px; z-index: 2;
+  width: 38px; height: 38px; border-radius: 50%; border: 0;
+  display: grid; place-items: center;
+  background: color-mix(in srgb, var(--bg) 82%, transparent);
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+  color: var(--text); box-shadow: var(--shadow-raised);
+}
+.pf-cover-btn svg { width: 18px; height: 18px; }
+
+.pf-avatar-wrap {
+  position: relative; z-index: 2;
+  width: 120px; height: 120px; margin: -60px auto 0;
+}
+.pf-avatar {
+  width: 100%; height: 100%; border-radius: 50%;
+  border: 4px solid var(--bg); background: var(--surface-2);
+  display: grid; place-items: center; overflow: hidden;
+  font: 800 44px var(--font-display); color: var(--text-secondary);
+  box-shadow: 0 2px 10px color-mix(in srgb, var(--text) 10%, transparent);
+}
+.pf-avatar-badge {
+  position: absolute; right: 4px; bottom: 4px;
+  width: 34px; height: 34px; border-radius: 50%;
+  border: 3px solid var(--bg); background: var(--select); color: var(--on-select);
+  display: grid; place-items: center;
+}
+.pf-avatar-badge svg { width: 15px; height: 15px; }
+
+.pf-name {
+  text-align: center; margin-top: 12px;
+  font: 800 30px/1.1 var(--font-display); color: var(--text); letter-spacing: -0.5px;
+}
+.pf-meta { text-align: center; margin: 6px 0 20px; font-size: 13px; color: var(--text-dim); }
+/* The name moved into the header, so the stats card loses its top divider */
+.profile-page .profile-stats-grid { border-top: 0; padding-top: 0; }
+
+/* Background picker sheet */
+.bg-sheet { max-height: 64%; display: flex; flex-direction: column; background: var(--bg); padding-bottom: 20px; }
+.bg-sheet .ex-options-name { margin-bottom: 12px; }
+.bg-sheet .range-selector { display: flex; margin-bottom: 14px; }
+.bg-sheet .range-btn { flex: 1; }
+.bg-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 10px; overflow-y: auto; scrollbar-width: none; padding-bottom: 12px; }
+.bg-tile-img {
+  aspect-ratio: 16 / 10; border-radius: 10px; position: relative;
+  background: linear-gradient(135deg, var(--t1), var(--t2));
+  display: grid; place-items: center; color: color-mix(in srgb, var(--text) 35%, transparent);
+  font-size: 11px; font-weight: 600;
+}
+.bg-tile.on .bg-tile-img { outline: 2.5px solid var(--select); outline-offset: 2px; }
+.bg-tile.on .bg-tile-img::after {
+  content: '✓'; position: absolute; top: 6px; right: 6px; width: 22px; height: 22px; border-radius: 50%;
+  background: var(--select); color: var(--on-select); font-size: 12px; display: grid; place-items: center;
+}
+.bg-tile-name { font-size: 13px; font-weight: 700; color: var(--text); margin-top: 6px; }
+.bg-tile-sub { font-size: 12px; color: var(--text-dim); }
+.bg-save { width: 100%; padding: 15px; border: 0; border-radius: 12px; background: var(--accent); color: var(--on-accent); font: 700 15px var(--font-body); }
+</style>
+</head>
+<body>
+<header class="mock-head">
+  <h1>Profile header — cover photo and centred profile photo</h1>
+  <p>Pattern 4 (Ladder, layout only), in Warm Daylight. The city photo is a stand-in until the real library is downloaded.</p>
+</header>
+<div class="phones">
+  <figure><div class="phone" data-phone data-cover=""></div><figcaption>1 · No background chosen<span>default: the Home orange fade</span></figcaption></figure>
+  <figure><div class="phone photo" data-phone data-cover="h200"></div><figcaption>2 · Photo, short cover<span>200px</span></figcaption></figure>
+  <figure><div class="phone photo" data-phone data-cover=""></div><figcaption>3 · Photo, medium cover<span>240px</span></figcaption></figure>
+  <figure><div class="phone photo" data-phone data-cover="h280"></div><figcaption>4 · Photo, tall cover<span>280px, closest to the reference</span></figcaption></figure>
+  <figure><div class="phone photo" data-phone data-cover="" data-sheet="photo"></div><figcaption>5 · Tap the profile photo<span>take one, pick one, or remove it</span></figcaption></figure>
+  <figure><div class="phone photo" data-phone data-cover="" data-sheet="bg"></div><figcaption>6 · Tap the background button<span>Cities / Nature / None; the cover updates as you tap</span></figcaption></figure>
+</div>
+<section class="notes">
+  <h3>What changes</h3>
+  <ul>
+    <li>A cover across the top of Profile: the orange fade until you pick a photo. Photos fade into the white page at the bottom.</li>
+    <li>Your profile photo sits in the middle, half over the cover. Until you add one it shows your initial. The small dark badge opens the photo options.</li>
+    <li>Name centred under it, with "Member since" and your training mode. The stats card and settings below stay as they are today.</li>
+    <li>The round button on the cover opens the background library.</li>
+  </ul>
+</section>
+
+<template id="profileTpl">
+  <div class="status"><span>9:41</span><span>●●●</span></div>
+  <div class="scroll">
+    <div class="page active profile-page">
+      <div class="pf-cover">
+        <button class="pf-cover-btn" aria-label="Change background">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        </button>
+      </div>
+      <div class="pf-avatar-wrap">
+        <div class="pf-avatar">R</div>
+        <div class="pf-avatar-badge" aria-label="Change photo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        </div>
+      </div>
+      <div class="pf-name">Reid</div>
+      <div class="pf-meta">Member since May 2026 · Structured plan</div>
+
+      <div class="profile-stats-card">
+        <div class="profile-stats-grid">
+          <div class="profile-stat"><div class="profile-stat-value">25</div><div class="profile-stat-label">Sessions</div></div>
+          <div class="profile-stat"><div class="profile-stat-value">29</div><div class="profile-stat-label">Weeks Active</div></div>
+          <div class="profile-stat profile-stat--wide"><div class="profile-stat-value profile-stat-value--sm">Upper A</div><div class="profile-stat-label">Fav. Workout</div></div>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <div class="settings-section-title">Profile</div>
+        <div class="settings-row"><span class="settings-row-label">Name</span><div class="settings-row-right"><span class="settings-row-value">Reid</span><button class="settings-edit-btn">Edit</button></div></div>
+        <div class="settings-row"><span class="settings-row-label">Mode</span><div class="settings-row-right"><span class="settings-row-value">Structured Plan</span><button class="settings-edit-btn">Switch</button></div></div>
+      </div>
+      <div class="settings-section">
+        <div class="settings-section-title">Workout Settings</div>
+        <div class="settings-row"><span class="settings-row-label">Rest Timer</span><label class="settings-toggle"><input type="checkbox" checked><span class="toggle-slider"></span></label></div>
+      </div>
+    </div>
+  </div>
+  <div class="tab-nav">
+    <div class="tabs">
+      <button class="tab"><svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span class="tab-label">Home</span></button>
+      <button class="tab"><svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="8" y1="16" x2="12" y2="16"/></svg><span class="tab-label">My Plans</span></button>
+      <button class="tab"><svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg><span class="tab-label">Progress</span></button>
+      <button class="tab active"><svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span class="tab-label">Profile</span></button>
+    </div>
+  </div>
+</template>
+
+<template id="photoSheetTpl">
+  <div class="ex-options-backdrop">
+    <div class="ex-options-sheet">
+      <div class="ex-options-name">Profile photo</div>
+      <button class="ex-options-btn ex-options-btn--replace">Take photo</button>
+      <button class="ex-options-btn ex-options-btn--replace">Choose from library</button>
+      <button class="ex-options-btn ex-options-btn--remove">Remove photo</button>
+      <button class="ex-options-btn ex-options-btn--cancel">Cancel</button>
+    </div>
+  </div>
+</template>
+
+<template id="bgSheetTpl">
+  <div class="ex-options-backdrop" style="background: color-mix(in srgb, var(--text) 18%, transparent);">
+    <div class="ex-options-sheet bg-sheet">
+      <div class="ex-options-name">Background</div>
+      <div class="range-selector"><button class="range-btn active">Cities</button><button class="range-btn">Nature</button><button class="range-btn">None</button></div>
+      <div class="bg-grid">
+        <div class="bg-tile on"><div class="bg-tile-img" style="--t1:#8a6a5a;--t2:#b9c7d3">photo</div><div class="bg-tile-name">New York</div><div class="bg-tile-sub">Manhattan Bridge</div></div>
+        <div class="bg-tile"><div class="bg-tile-img" style="--t1:#9aa6b2;--t2:#d8cdbf">photo</div><div class="bg-tile-name">London</div><div class="bg-tile-sub">Tower Bridge</div></div>
+        <div class="bg-tile"><div class="bg-tile-img" style="--t1:#c9b6a0;--t2:#a9bccb">photo</div><div class="bg-tile-name">Paris</div><div class="bg-tile-sub">Eiffel Tower</div></div>
+        <div class="bg-tile"><div class="bg-tile-img" style="--t1:#5b5f7a;--t2:#d4a9b5">photo</div><div class="bg-tile-name">Tokyo</div><div class="bg-tile-sub">Shibuya at night</div></div>
+        <div class="bg-tile"><div class="bg-tile-img" style="--t1:#7fa3c4;--t2:#e3d6c2">photo</div><div class="bg-tile-name">Sydney</div><div class="bg-tile-sub">Opera House</div></div>
+        <div class="bg-tile"><div class="bg-tile-img" style="--t1:#cfa77f;--t2:#8fb0c9">photo</div><div class="bg-tile-name">Rome</div><div class="bg-tile-sub">Colosseum</div></div>
+      </div>
+      <button class="bg-save">Use this background</button>
+    </div>
+  </div>
+</template>
+
+<script>
+  const q = new URLSearchParams(location.search);
+  const shot = q.get('shot');
+  const figs = [...document.querySelectorAll('figure')];
+  if (shot) { document.body.classList.add('shot'); figs[+shot - 1]?.classList.add('on'); }
+  document.querySelectorAll('[data-phone]').forEach(p => {
+    p.appendChild(document.getElementById('profileTpl').content.cloneNode(true));
+    const cls = p.dataset.cover; if (cls) p.querySelector('.pf-cover').classList.add(cls);
+    const sheet = p.dataset.sheet;
+    if (sheet) p.appendChild(document.getElementById(sheet === 'bg' ? 'bgSheetTpl' : 'photoSheetTpl').content.cloneNode(true));
+  });
+</script>
+</body>
+</html>

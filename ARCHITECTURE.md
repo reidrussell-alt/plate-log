@@ -76,6 +76,9 @@ graph TD
     ProgressTab --> Charts[Per-muscle Charts\n10 / 20 / 30 / All range]
     Charts --> EditModal[Edit Past Session Modal]
 
+    ProfileTab --> ProfileHeader[Header: cover, profile photo, name]
+    ProfileHeader -->|Tap photo| PhotoSheet[Take photo / Choose / Remove\nthen crop]
+    ProfileHeader -->|Cover button| BgPicker[Background picker\nCities / Nature / None]
     ProfileTab --> ProfileSection[Profile: name, mode]
     ProfileTab --> TimerSection[Workout: rest timer, duration, vibrate]
     ProfileTab --> DataSection[Data: export, import, reset]
@@ -105,6 +108,8 @@ graph LR
         restTimer.js
         sessionBanner.js
         healthkit.js
+        profilePhoto.js
+        backgroundPicker.js
     end
 
     subgraph Shared
@@ -114,6 +119,8 @@ graph LR
         charts.js
         exerciseLibrary.js
         programTemplates.js
+        media.js
+        backgrounds.js
     end
 
     app.js --> home.js
@@ -129,6 +136,8 @@ graph LR
     app.js --> sessionBanner.js
     app.js --> healthkit.js
     app.js --> data.js
+    app.js --> profilePhoto.js
+    app.js --> backgroundPicker.js
 
     home.js --> data.js
     home.js --> session.js
@@ -160,6 +169,16 @@ graph LR
     settings.js --> restTimer.js
     settings.js --> healthkit.js
     settings.js --> utils.js
+    settings.js --> media.js
+    settings.js --> backgrounds.js
+    settings.js --> backgroundPicker.js
+
+    backgroundPicker.js --> backgrounds.js
+    backgroundPicker.js --> data.js
+    backgroundPicker.js --> utils.js
+
+    profilePhoto.js --> media.js
+    profilePhoto.js --> utils.js
 
     onboarding.js --> data.js
     onboarding.js --> programTemplates.js
@@ -174,6 +193,7 @@ graph LR
 
     data.js --> utils.js
     data.js --> program.js
+    data.js --> media.js
     program.js --> exerciseLibrary.js
     programTemplates.js --> exerciseLibrary.js
     charts.js --> utils.js
@@ -189,17 +209,21 @@ graph LR
 | `home.js` | `data.js`, `session.js` | Home tab. Week streak, readiness strip (48h rule), split progress grid (3 cell states: completed/today/future), momentum row (most recent PR computed from history + coaching via `getSuggestion`), yesterday card with volume, stat footer. |
 | `myplans.js` | `data.js`, `programTemplates.js`, `home.js` (next day) | My Plans tab — program management workshop only (no Start buttons). Active program day cards with exercise preview + chevron → program builder. Library section with Set Active / Duplicate / Delete overflow. |
 | `program.js` | `exerciseLibrary.js` | Static data: original 4-day split, `MUSCLE_GROUPS` mapping (covers all exercise library IDs), display metadata. |
-| `data.js` | `utils.js`, `program.js` | `state` object (profile, programs, history, customExercises, currentSession). `loadData()` with v2→v3→v4→v5 migrations (`migrateToLatest()`), `applyImportedData()` shared by both import paths, `saveData()`, `saveCurrentSession()`, `exportData()`, `importData()`. |
+| `data.js` | `utils.js`, `program.js`, `media.js` | `state` object (profile, programs, history, customExercises, currentSession). `loadData()` with v2→v3→v4→v5 migrations (`migrateToLatest()`), `applyImportedData()` shared by both import paths, `saveData()`, `saveCurrentSession()`, `exportData()` (includes the profile photo), `importData()`. |
 | `utils.js` | _(none)_ | `todayDateString()`, `isoDateOnly()`, `formatDate()`, `formatDateShort()`, `showToast()`, `showConfirm()`, `showPrompt()`. |
 | `exerciseLibrary.js` | _(none)_ | 127 exercises with id, name, muscleGroup, loadType. `MUSCLE_GROUP_ORDER`, `MUSCLE_GROUP_META`, `getExerciseById()` and search helpers. |
 | `programTemplates.js` | `exerciseLibrary.js` | 6 program templates (3-day full body, 4-day upper/lower, 4-day PPL, 5-day PPL, 6-day PPL 2×, 5-day bro split). `getTemplateById()`. |
 | `onboarding.js` | `data.js`, `programTemplates.js`, `utils.js` | Multi-step new-user onboarding, opened from the welcome screen's button: name → mode → template/track-as-you-go → save, then Home. Also handles backup import during onboarding. |
-| `settings.js` | `data.js`, `programTemplates.js`, `myplans.js`, `restTimer.js`, `healthkit.js`, `utils.js` | Profile tab: stats card, profile editing, rest timer settings, HealthKit toggles, data backup/restore. Also holds program activate/duplicate/delete actions used by My Plans. |
+| `settings.js` | `data.js`, `programTemplates.js`, `myplans.js`, `restTimer.js`, `healthkit.js`, `utils.js`, `media.js`, `backgrounds.js`, `backgroundPicker.js` | Profile tab: header (cover — orange fade or the chosen background photo, with its credit at the bottom of the page — centred profile photo, name, member since, mode), stats card, profile editing, rest timer settings, HealthKit toggles, data backup/restore. Also holds program activate/duplicate/delete actions used by My Plans. |
 | `session.js` | `data.js`, `exerciseLibrary.js`, `exerciseSelector.js`, `restTimer.js`, `healthkit.js`, `utils.js` | Structured and TAYG session lifecycle. `startSession()`, `startTrackAsYouGoWorkout()`, `renderSession()`, add/replace/remove exercise, add/remove set, reorder, `getSuggestion()` (progressive overload), `getLastPerformance()`. In-progress session persisted separately so it survives app close. |
 | `programBuilder.js` | `data.js`, `exerciseSelector.js`, `utils.js` | Full-screen program editor overlay. `showProgramBuilder(editingId, focusDayId?)` — optional `focusDayId` pre-expands and scrolls to the target day. Drag-to-reorder via Sortable.js. Per-exercise sets and rep type (range / fixed / AMRAP). |
 | `exerciseSelector.js` | `exerciseLibrary.js`, `data.js`, `utils.js` | Modal for picking exercises (search, muscle filter) or creating custom ones (saved to `customExercises`). |
 | `restTimer.js` | _(none)_ | Floating rest timer pill. Auto-starts after set logged; stays accurate in the background (`reconcileTimer()`); traffic-light states; optional vibrate. |
 | `sessionBanner.js` | `data.js` | Persistent banner shown on non-session tabs when a session is in progress. |
+| `profilePhoto.js` | `media.js`, `utils.js` | Profile photo options sheet (take photo with the front camera, choose from library, remove), crop step (drag + zoom in a circle), saves a 400×400 JPEG. |
+| `backgroundPicker.js` | `data.js`, `backgrounds.js`, `utils.js` | Background sheet for the Profile cover: Cities / Nature / None tabs, photo grid, live preview on the cover, photo credit, saves `profile.background`. |
+| `backgrounds.js` | _(none)_ | The 36 curated cover photos (18 cities, 18 nature) from Wikimedia Commons: id, label, photographer, licence. Files in `img/backgrounds/full/` (1200px) and `img/backgrounds/thumbs/` (480×300); rebuilt by `scripts/backgrounds/`. |
+| `media.js` | _(none)_ | Stores the profile photo on the device in IndexedDB (`plateLogMedia` database), separate from localStorage. Load/save/remove, and data-URL conversion for backups. |
 | `healthkit.js` | _(none)_ | iOS Capacitor HealthKit integration (steps, weight). No-ops on non-iOS. |
 | `progress.js` | `data.js`, `program.js`, `exerciseLibrary.js`, `utils.js`, `charts.js` | Stats, calendar (dynamic colors by dayId hash), per-muscle charts with 10/20/30/All range (re-renders only the changed chart), sets-per-session and bodyweight charts, session history, edit modals. |
 | `charts.js` | `utils.js` | `drawSingleLineChart()` — canvas-based line chart. |
@@ -262,6 +286,7 @@ erDiagram
         string name
         string createdAt
         string trainingMode
+        string background
     }
 
     PROGRAM {
@@ -330,6 +355,8 @@ erDiagram
 - v3 → v4: `leg_ext_a` / `leg_ext_b` → `leg_extension`
 - v4 → v5: old split-specific exercise IDs remapped to exercise-library IDs in programs and history
 
+**Cover background:** `profile.background` holds a photo id from `backgrounds.js` (or is missing/null for the orange fade). Optional, so no migration.  
+**Profile photo:** kept in IndexedDB (database `plateLogMedia`, store `images`, key `avatar`) as a 400×400 JPEG, not in localStorage. Backups include it as an `avatar` data URL; restoring a backup without one keeps the current photo; Reset clears it.  
 **Other localStorage keys:** `liftTrackerSession` (in-progress workout), `liftTimerSettings`, `liftHealthSettings`, `liftTrackerChartRanges`.  
 **Personal records** are not stored — Home computes the most recent PR from history each render.
 
@@ -483,7 +510,8 @@ flowchart TD
 
 **Remote:** `https://github.com/reidrussell-alt/plate-log.git` (live at `https://reidrussell-alt.github.io/plate-log/`; the old `lifting-tracker-Application` repository is kept as an archive)  
 **Auth:** Personal Access Token (GitHub no longer accepts passwords)  
-**Current SW cache version:** `lift-tracker-v29`  
+**Current SW cache version:** `lift-tracker-v30`  
+**Background photos** are not precached: the service worker keeps them in a separate `plate-log-backgrounds-v1` cache as they are viewed, and that cache survives app updates.  
 **Auto-update:** when a new service worker takes control, the app reloads itself. On iOS a delete + re-add is still the reliable way to force fresh code.
 
 ---
@@ -514,6 +542,7 @@ flowchart TD
 
 | Date | Change |
 |------|--------|
+| 2026-11-16 | The Profile tab gets a new header: a soft orange cover across the top, your profile photo in a circle in the middle, and your name with when you joined and how you train underneath. Tap the photo to take a selfie or pick one from your phone, then move and zoom it to fit the circle; you can remove it too. The photo stays on your phone, is included when you export a backup, and comes back when you restore one. A button on the cover opens a library of 36 background photos — 18 famous cities and landmarks around the world and 18 nature scenes (waterfalls, mountains, forests, deserts, northern lights) — with a live preview before you save; the photographer is credited under the photo and at the bottom of the page. Photos download the first time you see them and then work offline; SW bumped to v30 |
 | 2026-11-16 | First-time users now see the same welcome screen as everyone else (plate logo, turning dots, "Welcome in") instead of the old "Welcome to Lift Tracker" page with a weightlifter emoji. Tapping "Let's get moving" walks them through setup — their name, then structured plan or track as you go — and lands them on Home. Emoji removed from the setup steps; SW bumped to v29 |
 | 2026-11-16 | Home gets a soft burnt-orange glow at the top of the screen that fades to white by the "This week" card, inspired by the Copilot app. The date and day stay black, and the Start button turns white with orange text so it stands out against the colour. Only Home has it; the other tabs stay plain white |
 | 2026-11-16 | Push days and the Chest chart change from orange to plum, and the Core chart from amber to teal, so orange only ever means the main action, workout progress or the logo. Remove, discard, delete and form-error messages that had borrowed the push colour now use the red danger colour everywhere. The home streak badge and a few labels lose their amber tint |

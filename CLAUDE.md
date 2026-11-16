@@ -33,6 +33,8 @@ lift-tracker/
 ├── manifest.json           # PWA manifest (name, colours, icon list)
 ├── icons/                  # App icon PNGs: apple-touch-icon (iOS), 192/512 + maskable (manifest), favicon
 ├── scripts/make_icons.py   # Regenerates everything in icons/ (needs Pillow)
+├── scripts/backgrounds/    # Finds, downloads and resizes the cover photos (Wikimedia Commons)
+├── img/backgrounds/        # Cover photos: full/ (1200px) and thumbs/ (480×300)
 ├── service-worker.js       # Cache-first SW; bump CACHE_NAME version on every deploy
 ├── css/
 │   └── main.css            # All styles; CSS variables in :root
@@ -50,6 +52,10 @@ lift-tracker/
     ├── programBuilder.js   # Full-screen program editor (drag-to-reorder, sets/rep ranges)
     ├── exerciseSelector.js # Exercise picker modal (search, filter by muscle, create custom)
     ├── healthkit.js        # iOS Capacitor HealthKit (steps, weight); no-ops elsewhere
+    ├── profilePhoto.js     # Profile photo sheet (take / choose / remove) + crop step
+    ├── media.js            # Profile photo storage in IndexedDB (no DOM)
+    ├── backgroundPicker.js # Profile cover background sheet (Cities / Nature / None)
+    ├── backgrounds.js      # 36 curated cover photos + credits (no DOM)
     ├── welcome.js          # Welcome/splash screen shown on every app open
     ├── data.js             # localStorage read/write; state; schema migrations
     ├── program.js          # Original 4-day split data + MUSCLE_GROUPS mapping (no DOM)
@@ -109,6 +115,8 @@ Other localStorage keys:
 - `liftHealthSettings` — HealthKit toggles
 - `liftTrackerChartRanges` — chosen range (10/20/30/All) per Progress chart
 
+The profile photo is **not** in localStorage: `media.js` keeps it in IndexedDB (`plateLogMedia` → `images` → `avatar`, a 400×400 JPEG). Export adds it to the backup as `avatar` (a data URL); import restores it; Reset removes it.
+
 ```js
 {
   version: 5,
@@ -116,7 +124,8 @@ Other localStorage keys:
   profile: {
     name: "Reid",
     createdAt: "2026-05-04T...",
-    trainingMode: "structured"   // "structured" | "trackAsYouGo"
+    trainingMode: "structured",  // "structured" | "trackAsYouGo"
+    background: "london"         // optional: Profile cover photo id from backgrounds.js; null/missing = orange fade
   },
   programs: [
     {
@@ -166,7 +175,7 @@ Other localStorage keys:
 
 New users (no localStorage) see the same welcome screen; its button opens the onboarding steps (name → training mode → template / track as you go / import) instead of Home.
 
-**Backup/restore:** Export downloads a JSON file (profile, programs, history, custom exercises). Both import paths (onboarding and Profile → Data) migrate it, then `applyImportedData()` replaces history, profile and programs and merges custom exercises (the backup wins on matching IDs).
+**Backup/restore:** Export downloads a JSON file (profile, programs, history, custom exercises, profile photo). Both import paths (onboarding and Profile → Data) migrate it, then `applyImportedData()` replaces history, profile and programs and merges custom exercises (the backup wins on matching IDs).
 
 ---
 
@@ -283,8 +292,10 @@ Welcome screen shown on every app open (design: `design-reference/patterns.md`, 
 ## Service worker
 
 - Cache name must be bumped (v1 → v2 → v3...) on **every deploy** that changes JS/CSS files
-- Currently: `lift-tracker-v29`
+- Currently: `lift-tracker-v30`
 - Every JS file must be listed in the `ASSETS` array — add new modules there, remove deleted ones
+- Cover photos (`img/backgrounds/`) are **not** in `ASSETS`: they go in a separate `plate-log-backgrounds-v1` cache when first viewed, kept across versions
+- Cover photos are from Wikimedia Commons (CC BY / BY-SA / CC0); their licences require the credit line shown in the picker and under the Profile page — keep it
 - SW is **disabled on localhost** — the hostname check in `app.js` prevents re-registration during development
 - When a new SW takes control, `app.js` reloads the page automatically (`controllerchange`)
 - On iOS, updating the PWA requires deleting the home screen app and re-adding it from Safari

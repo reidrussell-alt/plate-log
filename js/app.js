@@ -10,6 +10,8 @@ import { showOnboarding, hideOnboarding, obGoTo, obSelectMode, obSelectTemplate,
 import { openExerciseSelector, closeExerciseSelector, exSelFilterMuscle, exSelSearch, exSelPickExercise, exSelShowCreate, exSelCancelCreate, exSelConfirmCreate } from './exerciseSelector.js';
 import { showProgramBuilder, closeProgramBuilder, pbUpdateName, pbSelectDayCount, pbToggleDay, pbSetDayName, pbAddExercise, pbEditExercise, pbRemoveExercise, pbSetRepType, pbSaveProgram, pbConfirmSetsReps, pbCancelSetsReps, pbIncrSets, pbDecrSets, pbIncrRepMin, pbDecrRepMin, pbIncrRepMax, pbDecrRepMax, pbIncrFixed, pbDecrFixed } from './programBuilder.js';
 import { renderHome, homeStartWorkout, homeOpenYesterday } from './home.js';
+import { showBackgroundPicker, closeBackgroundPicker, setBackgroundTab, selectBackground, saveBackground } from './backgroundPicker.js';
+import { showProfilePhotoOptions, closeProfilePhotoOptions, pickProfilePhoto, removeProfilePhoto, zoomPhotoCrop, cancelPhotoCrop, confirmPhotoCrop } from './profilePhoto.js';
 import { renderMyPlans, showCreatePlanSheet, myPlansToggleActions } from './myplans.js';
 import { state } from './data.js';
 
@@ -101,12 +103,24 @@ window.deleteSession = deleteSession;
 window._liveSessionIdx = _liveSessionIdx;
 
 window.exportData = exportData;
-window.importData = (event) => importData(event, () => renderMyPlans());
+window.importData = (event) => importData(event, () => { renderMyPlans(); renderSettings(); });
 window.openResetModal = openResetModal;
 window.closeResetModal = closeResetModal;
 window.confirmReset = () => { confirmReset(); switchTab('home'); };
 
 window.renderSettings = renderSettings;
+window.showProfilePhotoOptions = showProfilePhotoOptions;
+window.closeProfilePhotoOptions = closeProfilePhotoOptions;
+window.pickProfilePhoto = pickProfilePhoto;
+window.removeProfilePhoto = removeProfilePhoto;
+window.zoomPhotoCrop = zoomPhotoCrop;
+window.cancelPhotoCrop = cancelPhotoCrop;
+window.confirmPhotoCrop = confirmPhotoCrop;
+window.showBackgroundPicker = showBackgroundPicker;
+window.closeBackgroundPicker = () => closeBackgroundPicker();
+window.setBackgroundTab = setBackgroundTab;
+window.selectBackground = selectBackground;
+window.saveBackground = saveBackground;
 window.editProfileName = editProfileName;
 window.switchTrainingMode = switchTrainingMode;
 window.setActiveProgram = setActiveProgram;

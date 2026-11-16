@@ -2,8 +2,47 @@ import { state, saveData, openResetModal } from './data.js';
 import { PROGRAM_TEMPLATES, buildProgramFromTemplate } from './programTemplates.js';
 import { MAX_CUSTOM_PROGRAMS } from './myplans.js';
 import { showToast, showConfirm, showPrompt } from './utils.js';
+import { getCachedAvatarUrl, isAvatarLoaded, loadAvatar } from './media.js';
+import { getBackgroundById, backgroundFullUrl } from './backgrounds.js';
+import { backgroundCreditHtml } from './backgroundPicker.js';
 import { getTimerSettings, setTimerEnabled, setTimerDuration, setTimerAlertEnabled, formatRestDuration } from './restTimer.js';
 import { isHealthKitAvailable, getHealthSettings, setHealthEnabled, setReadSteps, setReadWeight, requestHealthPermissions } from './healthkit.js';
+
+function escapeHtml(str) {
+  return String(str ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+// Cover (orange fade for now) with the profile photo centred half over it, then name and a line of facts.
+function buildProfileHeader(profile) {
+  const name = profile.name && profile.name !== '—' ? profile.name : '';
+  const createdAt = profile.createdAt ? new Date(profile.createdAt) : null;
+  const facts = [];
+  if (createdAt) facts.push(`Member since ${createdAt.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}`);
+  facts.push(profile.trainingMode === 'trackAsYouGo' ? 'Track as you go' : 'Structured plan');
+
+  const photoUrl = getCachedAvatarUrl();
+  const initial = name ? escapeHtml(name.trim()[0].toUpperCase()) : '';
+  const avatarInner = photoUrl
+    ? `<img src="${photoUrl}" alt="">`
+    : (initial || `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`);
+
+  const bg = getBackgroundById(profile.background);
+  return `
+    <div class="pf-cover${bg ? ' pf-cover--photo' : ''}"${bg ? ` style="background-image:url('${backgroundFullUrl(bg)}')"` : ''}>
+      <button type="button" class="pf-cover-btn" onclick="showBackgroundPicker()" aria-label="Change background">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+      </button>
+    </div>
+    <button type="button" class="pf-avatar-wrap" onclick="showProfilePhotoOptions()" aria-label="${photoUrl ? 'Change profile photo' : 'Add a profile photo'}">
+      <span class="pf-avatar" id="pfAvatar">${avatarInner}</span>
+      <span class="pf-avatar-badge" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+      </span>
+    </button>
+    ${name ? `<div class="pf-name">${escapeHtml(name)}</div>` : ''}
+    <div class="pf-meta">${facts.join(' · ')}</div>
+  `;
+}
 
 function buildProfileStatsCard(profile) {
   const history = state.history || [];
@@ -12,10 +51,6 @@ function buildProfileStatsCard(profile) {
   const createdAt = profile.createdAt ? new Date(profile.createdAt) : null;
   const weeksActive = createdAt
     ? Math.max(1, Math.ceil((new Date() - createdAt) / (7 * 24 * 60 * 60 * 1000)))
-    : '—';
-
-  const memberSince = createdAt
-    ? createdAt.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
     : '—';
 
   // Most frequently logged workout day title
@@ -29,10 +64,6 @@ function buildProfileStatsCard(profile) {
 
   return `
     <div class="profile-stats-card">
-      <div class="profile-stats-header">
-        <div class="profile-stats-name">${profile.name}</div>
-        <div class="profile-stats-since">Member since ${memberSince}</div>
-      </div>
       <div class="profile-stats-grid">
         <div class="profile-stat">
           <div class="profile-stat-value">${totalSessions}</div>
@@ -43,7 +74,7 @@ function buildProfileStatsCard(profile) {
           <div class="profile-stat-label">Weeks Active</div>
         </div>
         <div class="profile-stat profile-stat--wide">
-          <div class="profile-stat-value profile-stat-value--sm">${favLabel}</div>
+          <div class="profile-stat-value profile-stat-value--sm">${escapeHtml(favLabel)}</div>
           <div class="profile-stat-label">Fav. Workout</div>
         </div>
       </div>
@@ -58,7 +89,7 @@ export function renderSettings() {
   const profile = state.profile || { name: '—', trainingMode: 'structured' };
   const isStructured = profile.trainingMode === 'structured';
 
-  let html = buildProfileStatsCard(profile) + `
+  let html = buildProfileHeader(profile) + buildProfileStatsCard(profile) + `
     <div class="settings-section">
       <div class="settings-section-title">Profile</div>
       <div class="settings-row">
@@ -182,9 +213,13 @@ export function renderSettings() {
     <div class="reset-section">
       <button class="reset-link" onclick="openResetModal()">↻ Reset All Data</button>
     </div>
+    ${getBackgroundById(profile.background) ? `<div class="pf-cover-credit">Cover ${backgroundCreditHtml(getBackgroundById(profile.background)).replace(/^Photo/, 'photo')}</div>` : ''}
   `;
 
   el.innerHTML = html;
+
+  // The photo is read from the device the first time; show it once it arrives
+  if (!isAvatarLoaded()) loadAvatar().then(url => { if (url) renderSettings(); });
 }
 
 function getTotalExercises(prog) {

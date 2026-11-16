@@ -1,5 +1,6 @@
 import { showToast, showConfirm } from './utils.js';
 import { program, MUSCLE_GROUPS } from './program.js';
+import { getAvatarDataUrl, restoreAvatarFromDataUrl, removeAvatar } from './media.js';
 
 export const state = {
   profile: null,
@@ -172,6 +173,8 @@ export function applyImportedData(data) {
       ...data.customExercises
     ];
   }
+  // A backup without a photo leaves the current one alone
+  if (data.avatar) restoreAvatarFromDataUrl(data.avatar);
   saveData();
 }
 
@@ -202,8 +205,9 @@ export function loadData() {
   }
 }
 
-export function exportData() {
+export async function exportData() {
   if (state.history.length === 0) { showToast('No data to export yet'); return; }
+  const avatar = await getAvatarDataUrl();
   const exportObj = {
     app: 'lift-tracker',
     version: SCHEMA_VERSION,
@@ -211,7 +215,8 @@ export function exportData() {
     profile: state.profile,
     programs: state.programs,
     history: state.history,
-    customExercises: state.customExercises
+    customExercises: state.customExercises,
+    ...(avatar ? { avatar } : {})
   };
   const json = JSON.stringify(exportObj, null, 2);
   const blob = new Blob([json], { type: 'application/json' });
@@ -275,6 +280,7 @@ export function confirmReset() {
   state.editing = null;
   saveData();
   saveCurrentSession();
+  removeAvatar();
   closeResetModal();
   showToast('All data cleared');
 }
