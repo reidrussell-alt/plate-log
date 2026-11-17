@@ -1,6 +1,7 @@
 import { state } from './data.js';
 import { getSuggestion, getLastPerformance } from './session.js';
 import { buildProfileChip } from './profilePhoto.js';
+import { dayTitleBase } from './utils.js';
 
 export function renderHome() {
   const el = document.getElementById('homePage');
@@ -362,12 +363,12 @@ function getDayType(session) {
 
 // "Upper A - Push" → "Upper A"
 function abbreviateTitle(title) {
-  return (title || '').split(' - ')[0].trim();
+  return dayTitleBase(title || '').trim();
 }
 
 function abbreviateDay(title) {
   if (!title) return '·';
-  const base = title.split(' - ')[0].trim();
+  const base = dayTitleBase(title).trim();
   return base.split(' ').filter(Boolean).map(w => w[0].toUpperCase()).join('');
 }
 

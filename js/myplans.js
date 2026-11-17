@@ -2,6 +2,7 @@ import { state } from './data.js';
 import { PROGRAM_TEMPLATES } from './programTemplates.js';
 import { getSuggestedDay } from './home.js';
 import { buildProfileChip } from './profilePhoto.js';
+import { dayTitleBase } from './utils.js';
 
 export const MAX_CUSTOM_PROGRAMS = 5;
 
@@ -48,7 +49,7 @@ function buildHeader() {
 function buildActiveSection(program) {
   const next = program.days.length ? getSuggestedDay(program) : null;
   const dayCards = program.days.map((d, i) => buildDayCard(d, i, program.id, next && d.id === next.id)).join('');
-  const nextText = next ? ` · next up is ${next.name.split(' - ')[0]}` : '';
+  const nextText = next ? ` · next up is ${dayTitleBase(next.name)}` : '';
 
   return `
     <div class="myplans-section-label">Active</div>

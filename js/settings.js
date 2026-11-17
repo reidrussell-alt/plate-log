@@ -1,7 +1,7 @@
 import { state, saveData, openResetModal } from './data.js';
 import { PROGRAM_TEMPLATES, buildProgramFromTemplate } from './programTemplates.js';
 import { MAX_CUSTOM_PROGRAMS } from './myplans.js';
-import { showToast, showConfirm, showPrompt, escapeHtml } from './utils.js';
+import { showToast, showConfirm, showPrompt, escapeHtml, dayTitleBase } from './utils.js';
 import { getCachedAvatarUrl, isAvatarLoaded, loadAvatar } from './media.js';
 import { getBackgroundById, backgroundFullUrl } from './backgrounds.js';
 import { backgroundCreditHtml } from './backgroundPicker.js';
@@ -58,7 +58,7 @@ function buildProfileStatsCard(profile) {
     titleCounts[key] = (titleCounts[key] || 0) + 1;
   }
   const favDay = Object.keys(titleCounts).sort((a, b) => titleCounts[b] - titleCounts[a])[0];
-  const favLabel = favDay ? favDay.split(' - ')[0] : '—';
+  const favLabel = favDay ? dayTitleBase(favDay) : '—';
 
   return `
     <div class="profile-stats-card">
