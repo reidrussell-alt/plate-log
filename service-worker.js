@@ -10,6 +10,8 @@ const ASSETS = [
   './js/session.js',
   './js/overload.js',
   './js/progress.js',
+  './js/calendar.js',
+  './js/historyEdit.js',
   './js/data.js',
   './js/charts.js',
   './js/utils.js',

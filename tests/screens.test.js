@@ -285,7 +285,8 @@ describe('Overlays', () => {
   let openCalendarDay, openManualWorkoutSelect, openEditModal, openSessionEdit;
   let showProgramBuilder, closeProgramBuilder, pbToggleDay;
   beforeAll(async () => {
-    ({ openCalendarDay, openManualWorkoutSelect, openEditModal, openSessionEdit } = await import('../js/progress.js'));
+    ({ openCalendarDay, openManualWorkoutSelect } = await import('../js/calendar.js'));
+    ({ openEditModal, openSessionEdit } = await import('../js/historyEdit.js'));
     ({ showProgramBuilder, closeProgramBuilder, pbToggleDay } = await import('../js/programBuilder.js'));
   });
 

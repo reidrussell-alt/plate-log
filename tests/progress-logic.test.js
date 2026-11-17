@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { state } from '../js/data.js';
-import { analyzeTrend, _liveSessionIdx } from '../js/progress.js';
+import { analyzeTrend } from '../js/progress.js';
+import { _liveSessionIdx } from '../js/calendar.js';
 import { resetState, session } from './helpers.js';
 
 beforeEach(resetState);

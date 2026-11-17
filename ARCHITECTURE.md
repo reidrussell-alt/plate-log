@@ -100,6 +100,8 @@ graph LR
         myplans.js
         session.js
         progress.js
+        calendar.js
+        historyEdit.js
         welcome.js
         settings.js
         onboarding.js
@@ -131,6 +133,8 @@ graph LR
     app.js --> programActions.js
     app.js --> session.js
     app.js --> progress.js
+    app.js --> calendar.js
+    app.js --> historyEdit.js
     app.js --> welcome.js
     app.js --> settings.js
     app.js --> onboarding.js
@@ -168,6 +172,17 @@ graph LR
     progress.js --> exerciseLibrary.js
     progress.js --> utils.js
     progress.js --> charts.js
+    progress.js --> calendar.js
+
+    calendar.js --> data.js
+    calendar.js --> utils.js
+    calendar.js --> charts.js
+    calendar.js -.->|renderProgress| progress.js
+
+    historyEdit.js --> data.js
+    historyEdit.js --> utils.js
+    historyEdit.js --> progress.js
+    historyEdit.js --> calendar.js
 
     welcome.js --> data.js
     welcome.js --> utils.js
@@ -248,7 +263,9 @@ graph LR
 | `backgrounds.js` | _(none)_ | The 36 curated cover photos (18 cities, 18 nature) from Wikimedia Commons: id, label, photographer, licence. Files in `img/backgrounds/full/` (1200px) and `img/backgrounds/thumbs/` (480×300); rebuilt by `scripts/backgrounds/`. |
 | `media.js` | _(none)_ | Stores the profile photo on the device in IndexedDB (`plateLogMedia` database), separate from localStorage. Load/save/remove, and data-URL conversion for backups. |
 | `healthkit.js` | _(none)_ | iOS Capacitor HealthKit integration (steps, weight). No-ops on non-iOS. |
-| `progress.js` | `data.js`, `program.js`, `exerciseLibrary.js`, `utils.js`, `charts.js` | Stats, calendar (dynamic colors by dayId hash), per-muscle charts with 10/20/30/All range (re-renders only the changed chart), sets-per-session and bodyweight charts, session history, edit modals. |
+| `progress.js` | `data.js`, `program.js`, `exerciseLibrary.js`, `utils.js`, `charts.js`, `profilePhoto.js`, `calendar.js` | Progress tab: stats, per-muscle charts with 10/20/30/All range (re-renders only the changed chart), sets-per-session and bodyweight charts, session history list. |
+| `calendar.js` | `data.js`, `utils.js`, `charts.js`, `progress.js` | Progress calendar: month state and navigation, month grid (dynamic colours by dayId hash), calendar-day sheet, add-workout picker, `_liveSessionIdx()`. Imports `renderProgress` back from `progress.js` (deliberate, load-safe cycle). |
+| `historyEdit.js` | `data.js`, `utils.js`, `progress.js`, `calendar.js` | Editing past workouts: per-exercise edit modal, whole-workout edit modal (draft copy), delete workout. |
 | `charts.js` | `utils.js` | `drawSingleLineChart()` — canvas-based line chart. |
 | `welcome.js` | `data.js`, `utils.js` | Welcome screen: plate logo, then a turning canvas disc of dots, "Welcome in, {name}" and a "Let's get moving" button that goes to Home. Respects reduced motion. |
 

@@ -51,7 +51,9 @@ lift-tracker/
     ├── overload.js         # Progressive overload logic: last performance, suggestion, last note (no DOM)
     ├── sessionBanner.js    # "Session in progress" banner shown on other tabs
     ├── restTimer.js        # Floating rest timer pill (background-accurate, vibrate alert)
-    ├── progress.js         # Progress tab: stats, calendar, per-muscle charts + range filters, edit modals
+    ├── progress.js         # Progress tab: stats, per-muscle charts + range filters, history list
+    ├── calendar.js         # Progress calendar: month grid + navigation, calendar-day sheet, add-workout picker
+    ├── historyEdit.js      # Edit past workouts: per-exercise edit modal, whole-workout edit modal, delete workout
     ├── charts.js           # Canvas chart drawing utility
     ├── settings.js         # Profile tab: profile, rest timer, HealthKit, data backup
     ├── programActions.js   # Program actions (set active, delete, duplicate program/template) + custom-plan limit
@@ -339,10 +341,18 @@ Welcome screen shown on every app open (design: `design-reference/patterns.md`, 
 - Calls `window.switchTab('home')` after finishing a session
 
 ### `progress.js`
-- Module-level `calendarYear` / `calendarMonth` state for calendar navigation
-- `renderCalendar()` — private; monthly grid with workout dots, colors derived from the day
-- `navigateCalendar(dir)` — exported, bound to window, called by calendar arrow buttons
+- `renderProgress()` — stats row, calendar (from `calendar.js`), per-muscle charts, sets and bodyweight charts
 - `setChartRange()` — 10/20/30/All quick filter per chart; re-renders only that chart
+
+### `calendar.js`
+- Module-level `calendarYear` / `calendarMonth` state for calendar navigation
+- `renderCalendar()` — returns the monthly grid HTML (workout dots, colours derived from the day); used by `renderProgress()`
+- `navigateCalendar(dir)` — bound to window, called by calendar arrow buttons
+- `openCalendarDay()` / `openManualWorkoutSelect()` — the shared `calendarDayModal` sheet; `_liveSessionIdx()` finds a workout by date + day (BUGS H5)
+- Imports `renderProgress` from `progress.js`, which imports `renderCalendar` back: a deliberate cycle, safe because neither is called at load time
+
+### `historyEdit.js`
+- `openEditModal()` (one exercise of a past workout) and `openSessionEdit()` (whole workout, edited as a draft), their save/delete handlers, and `deleteSession()`
 
 ### `data.js`
 - `importData(event, onSuccess)` — calls optional `onSuccess` callback after a successful import; the caller (`app.js`) is responsible for any UI updates
