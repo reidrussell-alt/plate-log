@@ -239,12 +239,6 @@ export function renderProgress() {
   const totalSets = state.history.reduce((s, h) =>
     s + h.exercises.reduce((es, ex) => es + ex.sets.length, 0), 0);
 
-  const sessionsByDay = {};
-  state.history.forEach(h => {
-    if (!sessionsByDay[h.dayId]) sessionsByDay[h.dayId] = { count: 0, title: h.dayTitle || h.dayId };
-    sessionsByDay[h.dayId].count++;
-  });
-
   const mostRecent = [...state.history].reverse().find(h => h.bw);
   const currentBw = mostRecent?.bw || '—';
 
@@ -438,12 +432,6 @@ export function renderBwChart(bwData) {
   if (!canvas) return;
   const dataPoints = bwData.map(s => ({ date: s.date, bw: parseFloat(s.bw) }));
   drawSingleLineChart(canvas, dataPoints, 'bw', cssVar('--text-secondary', '#3f454b'));
-}
-
-export function getMostTrainedDay(sessionsByDay) {
-  if (!Object.keys(sessionsByDay).length) return '—';
-  const best = Object.values(sessionsByDay).reduce((a, b) => b.count > a.count ? b : a);
-  return best.count > 0 ? best.title : '—';
 }
 
 export function analyzeTrend(exerciseData) {

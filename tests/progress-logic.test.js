@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { state } from '../js/data.js';
-import { analyzeTrend, getMostTrainedDay, _liveSessionIdx } from '../js/progress.js';
+import { analyzeTrend, _liveSessionIdx } from '../js/progress.js';
 import { resetState, session } from './helpers.js';
 
 beforeEach(resetState);
@@ -33,15 +33,6 @@ describe('analyzeTrend — bodyweight', () => {
     expect(analyzeTrend(data(sets(['', 8]), sets(['', 11])))).toEqual({ label: '+3 reps', cls: 'trend-up', summary: '8 → 11 reps' });
     expect(analyzeTrend(data(sets(['', 8]), sets(['', 6])))).toEqual({ label: '-2 reps', cls: 'trend-flat', summary: '8 → 6 reps' });
     expect(analyzeTrend(data(sets(['', 8]), sets(['', 8])))).toEqual({ label: 'Steady', cls: 'trend-flat', summary: '8 reps top set' });
-  });
-});
-
-describe('getMostTrainedDay', () => {
-  it('returns the title with the most sessions; first wins a tie', () => {
-    expect(getMostTrainedDay({})).toBe('—');
-    expect(getMostTrainedDay({ a: { count: 2, title: 'A' }, b: { count: 5, title: 'B' } })).toBe('B');
-    expect(getMostTrainedDay({ a: { count: 3, title: 'A' }, b: { count: 3, title: 'B' } })).toBe('A');
-    expect(getMostTrainedDay({ a: { count: 0, title: 'A' } })).toBe('—');
   });
 });
 

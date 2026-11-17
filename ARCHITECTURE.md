@@ -397,7 +397,7 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    A[Switch to Progress Tab] --> B[View Stats\nSessions / Sets / BW / Most Trained]
+    A[Switch to Progress Tab] --> B[View Stats\nSessions / Sets / BW]
     B --> C[View Monthly Calendar\nColor-coded workout dots]
     C --> D[Navigate months\nwith arrow buttons]
     B --> E[Scroll to muscle group charts]
