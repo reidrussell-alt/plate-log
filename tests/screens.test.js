@@ -8,7 +8,7 @@
 // listed in that batch's handoff with its reason. Never run `vitest -u` across
 // the suite.
 import { describe, it, expect, beforeAll, beforeEach, afterEach, vi } from 'vitest';
-import { setNow, resetState, session, ex } from './helpers.js';
+import { setNow, resetState, session, ex, mountAppChrome } from './helpers.js';
 
 // Canvas drawing is stubbed: jsdom has no 2D context. The chart <canvas> elements
 // are still in the markup.
@@ -283,11 +283,11 @@ describe('Workout session', () => {
 
 describe('Overlays', () => {
   let openCalendarDay, openManualWorkoutSelect, openEditModal, openSessionEdit;
-  let showProgramBuilder, closeProgramBuilder, pbToggleDay;
+  let showProgramBuilder, closeProgramBuilder, pbToggleDay, pbSelectDayCount;
   beforeAll(async () => {
     ({ openCalendarDay, openManualWorkoutSelect } = await import('../js/calendar.js'));
     ({ openEditModal, openSessionEdit } = await import('../js/historyEdit.js'));
-    ({ showProgramBuilder, closeProgramBuilder, pbToggleDay } = await import('../js/programBuilder.js'));
+    ({ showProgramBuilder, closeProgramBuilder, pbToggleDay, pbSelectDayCount } = await import('../js/programBuilder.js'));
   });
 
   beforeEach(() => {
@@ -347,6 +347,97 @@ describe('Overlays', () => {
       showProgramBuilder('program_default', 'upperA');
       pbToggleDay('lowerB');
       await expectOverlay(document.getElementById('pbOverlay'), 'overlay-program-builder-empty-day-open');
+    });
+
+    // Day-count pills: pbSelectDayCount → _applyDayCount → _rerenderDayCards(true),
+    // the only path that redraws #pbDayPills (REFACTOR_PLAN 5.6). Pins today's
+    // behaviour with assertions rather than new snapshot files.
+    describe('day-count pills', () => {
+      const $ = id => document.getElementById(id);
+      const activePills = () => [...$('pbDayPills').querySelectorAll('.pb-day-pill.active')].map(b => b.textContent);
+      const pillLabels = () => [...$('pbDayPills').querySelectorAll('.pb-day-pill')].map(b => b.textContent);
+      const cardIds = () => [...$('pbDayCards').children].map(c => c.id);
+      const cardHtml = () => [...$('pbDayCards').children].map(c => c.outerHTML);
+      const NOW_MS = Date.parse(NOW);
+
+      it('opens with the program\'s day count active', () => {
+        showProgramBuilder('program_default', 'upperA');
+        expect(pillLabels()).toEqual(['3', '4', '5', '6', '7']);
+        expect(activePills()).toEqual(['4']);
+        expect(cardIds()).toEqual(['pbDay_upperA', 'pbDay_lowerA', 'pbDay_upperB', 'pbDay_lowerB']);
+      });
+
+      // The overlay with the pills and day cards emptied: everything the redraw must not touch.
+      const shell = () => {
+        const copy = $('pbOverlay').cloneNode(true);
+        copy.querySelector('#pbDayPills').innerHTML = '';
+        copy.querySelector('#pbDayCards').innerHTML = '';
+        return copy.outerHTML;
+      };
+
+      it('more days: pills and cards redraw; existing cards unchanged, new ones blank and collapsed', () => {
+        showProgramBuilder('program_default', 'upperA');
+        const before = cardHtml();
+        const shellBefore = shell();
+        pbSelectDayCount(6);
+        expect(activePills()).toEqual(['6']);
+        expect(pillLabels()).toEqual(['3', '4', '5', '6', '7']);
+        expect(cardIds()).toEqual([
+          'pbDay_upperA', 'pbDay_lowerA', 'pbDay_upperB', 'pbDay_lowerB',
+          `pbDay_day_${NOW_MS}_4`, `pbDay_day_${NOW_MS}_5`,
+        ]);
+        expect(cardHtml().slice(0, 4)).toEqual(before); // the open Upper A card stays open
+        const added = [...$('pbDayCards').children].slice(4);
+        expect(added.map(c => c.querySelector('.pb-day-label').textContent)).toEqual(['Day 5', 'Day 6']);
+        expect(added.map(c => c.querySelector('.pb-day-meta').textContent)).toEqual(['Tap to add exercises', 'Tap to add exercises']);
+        expect(added.every(c => c.getAttribute('onclick')?.startsWith('pbToggleDay('))).toBe(true); // collapsed variant
+        expect(shell()).toBe(shellBefore);
+      });
+
+      it('fewer days, dropped days empty: applies at once, no confirm', () => {
+        showProgramBuilder('program_default', 'upperA');
+        const shellBefore = shell();
+        pbSelectDayCount(3); // drops Lower B, which has no exercises
+        expect(activePills()).toEqual(['3']);
+        expect(cardIds()).toEqual(['pbDay_upperA', 'pbDay_lowerA', 'pbDay_upperB']);
+        expect(shell()).toBe(shellBefore);
+      });
+
+      it('picking the active count again does nothing', () => {
+        showProgramBuilder('program_default', 'upperA');
+        const html = $('pbOverlay').innerHTML;
+        pbSelectDayCount(4);
+        expect($('pbOverlay').innerHTML).toBe(html);
+      });
+
+      describe('fewer days, a dropped day has exercises', () => {
+        beforeEach(() => {
+          mountAppChrome(); // the confirm modal; new buttons each test
+          state.programs[0].days[3].exercises = [{ id: 'rdl', name: 'Romanian Deadlift', sets: 3, loadType: 'weight', repRangeMin: 8, repRangeMax: 10 }];
+          showProgramBuilder('program_default', 'upperA');
+          pbSelectDayCount(3);
+        });
+
+        it('asks first and changes nothing yet', () => {
+          expect($('confirmModal').classList.contains('active')).toBe(true);
+          expect($('confirmModalText').textContent).toBe('Day 4 (Lower B - Posterior) have exercises. Removing will delete them. Continue?');
+          expect($('confirmModalOk').textContent).toBe('Remove Days');
+          expect(activePills()).toEqual(['4']);
+          expect(cardIds()).toHaveLength(4);
+        });
+
+        it('Cancel keeps all four days', () => {
+          $('confirmModalCancel').click();
+          expect(activePills()).toEqual(['4']);
+          expect(cardIds()).toHaveLength(4);
+        });
+
+        it('OK redraws pills and cards with three days', () => {
+          $('confirmModalOk').click();
+          expect(activePills()).toEqual(['3']);
+          expect(cardIds()).toEqual(['pbDay_upperA', 'pbDay_lowerA', 'pbDay_upperB']);
+        });
+      });
     });
   });
 });
