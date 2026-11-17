@@ -1,5 +1,13 @@
 # Refactor plan
 
+## Refactor closed — 16 Nov 2026
+
+- **Batches done:** 0, 1, 2, 3, 4, 5 (as 5a and 5b), then a closing batch (BUGS.md locations updated, an import-cycle test, a program-builder day-count pills test). **Batch 6 deferred, not done** (6.2 was settled as a docs decision; 6.3 is safe to do later).
+- **Tests:** 91 before Batch 0 → 185 after the closing batch (174 at the end of 5b). No snapshot changed after Batch 0 created them.
+- **Files added:** `js/overload.js`, `js/stats.js`, `js/programActions.js` (Batch 3); `js/calendar.js`, `js/historyEdit.js` (5a). Tests: `window-bindings.test.js`, `screens.test.js` with 25 snapshot files, `program-actions.test.js`, `import.test.js` (Batch 0); `stats.test.js` (3.2); `import-cycles.test.js` (closing batch).
+- **Service worker:** `lift-tracker-v31` before the refactor → **`lift-tracker-v37`**. The closing batch changed no precached file, so no bump.
+- No behaviour, storage, or wording changes; every `BUGS.md` item is still open and pinned where it was.
+
 Audit of `js/` (23 modules, ~6,700 lines), `index.html` and `css/main.css` on branch
 `refactor/initial`, 16 Nov 2026. Read-only audit; nothing below has been done yet. Amended 16 Nov after review: decisions on 1.8 and 6.2, items 1.5, 2.5 and 6.5 removed (numbers kept stable, so gaps are intentional).
 
@@ -104,9 +112,9 @@ Split after the Batch 4 review into **5a** (5.1, 5.4, 5.5 — the Progress files
 | 5.3 ✓ `e7dd0b7` | `settings.js` `renderSettings` (~140 lines) | Profile, timer, Health and Data sections in one template. | Section builders in the same file. | L | S | T (0.2) + C 13 ⚠ | — |
 | 5.6 ✓ `7250800` | `programBuilder.js` `_dayCardHtml` | Collapsed and open variants repeat the day-name input; `_rerenderAll` vs `_rerenderDayCards` near-duplicates. | Shared `_dayNameInputHtml(day, open)`; one re-render function. | L | S | T (0.5) + C 12 | — |
 
-## Batch 6 — Consistency of UI patterns (optional, decide after Batch 5)
+## Batch 6 — Consistency of UI patterns — **Deferred** (not done)
 
-Highest-churn batch. **Optional: decide after Batch 5 whether to do any of it.** If done, small commits, and 0.1 must be in place.
+**Deferred 16 Nov 2026, when the refactor closed.** None of 6.1, 6.3 or 6.4 has been done; 6.2 was settled as a docs decision (Option A, no renames). **6.3 is safe to do later on its own:** it touches only `app.js`'s binding lines and is fully covered by 0.1 (`window-bindings.test.js`). 6.1 and 6.4 need the manual checklist steps listed in their rows. Original note: highest-churn batch; if done, small commits, and 0.1 must be in place.
 
 | # | Location | Problem | Proposed change | Risk | Effort | Coverage | Constraint |
 |---|----------|---------|-----------------|------|--------|----------|------------|
