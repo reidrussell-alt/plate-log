@@ -390,6 +390,7 @@ understand the app without needing to read code.
 
 ## Known constraints
 
+- **Do not run `npx cap sync` (or `npm run sync` / `npm run ios`)** until `BUGS.md` S2 is resolved. `capacitor.config.json` has `webDir: "."`, so a sync copies the whole repo into the iOS app, including `tests/` and `tests/node_modules/`.
 - **Preview tool can't serve this project** — the Claude Code preview sandbox lacks filesystem access to `~/Documents`. Always test at `localhost:8082` using the user's own Python server.
 - **No build step** — ES module imports use relative paths. No bundling, no transpilation.
 - **iOS PWA cache** — service workers on iOS are aggressive. Bumping the SW cache version forces a re-fetch, but the user still needs to delete/re-add the home screen app for changes to take effect immediately.
