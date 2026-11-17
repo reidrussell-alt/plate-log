@@ -1,0 +1,203 @@
+<div class="session-sticky">
+<div class="session-header-top">
+<div>
+<div class="session-day-name">Upper A - Push</div>
+<div class="session-meta-row">Push · 5 exercises · <span id="sessionSetCount">7 of 15 sets done</span>
+</div>
+</div>
+<div style="display:flex;gap:8px;align-items:center;">
+<button class="reorder-toggle-btn" onclick="toggleReorderMode()"> ⇅ </button>
+<button class="back-btn" onclick="leaveSession()" aria-label="Back to Home">←</button>
+</div>
+</div>
+<div class="session-progress" aria-hidden="true">
+<div class="session-progress-fill" id="sessionProgressFill" style="width:47%">
+</div>
+</div>
+</div>
+<div class="session-date-row">
+<label class="bw-label" for="sessionDateInput">Date</label>
+<input type="date" class="bw-input" id="sessionDateInput" value="2026-11-18" style="width:150px;font-size:12px;" onchange="updateSessionDate(this.value)">
+</div>
+<div class="exercise-block complete">
+<div class="exercise-header">
+<div class="exercise-name">
+<span>Dumbbell Bench Press</span>
+<div style="display:flex;gap:6px;align-items:center;">
+<span class="target-pill">3 × 8–12</span>
+<button onclick="showExerciseOptions(0)" style="background:transparent;border:none;color:var(--text-dimmer);cursor:pointer;padding:4px 6px;" title="Exercise options">
+<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" stroke="none">
+<circle cx="12" cy="5" r="1.5">
+</circle>
+<circle cx="12" cy="12" r="1.5">
+</circle>
+<circle cx="12" cy="19" r="1.5">
+</circle>
+</svg>
+</button>
+</div>
+</div>
+<div class="suggestion">
+<svg class="suggestion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+<circle cx="12" cy="12" r="10">
+</circle>
+<polyline points="12 6 12 12 16 14">
+</polyline>
+</svg>
+<span>
+<strong>Repeat 70 lb, beat 12 reps.</strong> Last time (6d ago): 70 × 12, 12, 11</span>
+</div>
+<div class="ex-last-note">
+<span class="ex-last-note-label">Last note, 6d ago</span>
+<span class="ex-last-note-text">Go up next time</span>
+</div>
+</div>
+<div class="sets-list">
+<div class="set-row logged " data-ex="0" data-set="0">
+<div class="set-num">
+<span class="set-input-label">Set</span>1</div>
+<div class="set-input-wrap">
+<span class="set-input-label">lb</span>
+<input type="number" inputmode="decimal" class="set-input" value="75" placeholder="—" onchange="updateSet(0, 0, 'weight', this.value)">
+</div>
+<div class="set-input-wrap">
+<span class="set-input-label">Reps</span>
+<input type="number" inputmode="numeric" class="set-input" value="10" placeholder="—" onchange="updateSet(0, 0, 'reps', this.value)">
+</div>
+<button class="icon-btn icon-btn--note" onclick="toggleNote(0, 0)" title="Note">
+<svg viewBox="0 0 24 24">
+<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z">
+</path>
+<polyline points="14 2 14 8 20 8">
+</polyline>
+<line x1="9" y1="13" x2="15" y2="13">
+</line>
+<line x1="9" y1="17" x2="13" y2="17">
+</line>
+</svg>
+</button>
+<button class="icon-btn icon-btn--check logged" onclick="toggleSetLogged(0, 0)">
+<svg viewBox="0 0 24 24">
+<polyline points="20 6 9 17 4 12">
+</polyline>
+</svg>
+</button>
+<button class="icon-btn remove-set-btn" onclick="removeSet(0, 0)" title="Remove set">
+<svg viewBox="0 0 24 24">
+<line x1="5" y1="12" x2="19" y2="12">
+</line>
+</svg>
+</button>
+</div>
+<div class="set-row logged " data-ex="0" data-set="1">
+<div class="set-num">
+<span class="set-input-label">Set</span>2</div>
+<div class="set-input-wrap">
+<span class="set-input-label">lb</span>
+<input type="number" inputmode="decimal" class="set-input" value="75" placeholder="—" onchange="updateSet(0, 1, 'weight', this.value)">
+</div>
+<div class="set-input-wrap">
+<span class="set-input-label">Reps</span>
+<input type="number" inputmode="numeric" class="set-input" value="9" placeholder="—" onchange="updateSet(0, 1, 'reps', this.value)">
+</div>
+<button class="icon-btn icon-btn--note" onclick="toggleNote(0, 1)" title="Note">
+<svg viewBox="0 0 24 24">
+<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z">
+</path>
+<polyline points="14 2 14 8 20 8">
+</polyline>
+<line x1="9" y1="13" x2="15" y2="13">
+</line>
+<line x1="9" y1="17" x2="13" y2="17">
+</line>
+</svg>
+</button>
+<button class="icon-btn icon-btn--check logged" onclick="toggleSetLogged(0, 1)">
+<svg viewBox="0 0 24 24">
+<polyline points="20 6 9 17 4 12">
+</polyline>
+</svg>
+</button>
+<button class="icon-btn remove-set-btn" onclick="removeSet(0, 1)" title="Remove set">
+<svg viewBox="0 0 24 24">
+<line x1="5" y1="12" x2="19" y2="12">
+</line>
+</svg>
+</button>
+</div>
+<div class="set-row logged " data-ex="0" data-set="2">
+<div class="set-num">
+<span class="set-input-label">Set</span>3</div>
+<div class="set-input-wrap">
+<span class="set-input-label">lb</span>
+<input type="number" inputmode="decimal" class="set-input" value="75" placeholder="—" onchange="updateSet(0, 2, 'weight', this.value)">
+</div>
+<div class="set-input-wrap">
+<span class="set-input-label">Reps</span>
+<input type="number" inputmode="numeric" class="set-input" value="8" placeholder="—" onchange="updateSet(0, 2, 'reps', this.value)">
+</div>
+<button class="icon-btn icon-btn--note" onclick="toggleNote(0, 2)" title="Note">
+<svg viewBox="0 0 24 24">
+<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z">
+</path>
+<polyline points="14 2 14 8 20 8">
+</polyline>
+<line x1="9" y1="13" x2="15" y2="13">
+</line>
+<line x1="9" y1="17" x2="13" y2="17">
+</line>
+</svg>
+</button>
+<button class="icon-btn icon-btn--check logged" onclick="toggleSetLogged(0, 2)">
+<svg viewBox="0 0 24 24">
+<polyline points="20 6 9 17 4 12">
+</polyline>
+</svg>
+</button>
+<button class="icon-btn remove-set-btn" onclick="removeSet(0, 2)" title="Remove set">
+<svg viewBox="0 0 24 24">
+<line x1="5" y1="12" x2="19" y2="12">
+</line>
+</svg>
+</button>
+</div>
+<button class="add-set-btn" onclick="addSet(0)">+ Add set</button>
+<div class="ex-note-wrap">
+<textarea class="ex-note-input" placeholder="Note for next time" oninput="updateExerciseNote(0, this.value)" rows="2">
+</textarea>
+</div>
+</div>
+</div>
+<button type="button" class="exercise-collapsed" onclick="openExercise(1)">
+<span class="exercise-collapsed-main">
+<span class="exercise-collapsed-name">Lat Pulldown</span>
+<span class="exercise-collapsed-sub">3 of 3 sets done</span>
+</span>
+<span class="exercise-collapsed-target">3 × 8–12</span>
+</button>
+<button type="button" class="exercise-collapsed" onclick="openExercise(2)">
+<span class="exercise-collapsed-main">
+<span class="exercise-collapsed-name">Push-Ups</span>
+<span class="exercise-collapsed-sub">1 of 3 sets done</span>
+</span>
+<span class="exercise-collapsed-target">3 × 8–12</span>
+</button>
+<button type="button" class="exercise-collapsed" onclick="openExercise(3)">
+<span class="exercise-collapsed-main">
+<span class="exercise-collapsed-name">Leg Extension</span>
+<span class="exercise-collapsed-sub">Repeat 100 lb, beat 12 reps</span>
+</span>
+<span class="exercise-collapsed-target">3 × 8–12</span>
+</button>
+<button type="button" class="exercise-collapsed" onclick="openExercise(4)">
+<span class="exercise-collapsed-main">
+<span class="exercise-collapsed-name">Cable Fly</span>
+<span class="exercise-collapsed-sub">First time logging this</span>
+</span>
+<span class="exercise-collapsed-target">2 sets</span>
+</button>
+<button class="add-exercise-fab" onclick="showExercisePicker()">+ Add exercise</button>
+<button class="abandon-link" onclick="abandonSession()">Discard workout</button>
+<div class="session-finish-bar">
+<button class="finish-btn" onclick="finishSession()">Finish workout</button>
+</div>

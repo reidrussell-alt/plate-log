@@ -1,0 +1,106 @@
+<div class="me-chip-row">
+<button type="button" class="me-chip" onclick="window.switchTab('profile')" aria-label="Open your profile">
+<span class="me-chip-name">Reid</span>
+<span class="me-chip-photo" aria-hidden="true">R</span>
+</button>
+</div>
+<div class="myplans-header">
+<div class="myplans-title">My Plans</div>
+<button class="myplans-add-btn" onclick="window.showCreatePlanSheet()">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;">
+<line x1="12" y1="5" x2="12" y2="19">
+</line>
+<line x1="5" y1="12" x2="19" y2="12">
+</line>
+</svg>
+</button>
+</div>
+<div class="myplans-section-label">Active</div>
+<div class="myplans-program-identity">
+<div class="myplans-program-name">Reid's 4-Day Push/Pull/Legs</div>
+<div class="myplans-program-subtitle">4 workouts · next up is Upper B</div>
+</div>
+<div class="myplans-day-list">
+<div class="myplans-day-card">
+<div class="myplans-day-badge">1</div>
+<div class="myplans-day-content">
+<div class="myplans-day-row">
+<span class="myplans-day-name">Upper A - Push</span>
+<span class="myplans-day-meta">5 exercises · 14 sets</span>
+</div>
+<div class="myplans-day-preview">Dumbbell Bench Press · Lat Pulldown · Push-Ups · +2</div>
+</div>
+<button class="myplans-day-chevron" aria-label="Edit Upper A - Push" onclick="window.showProgramBuilder('program_default', 'upperA')">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;">
+<polyline points="9 18 15 12 9 6">
+</polyline>
+</svg>
+</button>
+</div>
+<div class="myplans-day-card">
+<div class="myplans-day-badge">2</div>
+<div class="myplans-day-content">
+<div class="myplans-day-row">
+<span class="myplans-day-name">Lower A - Quads</span>
+<span class="myplans-day-meta">2 exercises · 7 sets</span>
+</div>
+<div class="myplans-day-preview">Barbell Back Squat · Leg Extension</div>
+</div>
+<button class="myplans-day-chevron" aria-label="Edit Lower A - Quads" onclick="window.showProgramBuilder('program_default', 'lowerA')">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;">
+<polyline points="9 18 15 12 9 6">
+</polyline>
+</svg>
+</button>
+</div>
+<div class="myplans-day-card">
+<div class="myplans-day-badge myplans-day-badge--next">3</div>
+<div class="myplans-day-content">
+<div class="myplans-day-row">
+<span class="myplans-day-name">Upper B - Pull</span>
+<span class="myplans-day-meta">1 exercises · 4 sets</span>
+</div>
+<div class="myplans-day-preview">Lat Pulldown</div>
+</div>
+<button class="myplans-day-chevron" aria-label="Edit Upper B - Pull" onclick="window.showProgramBuilder('program_default', 'upperB')">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;">
+<polyline points="9 18 15 12 9 6">
+</polyline>
+</svg>
+</button>
+</div>
+<div class="myplans-day-card">
+<div class="myplans-day-badge">4</div>
+<div class="myplans-day-content">
+<div class="myplans-day-row">
+<span class="myplans-day-name">Lower B - Posterior</span>
+<span class="myplans-day-meta">0 exercises · 0 sets</span>
+</div>
+<div class="myplans-day-preview">No exercises yet</div>
+</div>
+<button class="myplans-day-chevron" aria-label="Edit Lower B - Posterior" onclick="window.showProgramBuilder('program_default', 'lowerB')">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;">
+<polyline points="9 18 15 12 9 6">
+</polyline>
+</svg>
+</button>
+</div>
+</div>
+<div class="myplans-section-label">Library</div>
+<div class="myplans-library-card" id="libcard-program_custom_1">
+<div class="myplans-library-main">
+<div class="myplans-library-info">
+<div class="myplans-library-name">Summer Cut</div>
+<div class="myplans-library-subtitle">1 workout</div>
+</div>
+<div class="myplans-library-btns">
+<button class="myplans-set-active-btn" onclick="window.setActiveProgram('program_custom_1')">Set Active</button>
+<button class="myplans-more-btn" onclick="window.myPlansToggleActions('program_custom_1')" aria-label="More options">···</button>
+</div>
+</div>
+<div class="myplans-library-secondary">
+<button class="myplans-sec-btn" onclick="window.duplicateProgram('program_custom_1')">Duplicate</button>
+<button class="myplans-sec-btn myplans-sec-btn--danger" onclick="window.deleteProgram('program_custom_1')">Delete</button>
+</div>
+</div>
+<button class="myplans-create-cta" onclick="window.showCreatePlanSheet()"> Create a plan </button>

@@ -1,0 +1,101 @@
+<div class="me-chip-row">
+<button type="button" class="me-chip" onclick="window.switchTab('profile')" aria-label="Open your profile">
+<span class="me-chip-name">Reid</span>
+<span class="me-chip-photo" aria-hidden="true">R</span>
+</button>
+</div>
+<div class="myplans-header">
+<div class="myplans-title">My Plans</div>
+<button class="myplans-add-btn" onclick="window.showCreatePlanSheet()">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;">
+<line x1="12" y1="5" x2="12" y2="19">
+</line>
+<line x1="5" y1="12" x2="19" y2="12">
+</line>
+</svg>
+</button>
+</div>
+<div class="myplans-section-label">Active</div>
+<div class="myplans-no-program">No active program — set one from your library or create a new plan.</div>
+<div class="myplans-section-label">Library</div>
+<div class="myplans-library-card" id="libcard-program_custom_1">
+<div class="myplans-library-main">
+<div class="myplans-library-info">
+<div class="myplans-library-name">Custom 1</div>
+<div class="myplans-library-subtitle">1 workout</div>
+</div>
+<div class="myplans-library-btns">
+<button class="myplans-set-active-btn" onclick="window.setActiveProgram('program_custom_1')">Set Active</button>
+<button class="myplans-more-btn" onclick="window.myPlansToggleActions('program_custom_1')" aria-label="More options">···</button>
+</div>
+</div>
+<div class="myplans-library-secondary">
+<button class="myplans-sec-btn" onclick="window.duplicateProgram('program_custom_1')">Duplicate</button>
+<button class="myplans-sec-btn myplans-sec-btn--danger" onclick="window.deleteProgram('program_custom_1')">Delete</button>
+</div>
+</div>
+<div class="myplans-library-card" id="libcard-program_custom_2">
+<div class="myplans-library-main">
+<div class="myplans-library-info">
+<div class="myplans-library-name">Custom 2</div>
+<div class="myplans-library-subtitle">1 workout</div>
+</div>
+<div class="myplans-library-btns">
+<button class="myplans-set-active-btn" onclick="window.setActiveProgram('program_custom_2')">Set Active</button>
+<button class="myplans-more-btn" onclick="window.myPlansToggleActions('program_custom_2')" aria-label="More options">···</button>
+</div>
+</div>
+<div class="myplans-library-secondary">
+<button class="myplans-sec-btn" onclick="window.duplicateProgram('program_custom_2')">Duplicate</button>
+<button class="myplans-sec-btn myplans-sec-btn--danger" onclick="window.deleteProgram('program_custom_2')">Delete</button>
+</div>
+</div>
+<div class="myplans-library-card" id="libcard-program_custom_3">
+<div class="myplans-library-main">
+<div class="myplans-library-info">
+<div class="myplans-library-name">Custom 3</div>
+<div class="myplans-library-subtitle">1 workout</div>
+</div>
+<div class="myplans-library-btns">
+<button class="myplans-set-active-btn" onclick="window.setActiveProgram('program_custom_3')">Set Active</button>
+<button class="myplans-more-btn" onclick="window.myPlansToggleActions('program_custom_3')" aria-label="More options">···</button>
+</div>
+</div>
+<div class="myplans-library-secondary">
+<button class="myplans-sec-btn" onclick="window.duplicateProgram('program_custom_3')">Duplicate</button>
+<button class="myplans-sec-btn myplans-sec-btn--danger" onclick="window.deleteProgram('program_custom_3')">Delete</button>
+</div>
+</div>
+<div class="myplans-library-card" id="libcard-program_custom_4">
+<div class="myplans-library-main">
+<div class="myplans-library-info">
+<div class="myplans-library-name">Custom 4</div>
+<div class="myplans-library-subtitle">1 workout</div>
+</div>
+<div class="myplans-library-btns">
+<button class="myplans-set-active-btn" onclick="window.setActiveProgram('program_custom_4')">Set Active</button>
+<button class="myplans-more-btn" onclick="window.myPlansToggleActions('program_custom_4')" aria-label="More options">···</button>
+</div>
+</div>
+<div class="myplans-library-secondary">
+<button class="myplans-sec-btn" onclick="window.duplicateProgram('program_custom_4')">Duplicate</button>
+<button class="myplans-sec-btn myplans-sec-btn--danger" onclick="window.deleteProgram('program_custom_4')">Delete</button>
+</div>
+</div>
+<div class="myplans-library-card" id="libcard-program_custom_5">
+<div class="myplans-library-main">
+<div class="myplans-library-info">
+<div class="myplans-library-name">Custom 5</div>
+<div class="myplans-library-subtitle">1 workout</div>
+</div>
+<div class="myplans-library-btns">
+<button class="myplans-set-active-btn" onclick="window.setActiveProgram('program_custom_5')">Set Active</button>
+<button class="myplans-more-btn" onclick="window.myPlansToggleActions('program_custom_5')" aria-label="More options">···</button>
+</div>
+</div>
+<div class="myplans-library-secondary">
+<button class="myplans-sec-btn" onclick="window.duplicateProgram('program_custom_5')">Duplicate</button>
+<button class="myplans-sec-btn myplans-sec-btn--danger" onclick="window.deleteProgram('program_custom_5')">Delete</button>
+</div>
+</div>
+<div class="myplans-at-limit">Max 5 custom plans reached — delete one to create another.</div>

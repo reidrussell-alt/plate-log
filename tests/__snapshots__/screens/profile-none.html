@@ -1,0 +1,144 @@
+<div class="pf-cover">
+<button type="button" class="pf-cover-btn" onclick="showBackgroundPicker()" aria-label="Change background">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<rect x="3" y="3" width="18" height="18" rx="2">
+</rect>
+<circle cx="8.5" cy="8.5" r="1.5">
+</circle>
+<polyline points="21 15 16 10 5 21">
+</polyline>
+</svg>
+</button>
+<div class="me-chip-on-cover">
+<button type="button" class="me-chip" onclick="window.switchTab('profile')" aria-label="Open your profile">
+<span class="me-chip-photo" aria-hidden="true">
+</span>
+</button>
+</div>
+</div>
+<button type="button" class="pf-avatar-wrap" onclick="showProfilePhotoOptions()" aria-label="Add a profile photo">
+<span class="pf-avatar" id="pfAvatar">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2">
+</path>
+<circle cx="12" cy="7" r="4">
+</circle>
+</svg>
+</span>
+<span class="pf-avatar-badge" aria-hidden="true">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+<path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z">
+</path>
+<circle cx="12" cy="13" r="4">
+</circle>
+</svg>
+</span>
+</button>
+<div class="pf-meta">Structured plan</div>
+<div class="profile-stats-card">
+<div class="profile-stats-grid">
+<div class="profile-stat">
+<div class="profile-stat-value">0</div>
+<div class="profile-stat-label">Sessions</div>
+</div>
+<div class="profile-stat">
+<div class="profile-stat-value">—</div>
+<div class="profile-stat-label">Weeks Active</div>
+</div>
+<div class="profile-stat profile-stat--wide">
+<div class="profile-stat-value profile-stat-value--sm">—</div>
+<div class="profile-stat-label">Fav. Workout</div>
+</div>
+</div>
+</div>
+<div class="settings-section">
+<div class="settings-section-title">Profile</div>
+<div class="settings-row">
+<span class="settings-row-label">Name</span>
+<div class="settings-row-right">
+<span class="settings-row-value" id="profileNameDisplay">—</span>
+<button class="settings-edit-btn" onclick="editProfileName()">Edit</button>
+</div>
+</div>
+<div class="settings-row">
+<span class="settings-row-label">Mode</span>
+<div class="settings-row-right">
+<span class="settings-row-value">Structured Plan</span>
+<button class="settings-edit-btn" onclick="switchTrainingMode()">Switch</button>
+</div>
+</div>
+</div>
+<div class="settings-section">
+<div class="settings-section-title">Workout Settings</div>
+<div class="settings-row">
+<span class="settings-row-label">Rest Timer</span>
+<label class="settings-toggle">
+<input type="checkbox" checked="" onchange="window.toggleRestTimer(this.checked)">
+<span class="toggle-slider">
+</span>
+</label>
+</div>
+<div id="restTimerOptions" style="display:">
+<div class="settings-row">
+<span class="settings-row-label">Rest Duration</span>
+<div class="timer-duration-wrap">
+<input type="range" class="timer-duration-slider" min="30" max="600" step="15" value="90" oninput="window.onRestDurationChange(this.value)">
+<span class="timer-duration-display" id="restDurationDisplay">1:30</span>
+</div>
+</div>
+<div class="settings-row">
+<span class="settings-row-label">Vibrate when ready</span>
+<label class="settings-toggle">
+<input type="checkbox" checked="" onchange="window.toggleRestAlert(this.checked)">
+<span class="toggle-slider">
+</span>
+</label>
+</div>
+</div>
+</div>
+<div class="settings-section">
+<div class="settings-section-title">Apple Health</div>
+<div class="settings-row">
+<span class="settings-row-label">Health Integration</span>
+<label class="settings-toggle">
+<input type="checkbox" checked="" disabled="" onchange="window.toggleHealthEnabled(this.checked)">
+<span class="toggle-slider">
+</span>
+</label>
+</div>
+<div class="settings-row">
+<span class="settings-row-label">Status</span>
+<div class="settings-row-right">
+<span class="settings-row-value" style="color:var(--text-dim);">iOS only</span>
+</div>
+</div>
+<div class="data-helper">Apple Health is only available in the Capacitor iOS app — not the web version.</div>
+</div>
+<div class="settings-section">
+<div class="settings-section-title">Data</div>
+<div class="data-buttons">
+<button class="data-btn" onclick="exportData()">
+<svg viewBox="0 0 24 24">
+<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4">
+</path>
+<polyline points="7 10 12 15 17 10">
+</polyline>
+<line x1="12" y1="15" x2="12" y2="3">
+</line>
+</svg> Export </button>
+<button class="data-btn" onclick="document.getElementById('importInput').click()">
+<svg viewBox="0 0 24 24">
+<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4">
+</path>
+<polyline points="17 8 12 3 7 8">
+</polyline>
+<line x1="12" y1="3" x2="12" y2="15">
+</line>
+</svg> Import </button>
+</div>
+<input type="file" id="importInput" class="file-input-hidden" accept=".json,application/json" onchange="importData(event)">
+<div class="data-helper">Export saves your full history as a backup file. Import restores from a backup.</div>
+</div>
+<div class="reset-section">
+<button class="reset-link" onclick="openResetModal()">↻ Reset All Data</button>
+</div>

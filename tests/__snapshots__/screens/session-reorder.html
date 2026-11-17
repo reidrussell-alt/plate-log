@@ -1,0 +1,95 @@
+<div class="session-sticky">
+<div class="session-header-top">
+<div>
+<div class="session-day-name">Upper A - Push</div>
+<div class="session-meta-row">Push · 5 exercises · <span id="sessionSetCount">7 of 15 sets done</span>
+</div>
+</div>
+<div style="display:flex;gap:8px;align-items:center;">
+<button class="reorder-toggle-btn active" onclick="toggleReorderMode()"> Done </button>
+<button class="back-btn" onclick="leaveSession()" aria-label="Back to Home">←</button>
+</div>
+</div>
+</div>
+<div class="session-date-row">
+<label class="bw-label" for="sessionDateInput">Date</label>
+<input type="date" class="bw-input" id="sessionDateInput" value="2026-11-18" style="width:150px;font-size:12px;" onchange="updateSessionDate(this.value)">
+</div>
+<div id="exerciseList">
+<div class="exercise-reorder-card complete">
+<div class="reorder-handle">
+<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+<line x1="3" y1="9" x2="21" y2="9">
+</line>
+<line x1="3" y1="15" x2="21" y2="15">
+</line>
+</svg>
+</div>
+<div class="reorder-info">
+<div class="reorder-name">Dumbbell Bench Press</div>
+<div class="reorder-meta">3 / 3 sets logged</div>
+</div>
+<div class="reorder-check">
+<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5">
+<polyline points="20 6 9 17 4 12">
+</polyline>
+</svg>
+</div>
+</div>
+<div class="exercise-reorder-card">
+<div class="reorder-handle">
+<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+<line x1="3" y1="9" x2="21" y2="9">
+</line>
+<line x1="3" y1="15" x2="21" y2="15">
+</line>
+</svg>
+</div>
+<div class="reorder-info">
+<div class="reorder-name">Lat Pulldown</div>
+<div class="reorder-meta">3 / 3 sets logged</div>
+</div>
+</div>
+<div class="exercise-reorder-card">
+<div class="reorder-handle">
+<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+<line x1="3" y1="9" x2="21" y2="9">
+</line>
+<line x1="3" y1="15" x2="21" y2="15">
+</line>
+</svg>
+</div>
+<div class="reorder-info">
+<div class="reorder-name">Push-Ups</div>
+<div class="reorder-meta">1 / 3 sets logged</div>
+</div>
+</div>
+<div class="exercise-reorder-card">
+<div class="reorder-handle">
+<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+<line x1="3" y1="9" x2="21" y2="9">
+</line>
+<line x1="3" y1="15" x2="21" y2="15">
+</line>
+</svg>
+</div>
+<div class="reorder-info">
+<div class="reorder-name">Leg Extension</div>
+<div class="reorder-meta">0 / 3 sets logged</div>
+</div>
+</div>
+<div class="exercise-reorder-card">
+<div class="reorder-handle">
+<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+<line x1="3" y1="9" x2="21" y2="9">
+</line>
+<line x1="3" y1="15" x2="21" y2="15">
+</line>
+</svg>
+</div>
+<div class="reorder-info">
+<div class="reorder-name">Cable Fly</div>
+<div class="reorder-meta">0 / 2 sets logged</div>
+</div>
+</div>
+</div>

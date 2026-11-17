@@ -1,0 +1,25 @@
+<div class="session-sticky">
+<div class="session-header-top">
+<div>
+<div class="session-day-name">Wednesday, November 18</div>
+<div class="session-meta-row">Track · 0 exercises · <span id="sessionSetCount">0 of 0 sets done</span>
+</div>
+</div>
+<div style="display:flex;gap:8px;align-items:center;">
+<button class="back-btn" onclick="leaveSession()" aria-label="Back to Home">←</button>
+</div>
+</div>
+<div class="session-progress" aria-hidden="true">
+<div class="session-progress-fill" id="sessionProgressFill" style="width:0%">
+</div>
+</div>
+</div>
+<div class="session-date-row">
+<label class="bw-label" for="sessionDateInput">Date</label>
+<input type="date" class="bw-input" id="sessionDateInput" value="2026-11-18" style="width:150px;font-size:12px;" onchange="updateSessionDate(this.value)">
+</div>
+<button class="add-exercise-fab" onclick="showExercisePicker()">+ Add exercise</button>
+<button class="abandon-link" onclick="abandonSession()">Discard workout</button>
+<div class="session-finish-bar">
+<button class="finish-btn" onclick="finishSession()">Finish workout</button>
+</div>
