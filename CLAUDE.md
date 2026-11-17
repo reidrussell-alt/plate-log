@@ -342,6 +342,7 @@ Welcome screen shown on every app open (design: `design-reference/patterns.md`, 
 
 ### `progress.js`
 - `renderProgress()` — stats row, calendar (from `calendar.js`), per-muscle charts, sets and bodyweight charts
+- `_collectExerciseStats(history)` / `_groupByMuscle(stats)` — pure helpers that feed the charts (unit-tested in `progress-logic.test.js`)
 - `setChartRange()` — 10/20/30/All quick filter per chart; re-renders only that chart
 
 ### `calendar.js`

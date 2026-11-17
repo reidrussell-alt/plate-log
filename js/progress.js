@@ -110,6 +110,41 @@ function _buildChartCardHtml(mg, exercisesInGroup) {
   `;
 }
 
+// Per exercise id: name, load type and every session it appears in (history order),
+// with the indexes the Edit buttons need. Pure: reads only its argument.
+export function _collectExerciseStats(history) {
+  const exerciseStats = {};
+  history.forEach((sess, sessionIdx) => {
+    sess.exercises.forEach((ex, exerciseIdx) => {
+      if (!exerciseStats[ex.id]) {
+        exerciseStats[ex.id] = { name: ex.name, loadType: ex.loadType, sessions: [] };
+      }
+      exerciseStats[ex.id].sessions.push({
+        date: sess.date,
+        sets: ex.sets,
+        note: ex.note || '',
+        dayTitle: sess.dayTitle,
+        sessionIdx,
+        exerciseIdx
+      });
+    });
+  });
+  return exerciseStats;
+}
+
+// Exercise stats keyed by muscle group: every MUSCLE_GROUP_ORDER group (maybe empty),
+// plus 'other' (or any unlisted group) when an exercise maps there. Pure.
+export function _groupByMuscle(exerciseStats) {
+  const muscleGroupStats = {};
+  MUSCLE_GROUP_ORDER.forEach(mg => muscleGroupStats[mg] = {});
+  Object.entries(exerciseStats).forEach(([id, data]) => {
+    const mg = MUSCLE_GROUPS[id] || 'other';
+    if (!muscleGroupStats[mg]) muscleGroupStats[mg] = {};
+    muscleGroupStats[mg][id] = data;
+  });
+  return muscleGroupStats;
+}
+
 export function renderProgress() {
   _loadChartRanges();
   const el = document.getElementById('progressPage');
@@ -132,22 +167,7 @@ export function renderProgress() {
   const mostRecent = [...state.history].reverse().find(h => h.bw);
   const currentBw = mostRecent?.bw || '—';
 
-  const exerciseStats = {};
-  state.history.forEach((sess, sessionIdx) => {
-    sess.exercises.forEach((ex, exerciseIdx) => {
-      if (!exerciseStats[ex.id]) {
-        exerciseStats[ex.id] = { name: ex.name, loadType: ex.loadType, sessions: [] };
-      }
-      exerciseStats[ex.id].sessions.push({
-        date: sess.date,
-        sets: ex.sets,
-        note: ex.note || '',
-        dayTitle: sess.dayTitle,
-        sessionIdx,
-        exerciseIdx
-      });
-    });
-  });
+  const exerciseStats = _collectExerciseStats(state.history);
 
   let html = `
     <div class="me-chip-row">${buildProfileChip()}</div>
@@ -173,14 +193,7 @@ export function renderProgress() {
   // Cache exercise data for range-change updates without full re-render
   _exerciseDataCache = exerciseStats;
 
-  // Group exercises by muscle group
-  const muscleGroupStats = {};
-  MUSCLE_GROUP_ORDER.forEach(mg => muscleGroupStats[mg] = {});
-  Object.entries(exerciseStats).forEach(([id, data]) => {
-    const mg = MUSCLE_GROUPS[id] || 'other';
-    if (!muscleGroupStats[mg]) muscleGroupStats[mg] = {};
-    muscleGroupStats[mg][id] = data;
-  });
+  const muscleGroupStats = _groupByMuscle(exerciseStats);
 
   // Default selected exercise per group to most-trained
   MUSCLE_GROUP_ORDER.forEach(mg => {

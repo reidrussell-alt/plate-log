@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { state } from '../js/data.js';
-import { analyzeTrend } from '../js/progress.js';
+import { analyzeTrend, _collectExerciseStats, _groupByMuscle } from '../js/progress.js';
 import { _liveSessionIdx } from '../js/calendar.js';
-import { resetState, session } from './helpers.js';
+import { resetState, session, ex } from './helpers.js';
 
 beforeEach(resetState);
 
@@ -46,5 +46,42 @@ describe('_liveSessionIdx', () => {
     ];
     expect(_liveSessionIdx('2026-04-02', 'lowerA')).toBe(1);
     expect(_liveSessionIdx('2026-04-03', 'lowerA')).toBe(-1);
+  });
+});
+
+describe('_collectExerciseStats', () => {
+  it('lists every session per exercise in history order, with its indexes', () => {
+    const a = session({ date: '2026-04-01T12:00:00Z', dayTitle: 'Day 1', exercises: [ex('x', [[100, 8]], { note: 'n1' }), ex('y', [['', 10]], { loadType: 'bw', name: 'Y' })] });
+    const b = session({ date: '2026-04-03T12:00:00Z', dayTitle: 'Day 2', exercises: [ex('x', [[105, 8]], { name: 'Renamed' })] });
+    const stats = _collectExerciseStats([a, b]);
+    expect(Object.keys(stats)).toEqual(['x', 'y']);
+    expect(stats.x.name).toBe('x'); // first name seen wins
+    expect(stats.x.loadType).toBe('weight');
+    expect(stats.x.sessions).toEqual([
+      { date: a.date, sets: a.exercises[0].sets, note: 'n1', dayTitle: 'Day 1', sessionIdx: 0, exerciseIdx: 0 },
+      { date: b.date, sets: b.exercises[0].sets, note: '', dayTitle: 'Day 2', sessionIdx: 1, exerciseIdx: 0 },
+    ]);
+    expect(stats.x.sessions[0].sets).toBe(a.exercises[0].sets); // same array, not a copy
+    expect(stats.y).toMatchObject({ name: 'Y', loadType: 'bw' });
+    expect(stats.y.sessions[0]).toMatchObject({ sessionIdx: 0, exerciseIdx: 1 });
+  });
+
+  it('returns {} for no history', () => {
+    expect(_collectExerciseStats([])).toEqual({});
+  });
+});
+
+describe('_groupByMuscle', () => {
+  it('has every display group, and puts unmapped exercises under "other"', () => {
+    const stats = { db_press: { sessions: [] }, mystery_move: { sessions: [] } };
+    const groups = _groupByMuscle(stats);
+    expect(Object.keys(groups)).toEqual(['chest', 'back', 'shoulders', 'biceps', 'triceps', 'legs', 'core', 'other']);
+    expect(groups.chest.db_press).toBe(stats.db_press);
+    expect(groups.other.mystery_move).toBe(stats.mystery_move);
+    expect(groups.back).toEqual({});
+  });
+
+  it('has no "other" key when everything is mapped', () => {
+    expect(Object.keys(_groupByMuscle({}))).toEqual(['chest', 'back', 'shoulders', 'biceps', 'triceps', 'legs', 'core']);
   });
 });
