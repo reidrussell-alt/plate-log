@@ -262,7 +262,6 @@ export function setActiveProgram(programId) {
     prog.isActive = true;
     saveData();
     window.renderMyPlans();
-    window.renderMyPlans();
     showToast(`Activated: ${prog.name}`, 'success');
   }, 'Activate');
 }
@@ -279,7 +278,6 @@ export function deleteProgram(programId) {
     () => {
       state.programs = state.programs.filter(p => p.id !== programId);
       saveData();
-      window.renderMyPlans();
       window.renderMyPlans();
       showToast(`Deleted: ${prog.name}`);
     },
@@ -338,7 +336,6 @@ export function activateTemplate(templateId) {
       state.programs.push(newProg);
     }
     saveData();
-    window.renderMyPlans();
     window.renderMyPlans();
     showToast(`Activated: ${template.name}`, 'success');
   }, 'Activate');
