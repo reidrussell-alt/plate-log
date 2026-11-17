@@ -7,6 +7,31 @@ import { closeCalendarDay } from './calendar.js';
 let _seDraft = null;
 let _seIdx = null;
 
+// One set row, shared by both edit modals: "#n", then weight × reps inputs (reps
+// only for bodyweight). Class names differ per modal: cls 'edit' gives edit-weight /
+// edit-reps (per-exercise modal), 'se' gives se-weight / se-reps (whole-workout modal);
+// dataAttrs is what saveEdit / _flushDraftInputs look rows up by. `inline` goes after
+// the inputs on the same line, `below` under that line.
+function _editSetRowHtml({ setNum, set, bw, cls, dataAttrs, inline = '', below = '' }) {
+  const inputs = bw ? `
+      <input type="number" inputmode="numeric" class="${cls}-reps edit-input" ${dataAttrs} value="${set.reps}" placeholder="reps">
+    ` : `
+      <input type="number" inputmode="decimal" class="${cls}-weight edit-input" ${dataAttrs} value="${set.weight}" placeholder="lb">
+      <span class="edit-sep">×</span>
+      <input type="number" inputmode="numeric" class="${cls}-reps edit-input" ${dataAttrs} value="${set.reps}" placeholder="reps">
+    `;
+  return `
+    <div class="edit-set-row">
+      <div class="edit-set-inputs">
+        <div class="edit-set-num">#${setNum}</div>
+        ${inputs}
+        ${inline}
+      </div>
+      ${below}
+    </div>
+  `;
+}
+
 export function openEditModal(sessionIdx, exerciseIdx) {
   state.editing = { sessionIdx, exerciseIdx };
   const session = state.history[sessionIdx];
@@ -23,29 +48,11 @@ export function openEditModal(sessionIdx, exerciseIdx) {
   `;
 
   exercise.sets.forEach((set, i) => {
-    if (exercise.loadType === 'bw') {
-      html += `
-        <div class="edit-set-row">
-          <div class="edit-set-inputs">
-            <div class="edit-set-num">#${i + 1}</div>
-            <input type="number" inputmode="numeric" class="edit-reps edit-input" data-idx="${i}" value="${set.reps}" placeholder="reps">
-          </div>
-          <textarea class="edit-note" data-idx="${i}" placeholder="Note..." rows="1">${set.note || ''}</textarea>
-        </div>
-      `;
-    } else {
-      html += `
-        <div class="edit-set-row">
-          <div class="edit-set-inputs">
-            <div class="edit-set-num">#${i + 1}</div>
-            <input type="number" inputmode="decimal" class="edit-weight edit-input" data-idx="${i}" value="${set.weight}" placeholder="lb">
-            <span class="edit-sep">×</span>
-            <input type="number" inputmode="numeric" class="edit-reps edit-input" data-idx="${i}" value="${set.reps}" placeholder="reps">
-          </div>
-          <textarea class="edit-note" data-idx="${i}" placeholder="Note..." rows="1">${set.note || ''}</textarea>
-        </div>
-      `;
-    }
+    html += _editSetRowHtml({
+      setNum: i + 1, set, bw: exercise.loadType === 'bw',
+      cls: 'edit', dataAttrs: `data-idx="${i}"`,
+      below: `<textarea class="edit-note" data-idx="${i}" placeholder="Note..." rows="1">${set.note || ''}</textarea>`
+    });
   });
 
   document.getElementById('editModalBody').innerHTML = html;
@@ -122,24 +129,11 @@ function _renderSessionEditBody() {
         </div>
     `;
     ex.sets.forEach((set, setIdx) => {
-      html += `
-        <div class="edit-set-row">
-          <div class="edit-set-inputs">
-            <div class="edit-set-num">#${setIdx + 1}</div>
-            ${ex.loadType === 'bw' ? `
-              <input type="number" inputmode="numeric" class="se-reps edit-input"
-                     data-ex="${exIdx}" data-set="${setIdx}" value="${set.reps}" placeholder="reps">
-            ` : `
-              <input type="number" inputmode="decimal" class="se-weight edit-input"
-                     data-ex="${exIdx}" data-set="${setIdx}" value="${set.weight}" placeholder="lb">
-              <span class="edit-sep">×</span>
-              <input type="number" inputmode="numeric" class="se-reps edit-input"
-                     data-ex="${exIdx}" data-set="${setIdx}" value="${set.reps}" placeholder="reps">
-            `}
-            <button onclick="sessionEditDeleteSet(${exIdx}, ${setIdx})" style="background:transparent;border:none;color:var(--text-dimmer);cursor:pointer;font-size:16px;line-height:1;padding:2px 6px;flex-shrink:0;" title="Remove set">×</button>
-          </div>
-        </div>
-      `;
+      html += _editSetRowHtml({
+        setNum: setIdx + 1, set, bw: ex.loadType === 'bw',
+        cls: 'se', dataAttrs: `data-ex="${exIdx}" data-set="${setIdx}"`,
+        inline: `<button onclick="sessionEditDeleteSet(${exIdx}, ${setIdx})" style="background:transparent;border:none;color:var(--text-dimmer);cursor:pointer;font-size:16px;line-height:1;padding:2px 6px;flex-shrink:0;" title="Remove set">×</button>`
+      });
     });
     html += `</div>`;
   });
