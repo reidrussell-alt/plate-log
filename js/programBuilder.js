@@ -104,7 +104,7 @@ function _applyDayCount(n) {
   } else {
     _bs.days = _bs.days.slice(0, n);
   }
-  _rerenderAll();
+  _rerenderDayCards(true);
 }
 
 export function pbToggleDay(dayId) {
@@ -385,6 +385,15 @@ function _exerciseItemHtml(dayId, ex, idx) {
     </div>`;
 }
 
+// The day-name field, the same in both card states; the open card adds a modifier class.
+function _dayNameInputHtml(day, open) {
+  return `<input type="text" id="pbDayName_${day.id}" class="pb-day-name-input${open ? ' pb-day-name-input--open' : ''}"
+              placeholder="e.g., Push, Pull, Legs, Upper"
+              value="${escapeHtml(day.name)}" maxlength="30"
+              onclick="event.stopPropagation()"
+              oninput="pbSetDayName('${day.id}', this.value)">`;
+}
+
 function _dayCardHtml(day) {
   const exCount = day.exercises.length;
   const metaText = exCount > 0 ? `${exCount} exercise${exCount !== 1 ? 's' : ''}` : 'Tap to add exercises';
@@ -396,11 +405,7 @@ function _dayCardHtml(day) {
         <div class="pb-day-top">
           <div class="pb-day-left">
             <div class="pb-day-label">${dayLabel}</div>
-            <input type="text" id="pbDayName_${day.id}" class="pb-day-name-input"
-              placeholder="e.g., Push, Pull, Legs, Upper"
-              value="${escapeHtml(day.name)}" maxlength="30"
-              onclick="event.stopPropagation()"
-              oninput="pbSetDayName('${day.id}', this.value)">
+            ${_dayNameInputHtml(day, false)}
           </div>
           <div class="pb-day-right">
             <svg class="pb-expand-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -422,11 +427,7 @@ function _dayCardHtml(day) {
       <div class="pb-day-top" onclick="pbToggleDay('${day.id}')" style="cursor:pointer;">
         <div class="pb-day-left">
           <div class="pb-day-label">${dayLabel}</div>
-          <input type="text" id="pbDayName_${day.id}" class="pb-day-name-input pb-day-name-input--open"
-            placeholder="e.g., Push, Pull, Legs, Upper"
-            value="${escapeHtml(day.name)}" maxlength="30"
-            onclick="event.stopPropagation()"
-            oninput="pbSetDayName('${day.id}', this.value)">
+          ${_dayNameInputHtml(day, true)}
         </div>
         <svg class="pb-expand-chevron pb-expand-chevron--open" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
           <polyline points="18 15 12 9 6 15"/>
@@ -581,19 +582,15 @@ function _mount() {
   document.body.insertAdjacentHTML('beforeend', _builderHtml());
 }
 
-function _rerenderAll() {
-  const overlay = document.getElementById('pbOverlay');
-  if (!overlay) return;
-  const pills = document.getElementById('pbDayPills');
-  const cards = document.getElementById('pbDayCards');
-  if (pills) pills.innerHTML = _dayPillsHtml();
-  if (cards) cards.innerHTML = _bs.days.map(_dayCardHtml).join('');
-  _bs.days.filter(d => d.expanded).forEach(d => setTimeout(() => _initSortable(d.id), 60));
-}
-
-function _rerenderDayCards() {
+// Redraws the day cards (and, with withPills, the day-count pills), then
+// re-arms drag-to-reorder on every open day.
+function _rerenderDayCards(withPills = false) {
   const cards = document.getElementById('pbDayCards');
   if (!cards) return;
+  if (withPills) {
+    const pills = document.getElementById('pbDayPills');
+    if (pills) pills.innerHTML = _dayPillsHtml();
+  }
   cards.innerHTML = _bs.days.map(_dayCardHtml).join('');
   _bs.days.filter(d => d.expanded).forEach(d => setTimeout(() => _initSortable(d.id), 60));
 }
