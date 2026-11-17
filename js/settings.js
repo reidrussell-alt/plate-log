@@ -105,7 +105,7 @@ export function renderSettings() {
         <span class="settings-row-label">Mode</span>
         <div class="settings-row-right">
           <span class="settings-row-value">${isStructured ? 'Structured Plan' : 'Track As You Go'}</span>
-          <button class="settings-edit-btn" onclick="switchTrainingMode()">${isStructured ? 'Switch' : 'Switch'}</button>
+          <button class="settings-edit-btn" onclick="switchTrainingMode()">Switch</button>
         </div>
       </div>
     </div>
