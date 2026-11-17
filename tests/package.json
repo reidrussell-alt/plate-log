@@ -1,0 +1,14 @@
+{
+  "name": "lift-tracker-tests",
+  "private": true,
+  "description": "Test tooling for Lift Tracker. Kept apart from the root package.json (Capacitor/iOS).",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "fake-indexeddb": "6.2.8",
+    "jsdom": "31.0.1",
+    "vitest": "5.1.0"
+  }
+}

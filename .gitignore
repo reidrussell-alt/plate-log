@@ -3,3 +3,7 @@
 # Design reference screenshots stay local (repo is public via GitHub Pages)
 design-reference/captures/*
 !design-reference/captures/.gitkeep
+
+# Dependencies and macOS clutter
+node_modules/
+.DS_Store

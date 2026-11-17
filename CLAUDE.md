@@ -36,6 +36,9 @@ lift-tracker/
 ├── scripts/backgrounds/    # Finds, downloads and resizes the cover photos (Wikimedia Commons)
 ├── img/backgrounds/        # Cover photos: full/ (1200px) and thumbs/ (480×300)
 ├── service-worker.js       # Cache-first SW; bump CACHE_NAME version on every deploy
+├── tests/                  # Vitest characterization tests + their own package.json (not shipped)
+├── BUGS.md                 # Suspected bugs found while writing tests, with the test that pins each
+├── MANUAL_TEST_CHECKLIST.md # 15 click-through flows to check in the browser after changes
 ├── css/
 │   └── main.css            # All styles; CSS variables in :root
 └── js/
@@ -75,6 +78,19 @@ Tabs: **Home · My Plans · Progress · Profile.** `switchTab()` uses `data-tab`
 - Canvas API for charts
 - localStorage for all data persistence
 - Service worker for offline/PWA support
+
+---
+
+## Testing
+
+```bash
+cd tests && npm install && npm test     # or from the root: npm --prefix tests test
+```
+
+- **Tooling lives in `tests/package.json`, not the root one.** The root `package.json` is for Capacitor/iOS, and its `npm install` currently fails (see `BUGS.md` S1). Vitest + jsdom + fake-indexeddb, config in `tests/vitest.config.mjs` (time zone pinned to UTC).
+- **Tests pin current behaviour, including known bugs.** Tests named `PINNED` lock in what the code does today, even where it looks wrong; each suspected bug is listed in `BUGS.md` with its test. When you fix a bug on purpose, update its test and its `BUGS.md` entry in the same commit. A `PINNED` test failing otherwise means behaviour changed by accident.
+- Coverage: pure logic, migrations, storage round-trips (localStorage + IndexedDB), Home rendering, and the service-worker precache list (every `js/` file must be in `ASSETS`). DOM-heavy screens are not covered — click through `MANUAL_TEST_CHECKLIST.md` too.
+- In `vi.resetModules()` + dynamic import, keep import paths literal (`() => import('../js/x.js')`); Vite can't resolve a path held in a variable.
 
 ---
 
