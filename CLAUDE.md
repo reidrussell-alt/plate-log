@@ -90,7 +90,7 @@ cd tests && npm install && npm test     # or from the root: npm --prefix tests t
 
 - **Tooling lives in `tests/package.json`, not the root one.** The root `package.json` is for Capacitor/iOS, and its `npm install` currently fails (see `BUGS.md` S1). Vitest + jsdom + fake-indexeddb, config in `tests/vitest.config.mjs` (time zone pinned to UTC).
 - **Tests pin current behaviour, including known bugs.** Tests named `PINNED` lock in what the code does today, even where it looks wrong; each suspected bug is listed in `BUGS.md` with its test. When you fix a bug on purpose, update its test and its `BUGS.md` entry in the same commit. A `PINNED` test failing otherwise means behaviour changed by accident.
-- Coverage: pure logic, migrations, storage round-trips (localStorage + IndexedDB), Home rendering, and the service-worker precache list (every `js/` file must be in `ASSETS`). DOM-heavy screens are not covered — click through `MANUAL_TEST_CHECKLIST.md` too.
+- Coverage: pure logic, migrations, storage round-trips (localStorage + IndexedDB), Home rendering, the service-worker precache list (every `js/` file must be in `ASSETS`), inline-handler ↔ `window` bindings (`window-bindings.test.js`), screen markup snapshots for Home, My Plans, Progress, Profile and the workout screen (`screens.test.js`, one HTML file per state in `tests/__snapshots__/screens/`), program actions and backup import. Overlays, sheets and interactions are mostly not covered — click through `MANUAL_TEST_CHECKLIST.md` too.
 - In `vi.resetModules()` + dynamic import, keep import paths literal (`() => import('../js/x.js')`); Vite can't resolve a path held in a variable.
 
 ---
@@ -100,7 +100,7 @@ cd tests && npm install && npm test     # or from the root: npm --prefix tests t
 A behaviour-preserving refactor is under way on branch `refactor/initial`.
 - **`REFACTOR_PLAN.md`** — the batches, their ground rules (storage, service worker, no bug fixes, snapshots) and preconditions. Read it before starting a batch.
 - **`BUGS.md`** — suspected bugs. Don't fix them during the refactor; the tests that pin them must stay green.
-- After each batch: tests green, the listed `MANUAL_TEST_CHECKLIST.md` steps, one commit.
+- One commit per plan item (not per batch), with the full suite green before each commit. After each batch: the listed `MANUAL_TEST_CHECKLIST.md` steps, then the handoff.
 - Never update snapshots in bulk (no `vitest -u` across the suite); list every snapshot change and its reason in the handoff.
 
 **Every response in a refactor session ends with this handoff block**, which Reid pastes to a reviewer. Put it in ONE fenced code block with nothing after it. Keep it factual and concise, don't restate the plan, and write "None" for empty sections rather than removing them. If `REFACTOR_PLAN.md` was created or substantially changed, paste its full contents in a separate code block directly above the handoff.
@@ -114,6 +114,7 @@ CHANGES:
 COMMITS:
 - [hash] [message]
 TESTS: [pass/fail counts, or "none run" and why]
+MANUAL CHECKS FOR REID: [MANUAL_TEST_CHECKLIST.md step numbers to run before the next batch, or "None" if no app code changed]
 SKIPPED / BLOCKED:
 - [item]: [reason]
 SUSPECTED BUGS / RISKS:

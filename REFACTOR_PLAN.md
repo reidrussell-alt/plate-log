@@ -11,7 +11,8 @@ Audit of `js/` (23 modules, ~6,700 lines), `index.html` and `css/main.css` on br
 - **No bug fixes.** `BUGS.md` items stay as they are; every `PINNED` test stays green. Behaviour, markup and wording stay identical unless a row says otherwise.
 - **Snapshots:** never update snapshots in bulk (no `vitest -u` across the suite). Every snapshot change is listed in the handoff with its reason.
 - **Out of scope:** `js/healthkit.js`, until `BUGS.md` S1 (missing HealthKit package) is resolved.
-- **Each batch:** `npm --prefix tests test` green, then the relevant `MANUAL_TEST_CHECKLIST.md` steps, then one commit (plus `ARCHITECTURE.md`/`CLAUDE.md` updates where structure changes).
+- **Commits: one per plan item** (0.1, 0.2, …), not one per batch. Run the full suite (`npm --prefix tests test`) after each item; it must be green before that item's commit. Each commit names its item, e.g. `(REFACTOR_PLAN 1.2)`, and carries any `ARCHITECTURE.md`/`CLAUDE.md` updates the item needs.
+- **Each batch:** every item committed with the suite green, then the relevant `MANUAL_TEST_CHECKLIST.md` steps, then the handoff. Items are ticked (✓ plus commit hash) in their table as they land.
 
 **Columns:** Risk L/M/H · Effort S/M/L · Coverage = **T** covered by tests, **C** manual checklist only (step numbers), **N** none · Constraint touched.
 **⚠ new tests first** = write characterization tests for that code before changing it.
@@ -20,14 +21,14 @@ Audit of `js/` (23 modules, ~6,700 lines), `index.html` and `css/main.css` on br
 
 ## Batch 0 — Safety nets (tests only, no app code)
 
-Adds coverage that later batches rely on. No constraint touched.
+Adds coverage that later batches rely on. No constraint touched. **Done** (4 commits, suite 91 → 144 tests).
 
 | # | Location | Problem | Proposed change | Risk | Effort | Coverage | Constraint |
 |---|----------|---------|-----------------|------|--------|----------|------------|
-| 0.1 | Inline `onclick`/`oninput`/`onchange` strings in `js/*.js` and `index.html`; bindings in `app.js` | ~130 handlers are reached only by name through `window`. A rename or move that misses one fails silently until clicked. | Static test: collect every function name called from inline handlers and assert each has a `window.<name> =` binding in `app.js` (and vice versa, listing bindings with no caller). | L | S | — (new) | — |
-| 0.2 | `renderMyPlans`, `renderSettings`, `renderProgress`, `renderSession`, `renderHome` | Screen markup is untested except Home. Batches 4–6 restructure these renderers. | jsdom render tests with fixture state: whitespace-normalised `innerHTML` snapshots per screen (structured + track-as-you-go, empty + with history, an in-progress session with logged/extra sets). Canvas drawing stubbed. | L | M | — (new) | — |
-| 0.3 | `settings.js` program actions (`setActiveProgram`, `deleteProgram`, `duplicateProgram`, `activateTemplate`, `duplicateTemplate`) | Change saved programs; no tests. | Tests that drive `showConfirm` (click OK) and assert `state.programs` + `liftTrackerData` afterwards. | L | S | — (new) | — |
-| 0.4 | `data.js` `importData()`, `onboarding.js` `obProcessImport()` | Backup parse/validate paths untested (FileReader). | Tests with a jsdom `File`: valid v2/v5 backup, missing `history`, invalid JSON; assert toasts and state. | L | S | — (new) | — |
+| 0.1 ✓ `d6d035f` | Inline `onclick`/`oninput`/`onchange` strings in `js/*.js` and `index.html`; bindings in `app.js` | ~130 handlers are reached only by name through `window`. A rename or move that misses one fails silently until clicked. | Static test: collect every function name called from inline handlers and assert each has a `window.<name> =` binding in `app.js` (and vice versa, listing bindings with no caller). | L | S | — (new) | — |
+| 0.2 ✓ `dc7ac26` | `renderMyPlans`, `renderSettings`, `renderProgress`, `renderSession`, `renderHome` | Screen markup is untested except Home. Batches 4–6 restructure these renderers. | jsdom render tests with fixture state: whitespace-normalised `innerHTML` snapshots per screen (structured + track-as-you-go, empty + with history, an in-progress session with logged/extra sets). Canvas drawing stubbed. | L | M | — (new) | — |
+| 0.3 ✓ `616bdbd` | `settings.js` program actions (`setActiveProgram`, `deleteProgram`, `duplicateProgram`, `activateTemplate`, `duplicateTemplate`) | Change saved programs; no tests. | Tests that drive `showConfirm` (click OK) and assert `state.programs` + `liftTrackerData` afterwards. | L | S | — (new) | — |
+| 0.4 ✓ `7dc91ac` | `data.js` `importData()`, `onboarding.js` `obProcessImport()` | Backup parse/validate paths untested (FileReader). | Tests with a jsdom `File`: valid v2/v5 backup, missing `history`, invalid JSON; assert toasts and state. | L | S | — (new) | — |
 
 ## Batch 1 — Dead code removal
 
@@ -111,4 +112,4 @@ Highest-churn batch. **Optional: decide after Batch 5 whether to do any of it.**
 
 ## Suggested order and checkpoints
 
-0 → 1 → 2 → 3 → 4 → 5, then decide on 6. After each batch: tests green, the checklist steps listed in that batch, one commit, handoff. Batches 3 and 5 each carry one service-worker version bump. Any snapshot change is listed in that batch's handoff with its reason.
+0 → 1 → 2 → 3 → 4 → 5, then decide on 6. After each item: tests green, one commit. After each batch: the checklist steps listed in that batch, handoff. Batches 3 and 5 change the service worker: the version is bumped in each commit that adds, renames or removes a file (the storage/SW ground rule), so a batch may bump more than once. Any snapshot change is listed in that batch's handoff with its reason.
