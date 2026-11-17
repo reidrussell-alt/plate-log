@@ -78,14 +78,11 @@ function buildProfileStatsCard(profile) {
   `;
 }
 
-export function renderSettings() {
-  const el = document.getElementById('settingsPage');
-  if (!el) return;
-
-  const profile = state.profile || { name: '—', trainingMode: 'structured' };
+// Profile section: name and training mode, each with its button.
+function buildProfileSection(profile) {
   const isStructured = profile.trainingMode === 'structured';
 
-  let html = buildProfileHeader(profile) + buildProfileStatsCard(profile) + `
+  return `
     <div class="settings-section">
       <div class="settings-section-title">Profile</div>
       <div class="settings-row">
@@ -104,9 +101,12 @@ export function renderSettings() {
       </div>
     </div>
   `;
+}
 
+// Workout settings: rest timer on/off, duration and vibrate.
+function buildWorkoutSection() {
   const timer = getTimerSettings();
-  html += `
+  return `
     <div class="settings-section">
       <div class="settings-section-title">Workout Settings</div>
       <div class="settings-row">
@@ -138,7 +138,10 @@ export function renderSettings() {
       </div>
     </div>
   `;
+}
 
+// Apple Health: toggles and connection status ("iOS only" on the web).
+function buildHealthSection() {
   const health = getHealthSettings();
   const healthAvailable = isHealthKitAvailable();
   const healthStatusLabel = !healthAvailable
@@ -146,7 +149,7 @@ export function renderSettings() {
     : health.permissionsGranted ? 'Connected' : 'Not connected';
   const healthStatusColor = health.permissionsGranted ? 'var(--success)' : 'var(--text-dim)';
 
-  html += `
+  return `
     <div class="settings-section">
       <div class="settings-section-title">Apple Health</div>
       <div class="settings-row">
@@ -189,8 +192,11 @@ export function renderSettings() {
       ` : ''}
     </div>
   `;
+}
 
-  html += `
+// Data: export, import, reset, and the cover photo credit when a photo is set.
+function buildDataSection(profile) {
+  return `
     <div class="settings-section">
       <div class="settings-section-title">Data</div>
       <div class="data-buttons">
@@ -211,6 +217,19 @@ export function renderSettings() {
     </div>
     ${getBackgroundById(profile.background) ? `<div class="pf-cover-credit">Cover ${backgroundCreditHtml(getBackgroundById(profile.background)).replace(/^Photo/, 'photo')}</div>` : ''}
   `;
+}
+
+export function renderSettings() {
+  const el = document.getElementById('settingsPage');
+  if (!el) return;
+
+  const profile = state.profile || { name: '—', trainingMode: 'structured' };
+
+  const html = buildProfileHeader(profile) + buildProfileStatsCard(profile)
+    + buildProfileSection(profile)
+    + buildWorkoutSection()
+    + buildHealthSection()
+    + buildDataSection(profile);
 
   el.innerHTML = html;
 
