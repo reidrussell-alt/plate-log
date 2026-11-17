@@ -543,8 +543,6 @@ function _initSortable() {
   });
 }
 
-export function updateBw(val) { state.currentSession.bw = val; saveCurrentSession(); }
-
 export function updateSessionDate(val) {
   state.currentSession.date = val || todayDateString();
   saveCurrentSession();

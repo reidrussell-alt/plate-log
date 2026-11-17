@@ -1,7 +1,7 @@
 import { loadData, exportData, importData, confirmReset, openResetModal, closeResetModal } from './data.js';
 import { showWelcomeScreen } from './welcome.js';
 import { renderProgress, updateMuscleGroupExercise, setChartRange, toggleHistoryBlock, openEditModal, closeEditModal, saveEdit, deleteEditSession, navigateCalendar, openCalendarDay, closeCalendarDay, openManualWorkoutSelect, openSessionEdit, closeSessionEdit, saveSessionEdit, sessionEditDeleteExercise, sessionEditDeleteSet, deleteSession, _liveSessionIdx } from './progress.js';
-import { startSession, startTrackAsYouGoWorkout, abandonSession, finishSession, confirmFinishSession, closeModal, updateBw, updateSessionDate, updateSet, toggleNote, toggleSetLogged, addSet, removeExercise, updateExerciseNote, showExercisePicker, renderSession, leaveSession, toggleReorderMode, startManualEntry, showExerciseOptions, closeExerciseOptions, replaceExercise, removeSet, openExercise } from './session.js';
+import { startSession, startTrackAsYouGoWorkout, abandonSession, finishSession, confirmFinishSession, closeModal, updateSessionDate, updateSet, toggleNote, toggleSetLogged, addSet, removeExercise, updateExerciseNote, showExercisePicker, renderSession, leaveSession, toggleReorderMode, startManualEntry, showExerciseOptions, closeExerciseOptions, replaceExercise, removeSet, openExercise } from './session.js';
 import { updateSessionBanner, hideSessionBanner, resumeSession } from './sessionBanner.js';
 import { renderSettings, editProfileName, switchTrainingMode, setActiveProgram, deleteProgram, duplicateProgram, activateTemplate, duplicateTemplate, toggleRestTimer, onRestDurationChange, toggleRestAlert, connectHealth, toggleHealthEnabled, toggleHealthSteps, toggleHealthWeight } from './settings.js';
 import { initRestTimer, pauseTimer, skipTimer, resetTimer, toggleTimerExpanded, updatePillVisibility, reconcileTimer } from './restTimer.js';
@@ -56,7 +56,6 @@ function switchTab(tab) {
 window.switchTab = switchTab;
 window.renderHome = renderHome;
 window.renderMyPlans = renderMyPlans;
-window.renderPlan = renderMyPlans; // backward compat alias
 window.homeStartWorkout = homeStartWorkout;
 window.homeOpenYesterday = homeOpenYesterday;
 window.showCreatePlanSheet = showCreatePlanSheet;
@@ -68,7 +67,6 @@ window.abandonSession = abandonSession;
 window.finishSession = finishSession;
 window.confirmFinishSession = confirmFinishSession;
 window.closeModal = closeModal;
-window.updateBw = updateBw;
 window.updateSessionDate = updateSessionDate;
 window.updateSet = updateSet;
 window.toggleNote = toggleNote;
