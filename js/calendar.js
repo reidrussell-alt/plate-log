@@ -1,7 +1,6 @@
 import { state } from './data.js';
 import { todayDateString } from './utils.js';
 import { cssVar } from './charts.js';
-import { renderProgress } from './progress.js'; // circular with progress.js; safe, only called inside functions
 
 const FALLBACK_COLORS = ['#9c3587','#0fa678','#1a8fe0','#7c4dff','#687078','#db2777','#0b7f8c','#0891b2'];
 
@@ -27,7 +26,7 @@ export function navigateCalendar(dir) {
   if (el) {
     el.outerHTML = renderCalendar();
   } else {
-    renderProgress();
+    window.renderProgress(); // through window, not an import: progress.js imports this file
   }
 }
 

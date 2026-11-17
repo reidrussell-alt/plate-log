@@ -73,7 +73,8 @@ describe('window bindings', () => {
   // The reverse direction. A binding is "used" if an inline handler calls it or JS
   // code reaches it as window.name. PINNED: this is today's list of bindings with
   // neither. REFACTOR_PLAN.md 1.2–1.4 removed the dead ones (renderPlan, updateBw,
-  // editProgram, showCreateProgram) and 1.9 removed activateTemplate; the rest are
+  // editProgram, showCreateProgram) and 1.9 removed activateTemplate; 5.7 made
+  // calendar.js reach renderProgress through window, taking it off the list. The rest are
   // bound but only called directly by import. Update this list when a batch removes
   // or starts using one.
   it('PINNED: bindings that nothing reaches through window', () => {
@@ -83,7 +84,6 @@ describe('window bindings', () => {
       'hideOnboarding',
       'openExerciseSelector',
       'renderHome',
-      'renderProgress',
       'showOnboarding',
       'showWelcomeScreen',
     ]);
