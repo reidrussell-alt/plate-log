@@ -281,15 +281,21 @@ export function deleteProgram(programId) {
   );
 }
 
+// True (after a toast) when the custom-program limit is reached.
+function _atCustomLimit() {
+  const customCount = state.programs.filter(p => p.isCustom === true).length;
+  if (customCount >= MAX_CUSTOM_PROGRAMS) {
+    showToast(`Max ${MAX_CUSTOM_PROGRAMS} custom programs. Delete one first.`);
+    return true;
+  }
+  return false;
+}
+
 export function duplicateProgram(programId) {
   const prog = state.programs.find(p => p.id === programId);
   if (!prog) return;
 
-  const customCount = state.programs.filter(p => p.isCustom === true).length;
-  if (customCount >= MAX_CUSTOM_PROGRAMS) {
-    showToast(`Max ${MAX_CUSTOM_PROGRAMS} custom programs. Delete one first.`);
-    return;
-  }
+  if (_atCustomLimit()) return;
 
   const copyName = `${prog.name} (Copy)`;
   showConfirm(
@@ -315,11 +321,7 @@ export function duplicateTemplate(templateId) {
   const template = PROGRAM_TEMPLATES.find(t => t.id === templateId);
   if (!template) return;
 
-  const customCount = state.programs.filter(p => p.isCustom === true).length;
-  if (customCount >= MAX_CUSTOM_PROGRAMS) {
-    showToast(`Max ${MAX_CUSTOM_PROGRAMS} custom programs. Delete one first.`);
-    return;
-  }
+  if (_atCustomLimit()) return;
 
   const copyName = `${template.name} (Copy)`;
   showConfirm(
