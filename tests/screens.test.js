@@ -274,3 +274,78 @@ describe('Workout session', () => {
     await expectScreen('sessionPage', 'session-tayg-empty');
   });
 });
+
+// ─── Overlays (REFACTOR_PLAN.md 0.5) ─────────────────────────────────────────
+// The sheets and modals Batch 5 restructures (5.1, 5.5, 5.6). Same fixtures and
+// clock as the screens above. Only the JS-built part is snapshotted: the body
+// element each function fills (the static shell around it lives in index.html),
+// or the whole #pbOverlay for the program builder.
+
+describe('Overlays', () => {
+  let openCalendarDay, openManualWorkoutSelect, openEditModal, openSessionEdit;
+  let showProgramBuilder, closeProgramBuilder, pbToggleDay;
+  beforeAll(async () => {
+    ({ openCalendarDay, openManualWorkoutSelect, openEditModal, openSessionEdit } = await import('../js/progress.js'));
+    ({ showProgramBuilder, closeProgramBuilder, pbToggleDay } = await import('../js/programBuilder.js'));
+  });
+
+  beforeEach(() => {
+    structuredUser();
+    document.body.insertAdjacentHTML('beforeend', `
+      <div id="editModal"><div id="editModalBody"></div></div>
+      <div id="calendarDayModal"><div id="calendarDayBody"></div></div>
+      <div id="sessionEditModal"><div id="sessionEditBody"></div></div>
+    `);
+    // jsdom has no scrollIntoView; the builder calls it 120 ms after opening on a day.
+    Element.prototype.scrollIntoView = vi.fn();
+  });
+
+  async function expectOverlay(el, name) {
+    await expect(normalise(el.innerHTML)).toMatchFileSnapshot(`./__snapshots__/screens/${name}.html`);
+  }
+
+  it('calendar day sheet: a day with a workout', async () => {
+    openCalendarDay('2026-11-17');
+    await expectOverlay(document.getElementById('calendarDayBody'), 'overlay-calendar-day-workout');
+  });
+
+  it('calendar day sheet: a day with no workout', async () => {
+    openCalendarDay('2026-11-16');
+    await expectOverlay(document.getElementById('calendarDayBody'), 'overlay-calendar-day-empty');
+  });
+
+  it('manual workout picker (structured: program days + track as you go)', async () => {
+    openManualWorkoutSelect('2026-11-16');
+    await expectOverlay(document.getElementById('calendarDayBody'), 'overlay-manual-workout-select');
+  });
+
+  it('exercise edit modal: weighted exercise with a set note', async () => {
+    openEditModal(1, 0);
+    await expectOverlay(document.getElementById('editModalBody'), 'overlay-edit-exercise-weight');
+  });
+
+  it('exercise edit modal: bodyweight exercise', async () => {
+    openEditModal(1, 2);
+    await expectOverlay(document.getElementById('editModalBody'), 'overlay-edit-exercise-bw');
+  });
+
+  it('whole-workout edit modal (weighted and bodyweight exercises)', async () => {
+    openSessionEdit(1);
+    await expectOverlay(document.getElementById('sessionEditBody'), 'overlay-edit-session');
+  });
+
+  describe('program builder', () => {
+    afterEach(() => closeProgramBuilder());
+
+    it('editing a program, opened on a day: one open card, the rest collapsed', async () => {
+      showProgramBuilder('program_default', 'upperA');
+      await expectOverlay(document.getElementById('pbOverlay'), 'overlay-program-builder');
+    });
+
+    it('an empty day opened as well (empty hint)', async () => {
+      showProgramBuilder('program_default', 'upperA');
+      pbToggleDay('lowerB');
+      await expectOverlay(document.getElementById('pbOverlay'), 'overlay-program-builder-empty-day-open');
+    });
+  });
+});

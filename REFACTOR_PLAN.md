@@ -21,7 +21,7 @@ Audit of `js/` (23 modules, ~6,700 lines), `index.html` and `css/main.css` on br
 
 ## Batch 0 — Safety nets (tests only, no app code)
 
-Adds coverage that later batches rely on. No constraint touched. **Done** (4 commits, suite 91 → 144 tests).
+Adds coverage that later batches rely on. No constraint touched. 0.1–0.4 **done** (4 commits, suite 91 → 144 tests); 0.5 added 17 Nov after review.
 
 | # | Location | Problem | Proposed change | Risk | Effort | Coverage | Constraint |
 |---|----------|---------|-----------------|------|--------|----------|------------|
@@ -29,6 +29,7 @@ Adds coverage that later batches rely on. No constraint touched. **Done** (4 com
 | 0.2 ✓ `dc7ac26` | `renderMyPlans`, `renderSettings`, `renderProgress`, `renderSession`, `renderHome` | Screen markup is untested except Home. Batches 4–6 restructure these renderers. | jsdom render tests with fixture state: whitespace-normalised `innerHTML` snapshots per screen (structured + track-as-you-go, empty + with history, an in-progress session with logged/extra sets). Canvas drawing stubbed. | L | M | — (new) | — |
 | 0.3 ✓ `616bdbd` | `settings.js` program actions (`setActiveProgram`, `deleteProgram`, `duplicateProgram`, `activateTemplate`, `duplicateTemplate`) | Change saved programs; no tests. | Tests that drive `showConfirm` (click OK) and assert `state.programs` + `liftTrackerData` afterwards. | L | S | — (new) | — |
 | 0.4 ✓ `7dc91ac` | `data.js` `importData()`, `onboarding.js` `obProcessImport()` | Backup parse/validate paths untested (FileReader). | Tests with a jsdom `File`: valid v2/v5 backup, missing `history`, invalid JSON; assert toasts and state. | L | S | — (new) | — |
+| 0.5 | `progress.js` `openCalendarDay`, `openManualWorkoutSelect`, `openEditModal`, `openSessionEdit`; `programBuilder.js` `showProgramBuilder`, `pbToggleDay` | Overlays that Batch 5 (5.1, 5.5, 5.6) moves or restructures have no markup tests; 0.2 covers screens only. | File snapshots in `screens.test.js`, same fixtures and clock as 0.2: calendar day sheet (a day with a workout, an empty day), manual workout picker, per-exercise edit modal (weighted, bodyweight), whole-workout edit modal, program builder (one open day card + collapsed cards; an empty day opened too). Only the JS-filled body element (or `#pbOverlay`) is snapshotted. | L | S | — (new) | — |
 
 ## Batch 1 — Dead code removal
 
@@ -77,12 +78,12 @@ New files: **update `ASSETS` and bump the cache version in the same commit** (on
 
 | # | Location | Problem | Proposed change | Risk | Effort | Coverage | Constraint |
 |---|----------|---------|-----------------|------|--------|----------|------------|
-| 5.1 | `progress.js` (817 lines) | Stats/charts, calendar, calendar-day sheet, manual-entry picker, per-exercise edit modal and whole-workout edit modal in one file. | Split: `calendar.js` (calendar state, `renderCalendar`, `navigateCalendar`, `openCalendarDay`, `closeCalendarDay`, `openManualWorkoutSelect`, `_liveSessionIdx`), `historyEdit.js` (both edit modals, `deleteSession`). `progress.js` keeps stats and charts. **Precondition:** H5 (`_liveSessionIdx`) must have a pinning test before it moves; if not, add one to Batch 0. (Met 17 Nov: `progress-logic.test.js › _liveSessionIdx … PINNED: the first wins on duplicates`.) | M | M | T (0.2, `progress-logic`) + C 2, 9–11 ⚠ | SW |
+| 5.1 | `progress.js` (817 lines) | Stats/charts, calendar, calendar-day sheet, manual-entry picker, per-exercise edit modal and whole-workout edit modal in one file. | Split: `calendar.js` (calendar state, `renderCalendar`, `navigateCalendar`, `openCalendarDay`, `closeCalendarDay`, `openManualWorkoutSelect`, `_liveSessionIdx`), `historyEdit.js` (both edit modals, `deleteSession`). `progress.js` keeps stats and charts. **Precondition:** H5 (`_liveSessionIdx`) must have a pinning test before it moves; if not, add one to Batch 0. (Met 17 Nov: `progress-logic.test.js › _liveSessionIdx … PINNED: the first wins on duplicates`.) | M | M | T (0.2, 0.5, `progress-logic`) + C 2, 9–11 ⚠ | SW |
 | 5.2 | `session.js` `renderSession` (~200 lines) | One function builds header, reorder list, collapsed rows, open exercise, set rows and footer. | Private builders in the same file: `_headerHtml`, `_reorderListHtml`, `_collapsedRowHtml`, `_openExerciseHtml`, `_setRowHtml`, `_footerHtml`. | M | M | T (0.2) + C 4–8 ⚠ | — |
 | 5.3 | `settings.js` `renderSettings` (~140 lines) | Profile, timer, Health and Data sections in one template. | Section builders in the same file. | L | S | T (0.2) + C 13 ⚠ | — |
 | 5.4 | `progress.js` `renderProgress` (~130 lines) | Computes exercise stats, groups by muscle, picks defaults and renders. | Split into `_collectExerciseStats()` (pure, unit-testable), `_groupByMuscle()`, render. | M | S | T (0.2) ⚠ | — |
-| 5.5 | `progress.js` `openEditModal` / `_renderSessionEditBody` | Near-identical set-row markup (weight × reps inputs) in two edit modals. | Shared `_editSetRowHtml()`; class names and attributes kept per modal. | M | S | T (0.2) + C 10 ⚠ | — |
-| 5.6 | `programBuilder.js` `_dayCardHtml` | Collapsed and open variants repeat the day-name input; `_rerenderAll` vs `_rerenderDayCards` near-duplicates. | Shared `_dayNameInputHtml(day, open)`; one re-render function. | L | S | C 12 (+0.2) | — |
+| 5.5 | `progress.js` `openEditModal` / `_renderSessionEditBody` | Near-identical set-row markup (weight × reps inputs) in two edit modals. | Shared `_editSetRowHtml()`; class names and attributes kept per modal. | M | S | T (0.5) + C 10 ⚠ | — |
+| 5.6 | `programBuilder.js` `_dayCardHtml` | Collapsed and open variants repeat the day-name input; `_rerenderAll` vs `_rerenderDayCards` near-duplicates. | Shared `_dayNameInputHtml(day, open)`; one re-render function. | L | S | T (0.5) + C 12 | — |
 
 ## Batch 6 — Consistency of UI patterns (optional, decide after Batch 5)
 
