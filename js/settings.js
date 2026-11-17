@@ -315,32 +315,6 @@ export function duplicateProgram(programId) {
   );
 }
 
-export function activateTemplate(templateId) {
-  const template = PROGRAM_TEMPLATES.find(t => t.id === templateId);
-  if (!template) return;
-
-  const current = state.programs.find(p => p.isActive);
-  const currentName = current ? current.name : '';
-  const msg = currentName
-    ? `Switch to "${template.name}"?\n\nThis will replace "${currentName}" on the Plan tab.\n\nYour workout history will be preserved.`
-    : `Activate "${template.name}"?`;
-
-  showConfirm(msg, () => {
-    // Reuse existing non-custom program from this template if one exists
-    const existing = state.programs.find(p => p.templateId === templateId && !p.isCustom);
-    state.programs.forEach(p => { p.isActive = false; });
-    if (existing) {
-      existing.isActive = true;
-    } else {
-      const newProg = buildProgramFromTemplate(template.name, template, true, false);
-      state.programs.push(newProg);
-    }
-    saveData();
-    window.renderMyPlans();
-    showToast(`Activated: ${template.name}`, 'success');
-  }, 'Activate');
-}
-
 export function duplicateTemplate(templateId) {
   const template = PROGRAM_TEMPLATES.find(t => t.id === templateId);
   if (!template) return;

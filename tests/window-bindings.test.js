@@ -73,14 +73,13 @@ describe('window bindings', () => {
   // The reverse direction. A binding is "used" if an inline handler calls it or JS
   // code reaches it as window.name. PINNED: this is today's list of bindings with
   // neither. REFACTOR_PLAN.md 1.2–1.4 removed the dead ones (renderPlan, updateBw,
-  // editProgram, showCreateProgram); the rest are bound but only called directly by
-  // import, or (activateTemplate) no longer called at all. Update this list when a
-  // batch removes or starts using one.
+  // editProgram, showCreateProgram) and 1.9 removed activateTemplate; the rest are
+  // bound but only called directly by import. Update this list when a batch removes
+  // or starts using one.
   it('PINNED: bindings that nothing reaches through window', () => {
     const refs = windowReferences();
     const unused = [...bindings].filter(n => !callers.has(n) && !refs.has(n)).sort();
     expect(unused).toEqual([
-      'activateTemplate', // only caller was the dead Settings program list, deleted in 1.1
       'hideOnboarding',
       'openExerciseSelector',
       'renderHome',

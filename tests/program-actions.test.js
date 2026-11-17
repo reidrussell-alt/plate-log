@@ -3,7 +3,7 @@
 // state.programs and what was written to localStorage (liftTrackerData).
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { state } from '../js/data.js';
-import { setActiveProgram, deleteProgram, duplicateProgram, activateTemplate, duplicateTemplate } from '../js/settings.js';
+import { setActiveProgram, deleteProgram, duplicateProgram, duplicateTemplate } from '../js/settings.js';
 import { PROGRAM_TEMPLATES } from '../js/programTemplates.js';
 import { resetState, setNow, mountAppChrome } from './helpers.js';
 
@@ -135,48 +135,6 @@ describe('duplicateProgram', () => {
     expect(confirmOpen()).toBe(false);
     expect($('toast').textContent).toBe('Max 5 custom programs. Delete one first.');
     expect(state.programs).toHaveLength(7);
-  });
-});
-
-describe('activateTemplate', () => {
-  const tpl = id => PROGRAM_TEMPLATES.find(t => t.id === id);
-
-  it('OK builds a new active, non-custom program from the template and saves', () => {
-    const t = tpl('template_4day_upper_lower');
-    activateTemplate(t.id);
-    expect($('confirmModalText').textContent).toBe(
-      `Switch to "${t.name}"?\n\nThis will replace "Default" on the Plan tab.\n\nYour workout history will be preserved.`);
-    clickOk();
-
-    expect(state.programs).toHaveLength(4);
-    const created = state.programs[3];
-    expect(created).toMatchObject({
-      id: `program_${NOW_MS}`, name: t.name, isActive: true, isCustom: false, templateId: t.id, createdAt: NOW,
-    });
-    expect(created.days.map(d => d.id)).toEqual(t.days.map(d => d.id));
-    expect(state.programs.filter(p => p.isActive)).toHaveLength(1);
-    expect(saved().programs[3].templateId).toBe(t.id);
-    expect($('toast').textContent).toBe(`Activated: ${t.name}`);
-  });
-
-  it('reuses an existing non-custom program from the same template instead of adding one', () => {
-    activateTemplate('template_3day_fullbody');
-    clickOk();
-    expect(ids(state.programs)).toEqual(['program_default', 'program_custom', 'program_tpl']);
-    expect(state.programs.filter(p => p.isActive).map(p => p.id)).toEqual(['program_tpl']);
-  });
-
-  it('a custom program with that templateId is not reused', () => {
-    state.programs[2].isCustom = true;
-    activateTemplate('template_3day_fullbody');
-    clickOk();
-    expect(state.programs).toHaveLength(4);
-    expect(state.programs[3].isActive).toBe(true);
-  });
-
-  it('an unknown template id does nothing', () => {
-    activateTemplate('nope');
-    expect(confirmOpen()).toBe(false);
   });
 });
 
