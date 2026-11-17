@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { state } from '../js/data.js';
-import { getLastPerformance, getSuggestion, getLastExerciseNote } from '../js/session.js';
+import { getLastPerformance, getSuggestion, getLastExerciseNote } from '../js/overload.js';
 import { resetState, session, ex, setNow } from './helpers.js';
 
 beforeEach(resetState);

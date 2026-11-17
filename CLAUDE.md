@@ -46,7 +46,8 @@ lift-tracker/
     ├── app.js              # Entry point — imports everything, binds window.* handlers, switchTab
     ├── home.js             # Home tab: streak, readiness strip, split grid, PR + coaching cards, yesterday card
     ├── myplans.js          # My Plans tab: active program day cards, program library, create-plan sheet
-    ├── session.js          # Active workout session; structured + track-as-you-go; overload suggestions
+    ├── session.js          # Active workout session; structured + track-as-you-go
+    ├── overload.js         # Progressive overload logic: last performance, suggestion, last note (no DOM)
     ├── sessionBanner.js    # "Session in progress" banner shown on other tabs
     ├── restTimer.js        # Floating rest timer pill (background-accurate, vibrate alert)
     ├── progress.js         # Progress tab: stats, calendar, per-muscle charts + range filters, edit modals
@@ -313,7 +314,7 @@ White-first, warm and grounded: white page, warm off-white cards with light neut
 ### `home.js`
 - `renderHome()` — week streak, readiness strip, split progress grid, momentum row, yesterday card, stat footer
 - `detectMostRecentPr()` — walks history and finds the latest session that beat an exercise's previous best (top weight, or top reps for bodyweight). PRs are computed on the fly, not stored.
-- Coaching card surfaces `getSuggestion()` from `session.js`
+- Coaching card surfaces `getSuggestion()` from `overload.js`
 - `homeStartWorkout()` — opens the day-picker sheet (structured) or starts track-as-you-go
 
 ### `welcome.js`
@@ -323,10 +324,13 @@ Welcome screen shown on every app open (design: `design-reference/patterns.md`, 
 - Name comes from `state.profile.name` (escaped); without one the headline is just "Welcome in"
 - Reduced motion: no logo pop, dots drawn once and still
 
-### `session.js`
+### `overload.js`
 - `getLastPerformance(exerciseId)` — finds most recent session containing that exercise
 - `getLastExerciseNote(exerciseId)` — returns last note, with backward-compat fallback to set-level notes
 - `getSuggestion(exercise, last?)` — progressive overload suggestion shown during session and on Home
+
+### `session.js`
+- Imports the overload functions from `overload.js` for the exercise cards
 - In-session: add/replace/remove exercise, add/remove set, reorder mode
 - Calls `window.switchTab('home')` after finishing a session
 
@@ -345,7 +349,7 @@ Welcome screen shown on every app open (design: `design-reference/patterns.md`, 
 ## Service worker
 
 - Cache name must be bumped (v1 → v2 → v3...) on **every deploy** that changes JS/CSS files
-- Currently: `lift-tracker-v31`
+- Currently: `lift-tracker-v32`
 - Every JS file must be listed in the `ASSETS` array — add new modules there, remove deleted ones
 - Cover photos (`img/backgrounds/`) are **not** in `ASSETS`: they go in a separate `plate-log-backgrounds-v1` cache when first viewed, kept across versions
 - Cover photos are from Wikimedia Commons (CC BY / BY-SA / CC0); their licences require the credit line shown in the picker and under the Profile page — keep it

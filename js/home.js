@@ -1,5 +1,5 @@
 import { state } from './data.js';
-import { getSuggestion, getLastPerformance } from './session.js';
+import { getSuggestion, getLastPerformance } from './overload.js';
 import { buildProfileChip } from './profilePhoto.js';
 import { dayTitleBase } from './utils.js';
 
