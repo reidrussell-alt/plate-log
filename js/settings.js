@@ -368,20 +368,6 @@ export function duplicateTemplate(templateId) {
   );
 }
 
-export function editProgram(programId) {
-  const prog = state.programs.find(p => p.id === programId);
-  if (!prog) return;
-  showPrompt('Rename program:', prog.name, (name) => {
-    const trimmed = name.trim();
-    if (!trimmed) { showToast('Name cannot be empty'); return; }
-    prog.name = trimmed;
-    saveData();
-    window.renderMyPlans();
-    window.renderMyPlans();
-    showToast('Program renamed', 'success');
-  });
-}
-
 export function toggleRestTimer(enabled) {
   setTimerEnabled(enabled);
   const opts = document.getElementById('restTimerOptions');

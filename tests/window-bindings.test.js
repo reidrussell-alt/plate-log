@@ -80,7 +80,6 @@ describe('window bindings', () => {
     const unused = [...bindings].filter(n => !callers.has(n) && !refs.has(n)).sort();
     expect(unused).toEqual([
       'activateTemplate', // only caller was the dead Settings program list, deleted in 1.1
-      'editProgram',
       'hideOnboarding',
       'openExerciseSelector',
       'renderHome',
