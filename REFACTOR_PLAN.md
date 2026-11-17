@@ -1,12 +1,13 @@
 # Refactor plan
 
 Audit of `js/` (23 modules, ~6,700 lines), `index.html` and `css/main.css` on branch
-`refactor/initial`, 17 Nov 2026. Read-only audit; nothing below has been done yet. Amended 17 Nov after review: decisions on 1.8 and 6.2, items 1.5, 2.5 and 6.5 removed (numbers kept stable, so gaps are intentional).
+`refactor/initial`, 16 Nov 2026. Read-only audit; nothing below has been done yet. Amended 16 Nov after review: decisions on 1.8 and 6.2, items 1.5, 2.5 and 6.5 removed (numbers kept stable, so gaps are intentional).
 
 ## Ground rules (apply to every batch)
 
 - **Storage:** no change to localStorage keys, the IndexedDB database/store/key, stored data shapes, or migration logic (`migrate*` in `data.js`).
-- **Service worker:** any file added, renamed, moved or deleted updates `ASSETS` in `service-worker.js` **and** bumps `lift-tracker-vN` in the same commit. `tests/service-worker.test.js` checks the list.
+- **Service worker:** bump `lift-tracker-vN` **once per batch** whenever any precached file (anything in `ASSETS`) changes, not only when files are added or removed. The bump goes in that batch's docs commit. Any file added, renamed, moved or deleted still updates `ASSETS` in the same commit as the change. `tests/service-worker.test.js` checks the list. (Corrected 16 Nov after Batch 4: the earlier rule only bumped when files were added or removed, so Batch 4's JS changes shipped without a bump; fixed by the v35 bump in the housekeeping commit.)
+- **Pushing:** never run `git push`. Reid pushes from Terminal.
 - **Off limits:** `capacitor.config.json`, root `package.json`.
 - **No bug fixes.** `BUGS.md` items stay as they are; every `PINNED` test stays green. Behaviour, markup and wording stay identical unless a row says otherwise.
 - **Snapshots:** never update snapshots in bulk (no `vitest -u` across the suite). Every snapshot change is listed in the handoff with its reason.
@@ -21,7 +22,7 @@ Audit of `js/` (23 modules, ~6,700 lines), `index.html` and `css/main.css` on br
 
 ## Batch 0 — Safety nets (tests only, no app code)
 
-Adds coverage that later batches rely on. No constraint touched. **Done** (5 commits, suite 91 → 152 tests; 0.5 added 17 Nov after review).
+Adds coverage that later batches rely on. No constraint touched. **Done** (5 commits, suite 91 → 152 tests; 0.5 added 16 Nov after review).
 
 | # | Location | Problem | Proposed change | Risk | Effort | Coverage | Constraint |
 |---|----------|---------|-----------------|------|--------|----------|------------|
@@ -44,7 +45,7 @@ No files added or removed, so no SW change. `healthkit.js` dead code (formerly 1
 | 1.6 ✓ `d55cce7` | `settings.js` lines 361–362, 379–380, 438–439, 476–477 | `window.renderMyPlans()` called twice in a row. | Call once. | L | S | C 12 | — |
 | 1.7 ✓ `4a776ce` | `settings.js:108` | `${isStructured ? 'Switch' : 'Switch'}` | Plain `Switch`. | L | S | T (0.2) | — |
 | 1.8 ✓ `f25606e` | `progress.js` `getMostTrainedDay`; the `sessionsByDay` tally in `renderProgress` that only fed it | Unused by the app; only `progress-logic.test.js` calls it. | **Decided:** delete the function, its `getMostTrainedDay` test block and its import in that test file, and the unused `sessionsByDay` block in `renderProgress` (output unchanged). `searchExercises` and `getExercisesByMuscleGroup` stay (decided: keep). | L | S | T | — |
-| 1.9 ✓ `21dfcf7` | `settings.js` `activateTemplate` + binding | Its only caller was the template card deleted in 1.1, so nothing in the app calls it. Added 17 Nov after the Batch 1 review. | Delete the function, its `window` binding, its `program-actions.test.js` block and its entry in the 0.1 pinned list. | L | S | T (0.1, 0.3 — tests removed with it) | — |
+| 1.9 ✓ `21dfcf7` | `settings.js` `activateTemplate` + binding | Its only caller was the template card deleted in 1.1, so nothing in the app calls it. Added 16 Nov after the Batch 1 review. | Delete the function, its `window` binding, its `program-actions.test.js` block and its entry in the 0.1 pinned list. | L | S | T (0.1, 0.3 — tests removed with it) | — |
 
 ## Batch 2 — Shared helpers inside existing files
 
@@ -52,7 +53,7 @@ No new files. Output must stay byte-identical. **Done** (5 commits, suite 147 �
 
 | # | Location | Problem | Proposed change | Risk | Effort | Coverage | Constraint |
 |---|----------|---------|-----------------|------|--------|----------|------------|
-| 2.1 ✓ `e919b76` | `escapeHtml` (`settings.js`, `welcome.js`), `_esc` (`profilePhoto.js`, `programBuilder.js`), `_escape` (`backgroundPicker.js`) | Five copies, three identical. Variants: `programBuilder`'s does not escape `'`; `welcome.js` uses `String(s)` so `null` becomes `"null"` (others give `''`). | One `escapeHtml` (the `String(s ?? '')` version) in `utils.js`, imported by all five. **Only replace existing calls — add no new escaping** (that's BUGS.md L1). `programBuilder` would start escaping `'` as `&#39;` inside double-quoted attributes: renders identically, but markup differs, so its snapshot updates. `welcome.js:44` only calls it when `name` is truthy, so its output is unchanged. **Precondition:** verify every `programBuilder` `_esc` call site is in text content or a double-quoted attribute; report any that aren't. (Checked 17 Nov: all 6 OK — lines 378, 549, 550 text; 405, 431, 470 `value="…"`. Re-check at batch time.) | L | S | T (0.2 + direct unit test) ⚠ | — |
+| 2.1 ✓ `e919b76` | `escapeHtml` (`settings.js`, `welcome.js`), `_esc` (`profilePhoto.js`, `programBuilder.js`), `_escape` (`backgroundPicker.js`) | Five copies, three identical. Variants: `programBuilder`'s does not escape `'`; `welcome.js` uses `String(s)` so `null` becomes `"null"` (others give `''`). | One `escapeHtml` (the `String(s ?? '')` version) in `utils.js`, imported by all five. **Only replace existing calls — add no new escaping** (that's BUGS.md L1). `programBuilder` would start escaping `'` as `&#39;` inside double-quoted attributes: renders identically, but markup differs, so its snapshot updates. `welcome.js:44` only calls it when `name` is truthy, so its output is unchanged. **Precondition:** verify every `programBuilder` `_esc` call site is in text content or a double-quoted attribute; report any that aren't. (Checked 16 Nov: all 6 OK — lines 378, 549, 550 text; 405, 431, 470 `value="…"`. Re-check at batch time.) | L | S | T (0.2 + direct unit test) ⚠ | — |
 | 2.2 ✓ `afcc3ce` | `session.js:236, 608, 675, 710` | Blank set object `{ weight:'', reps:'', logged:false, note:'', noteOpen:false }` written out 4×; new-exercise object (3 sets) 2×. | `_blankSet()` / `_newSessionExercise(ex)` private helpers. Same keys, same order. | L | S | C 4, 8 (+0.2) | Session shape — unchanged |
 | 2.3 ✓ `b0e75d2` | `home.js:12–16, 87–94, 330–332` | Week-start (Sunday 00:00 local) computed three ways. | `_weekStart(date)` helper in `home.js`. Must keep the `toISOString()` date keys exactly (BUGS M1). | L | S | T (`home.test.js` incl. pinned TZ test) | — |
 | 2.4 ✓ `1660d25` | `home.js` `abbreviateTitle`; `myplans.js:51`; `settings.js:65` | "Title before ` - `" done three ways (Home trims, others don't). | Shared `dayTitleBase(title)` that does **not** trim; Home keeps its `.trim()` at the call site. | L | S | T (home) / C 12–13 | — |
@@ -71,7 +72,7 @@ New files: **update `ASSETS` and bump the cache version in the same commit**. **
 
 ## Batch 4 — Storage and import plumbing (keys and shapes unchanged)
 
-No files added, so no SW change. **Done** 16 Nov (2 commits, suite 161 → 170 tests: `readJSON`/`writeJSON` and `parseBackup` unit tests, and a test for the timer save warning). No snapshot changed; 0.4 (`import.test.js`) ran unedited. Keys through the helpers: `liftTimerSettings`, `liftTrackerChartRanges` (unchanged). Warning text is now `Failed to read <key>` / `Failed to save <key>`. Follow-up 3.4 landed first (`c0e08fb`).
+No files added. **Done** 16 Nov (2 commits, suite 161 → 170 tests: `readJSON`/`writeJSON` and `parseBackup` unit tests, and a test for the timer save warning). No snapshot changed; 0.4 (`import.test.js`) ran unedited. Keys through the helpers: `liftTimerSettings`, `liftTrackerChartRanges` (unchanged). Warning text is now `Failed to read <key>` / `Failed to save <key>`. Follow-up 3.4 landed first (`c0e08fb`). No version bump at the time (old rule); bumped v34 → v35 in the housekeeping commit after the Batch 4 review.
 
 | # | Location | Problem | Proposed change | Risk | Effort | Coverage | Constraint |
 |---|----------|---------|-----------------|------|--------|----------|------------|
@@ -80,13 +81,22 @@ No files added, so no SW change. **Done** 16 Nov (2 commits, suite 161 → 170 t
 
 ## Batch 5 — Break up oversized files and functions
 
+Split after the Batch 4 review into **5a** (5.1, 5.4, 5.5 — the Progress files) and **5b** (5.2, 5.3, 5.6 — workout screen, Profile, program builder). Each sub-batch is its own batch: its own checklist steps, handoff and single version bump in its docs commit. Item numbers are unchanged.
+
+### Batch 5a — Progress: 5.1, then 5.4, then 5.5
+
 | # | Location | Problem | Proposed change | Risk | Effort | Coverage | Constraint |
 |---|----------|---------|-----------------|------|--------|----------|------------|
-| 5.1 | `progress.js` (817 lines) | Stats/charts, calendar, calendar-day sheet, manual-entry picker, per-exercise edit modal and whole-workout edit modal in one file. | Split: `calendar.js` (calendar state, `renderCalendar`, `navigateCalendar`, `openCalendarDay`, `closeCalendarDay`, `openManualWorkoutSelect`, `_liveSessionIdx`), `historyEdit.js` (both edit modals, `deleteSession`). `progress.js` keeps stats and charts. **Precondition:** H5 (`_liveSessionIdx`) must have a pinning test before it moves; if not, add one to Batch 0. (Met 17 Nov: `progress-logic.test.js › _liveSessionIdx … PINNED: the first wins on duplicates`.) | M | M | T (0.2, 0.5, `progress-logic`) + C 2, 9–11 ⚠ | SW |
-| 5.2 | `session.js` `renderSession` (~200 lines) | One function builds header, reorder list, collapsed rows, open exercise, set rows and footer. | Private builders in the same file: `_headerHtml`, `_reorderListHtml`, `_collapsedRowHtml`, `_openExerciseHtml`, `_setRowHtml`, `_footerHtml`. | M | M | T (0.2) + C 4–8 ⚠ | — |
-| 5.3 | `settings.js` `renderSettings` (~140 lines) | Profile, timer, Health and Data sections in one template. | Section builders in the same file. | L | S | T (0.2) + C 13 ⚠ | — |
+| 5.1 | `progress.js` (817 lines) | Stats/charts, calendar, calendar-day sheet, manual-entry picker, per-exercise edit modal and whole-workout edit modal in one file. | Split: `calendar.js` (calendar state, `renderCalendar`, `navigateCalendar`, `openCalendarDay`, `closeCalendarDay`, `openManualWorkoutSelect`, `_liveSessionIdx`), `historyEdit.js` (both edit modals, `deleteSession`). `progress.js` keeps stats and charts. **Precondition:** H5 (`_liveSessionIdx`) must have a pinning test before it moves; if not, add one to Batch 0. (Met 16 Nov: `progress-logic.test.js › _liveSessionIdx … PINNED: the first wins on duplicates`.) | M | M | T (0.2, 0.5, `progress-logic`) + C 2, 9–11 ⚠ | SW |
 | 5.4 | `progress.js` `renderProgress` (~130 lines) | Computes exercise stats, groups by muscle, picks defaults and renders. | Split into `_collectExerciseStats()` (pure, unit-testable), `_groupByMuscle()`, render. | M | S | T (0.2) ⚠ | — |
 | 5.5 | `progress.js` `openEditModal` / `_renderSessionEditBody` | Near-identical set-row markup (weight × reps inputs) in two edit modals. | Shared `_editSetRowHtml()`; class names and attributes kept per modal. | M | S | T (0.5) + C 10 ⚠ | — |
+
+### Batch 5b — Workout screen, Profile, program builder: 5.2, 5.3, 5.6
+
+| # | Location | Problem | Proposed change | Risk | Effort | Coverage | Constraint |
+|---|----------|---------|-----------------|------|--------|----------|------------|
+| 5.2 | `session.js` `renderSession` (~200 lines) | One function builds header, reorder list, collapsed rows, open exercise, set rows and footer. | Private builders in the same file: `_headerHtml`, `_reorderListHtml`, `_collapsedRowHtml`, `_openExerciseHtml`, `_setRowHtml`, `_footerHtml`. | M | M | T (0.2) + C 4–8 ⚠ | — |
+| 5.3 | `settings.js` `renderSettings` (~140 lines) | Profile, timer, Health and Data sections in one template. | Section builders in the same file. | L | S | T (0.2) + C 13 ⚠ | — |
 | 5.6 | `programBuilder.js` `_dayCardHtml` | Collapsed and open variants repeat the day-name input; `_rerenderAll` vs `_rerenderDayCards` near-duplicates. | Shared `_dayNameInputHtml(day, open)`; one re-render function. | L | S | T (0.5) + C 12 | — |
 
 ## Batch 6 — Consistency of UI patterns (optional, decide after Batch 5)
@@ -96,7 +106,7 @@ Highest-churn batch. **Optional: decide after Batch 5 whether to do any of it.**
 | # | Location | Problem | Proposed change | Risk | Effort | Coverage | Constraint |
 |---|----------|---------|-----------------|------|--------|----------|------------|
 | 6.1 | Overlays | Four ways to show a sheet: static modals in `index.html`; `calendarDayModal` borrowed by Home's start sheet, My Plans' create sheet and Progress; `insertAdjacentHTML` overlays (`programBuilder`); `createElement` backdrops (`exerciseSelector`, session options, photo, background). | `openSheet(html)` / `closeSheet()` helper wrapping the shared `calendarDayModal` (same id and classes), used by Home and My Plans instead of reaching into Progress's modal. Leave the other overlay types alone in this pass. | M | M | C 3–4, 12 | — |
-| 6.2 | Naming (`CLAUDE.md` render/show convention) | `show*`/`open*` functions build overlay HTML, which the old convention said `show*` never did. | **Decided: Option A, done in the docs commit of 17 Nov.** `CLAUDE.md` now says `render*` re-renders a screen and `show*`/`open*` build and display an overlay. No renames. | L | — | — | — |
+| 6.2 | Naming (`CLAUDE.md` render/show convention) | `show*`/`open*` functions build overlay HTML, which the old convention said `show*` never did. | **Decided: Option A, done in the docs commit of 16 Nov.** `CLAUDE.md` now says `render*` re-renders a screen and `show*`/`open*` build and display an overlay. No renames. | L | — | — | — |
 | 6.3 | `app.js` lines 56–185 | ~130 `window.x = x` lines. | `Object.assign(window, { … })` grouped per module. Same names. | L | S | T (0.1) | — |
 | 6.4 | `programBuilder.js` `pbIncr*`/`pbDecr*` (8 exports) | One-line wrappers per counter. | `pbStep(id, delta)` with min/max table; update inline handlers and bindings. | L | S | T (0.1) + C 12 | — |
 
@@ -117,4 +127,4 @@ Highest-churn batch. **Optional: decide after Batch 5 whether to do any of it.**
 
 ## Suggested order and checkpoints
 
-0 → 1 → 2 → 3 → 4 → 5, then decide on 6. After each item: tests green, one commit. After each batch: the checklist steps listed in that batch, handoff. Batches 3 and 5 change the service worker: the version is bumped in each commit that adds, renames or removes a file (the storage/SW ground rule), so a batch may bump more than once. Any snapshot change is listed in that batch's handoff with its reason.
+0 → 1 → 2 → 3 → 4 → 5, then decide on 6. After each item: tests green, one commit. After each batch: the checklist steps listed in that batch, handoff. Every batch that changes a precached file bumps the version once, in its docs commit (the service-worker ground rule); files added or removed update `ASSETS` in the commit that adds or removes them. (Batch 3 bumped per commit under the old rule.) Any snapshot change is listed in that batch's handoff with its reason.

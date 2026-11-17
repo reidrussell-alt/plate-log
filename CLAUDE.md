@@ -105,6 +105,8 @@ A behaviour-preserving refactor is under way on branch `refactor/initial`.
 - **`BUGS.md`** — suspected bugs. Don't fix them during the refactor; the tests that pin them must stay green.
 - One commit per plan item (not per batch), with the full suite green before each commit. After each batch: the listed `MANUAL_TEST_CHECKLIST.md` steps, then the handoff.
 - Never update snapshots in bulk (no `vitest -u` across the suite); list every snapshot change and its reason in the handoff.
+- Service worker: bump `lift-tracker-vN` once per batch whenever any precached file changes (not only when files are added or removed), in that batch's docs commit. Files added or removed still update `ASSETS` in the same commit as the change.
+- **Do not attempt `git push`.** Reid pushes from Terminal.
 
 **Every response in a refactor session ends with this handoff block**, which Reid pastes to a reviewer. Put it in ONE fenced code block with nothing after it. Keep it factual and concise, don't restate the plan, and write "None" for empty sections rather than removing them. If `REFACTOR_PLAN.md` was created or substantially changed, paste its full contents in a separate code block directly above the handoff.
 
@@ -140,7 +142,7 @@ QUESTIONS FOR ME:
 - **`close*()` / `hide*()`** — removes or hides it again.
 - **`build*()` / `*Html()`** — return an HTML string and never touch the DOM (`buildProfileChip()`, `buildPrCard()`, `_dayCardHtml()`).
 
-Existing names stay as they are (decided 17 Nov 2026, REFACTOR_PLAN.md 6.2 option A). Follow this convention for new functions so callsites remain predictable.
+Existing names stay as they are (decided 16 Nov 2026, REFACTOR_PLAN.md 6.2 option A). Follow this convention for new functions so callsites remain predictable.
 
 ---
 
@@ -350,8 +352,8 @@ Welcome screen shown on every app open (design: `design-reference/patterns.md`, 
 
 ## Service worker
 
-- Cache name must be bumped (v1 → v2 → v3...) on **every deploy** that changes JS/CSS files
-- Currently: `lift-tracker-v34`
+- Cache name must be bumped (v1 → v2 → v3...) whenever any precached file changes — during the refactor, once per batch in its docs commit
+- Currently: `lift-tracker-v35`
 - Every JS file must be listed in the `ASSETS` array — add new modules there, remove deleted ones
 - Cover photos (`img/backgrounds/`) are **not** in `ASSETS`: they go in a separate `plate-log-backgrounds-v1` cache when first viewed, kept across versions
 - Cover photos are from Wikimedia Commons (CC BY / BY-SA / CC0); their licences require the credit line shown in the picker and under the Profile page — keep it
@@ -376,6 +378,7 @@ git push origin main
 - Git remote `origin`: `https://github.com/reidrussell-alt/plate-log.git` (full history moved here Nov 2026)
 - Old repository kept as remote `old-origin`: `https://github.com/reidrussell-alt/lifting-tracker-Application.git`
 - Auth: Personal Access Token required (password auth disabled by GitHub)
+- **Claude does not run `git push`.** Reid pushes from Terminal with his token.
 
 ---
 
