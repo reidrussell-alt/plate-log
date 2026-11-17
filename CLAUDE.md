@@ -52,7 +52,7 @@ lift-tracker/
     ├── programBuilder.js   # Full-screen program editor (drag-to-reorder, sets/rep ranges)
     ├── exerciseSelector.js # Exercise picker modal (search, filter by muscle, create custom)
     ├── healthkit.js        # iOS Capacitor HealthKit (steps, weight); no-ops elsewhere
-    ├── profilePhoto.js     # Profile photo sheet (take / choose / remove) + crop step
+    ├── profilePhoto.js     # Profile photo sheet (take / choose / remove) + crop step; profile chip (name + photo, top right of each tab)
     ├── media.js            # Profile photo storage in IndexedDB (no DOM)
     ├── backgroundPicker.js # Profile cover background sheet (Cities / Nature / None)
     ├── backgrounds.js      # 36 curated cover photos + credits (no DOM)
@@ -250,6 +250,7 @@ White-first, warm and grounded: white page, warm off-white cards with light neut
 - Daylight overrides (card shadows, set rows, calendar, page titles) live in labelled `DAYLIGHT —` blocks at the end of `main.css`.
 - Set logged: `_celebrateSet()` in `session.js` pops the tick, bursts dots and shows a 2-second pill (`.set-toast`); reduced motion turns the animation off.
 - `html, body` use `overflow-x: clip` (after a `hidden` fallback) so `position: sticky` works — the workout header (`.session-sticky`) relies on it.
+- Profile chip: `buildProfileChip()` (`profilePhoto.js`) puts the name and a 32px round photo (initial until one is set) in a pill at the top right of Home, My Plans, Progress and Profile; tapping it opens Profile. Hairline border on white pages; raised white with no border on the Home fade and the Profile cover, where the change-background button sits on the left. Not on the workout screen. Styles in the `PROFILE CHIP` block of `main.css`.
 - Rest timer: red (resting) → amber (last third) → green "READY", via `--timer-red/amber/green` on `.rest-timer-pill` (a status signal, deliberately not the brand orange).
 - App icons: `scripts/make_icons.py` draws the plate in the same burnt orange; rerun it (`python3 scripts/make_icons.py icons`) if `--accent` changes.
 
@@ -292,7 +293,7 @@ Welcome screen shown on every app open (design: `design-reference/patterns.md`, 
 ## Service worker
 
 - Cache name must be bumped (v1 → v2 → v3...) on **every deploy** that changes JS/CSS files
-- Currently: `lift-tracker-v30`
+- Currently: `lift-tracker-v31`
 - Every JS file must be listed in the `ASSETS` array — add new modules there, remove deleted ones
 - Cover photos (`img/backgrounds/`) are **not** in `ASSETS`: they go in a separate `plate-log-backgrounds-v1` cache when first viewed, kept across versions
 - Cover photos are from Wikimedia Commons (CC BY / BY-SA / CC0); their licences require the credit line shown in the picker and under the Profile page — keep it

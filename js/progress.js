@@ -3,6 +3,7 @@ import { MUSCLE_GROUPS } from './program.js';
 import { MUSCLE_GROUP_ORDER, MUSCLE_GROUP_META } from './exerciseLibrary.js';
 import { formatDate, formatDateShort, isoDateOnly, todayDateString, showToast, showConfirm } from './utils.js';
 import { drawSingleLineChart, cssVar } from './charts.js';
+import { buildProfileChip } from './profilePhoto.js';
 
 const FALLBACK_COLORS = ['#9c3587','#0fa678','#1a8fe0','#7c4dff','#687078','#db2777','#0b7f8c','#0891b2'];
 
@@ -225,6 +226,7 @@ export function renderProgress() {
 
   if (state.history.length === 0) {
     el.innerHTML = `
+      <div class="me-chip-row">${buildProfileChip()}</div>
       <div class="empty-state">
                 <p><strong>No workouts logged yet.</strong><br>Complete a session to see your progress here.</p>
       </div>
@@ -264,6 +266,7 @@ export function renderProgress() {
   });
 
   let html = `
+    <div class="me-chip-row">${buildProfileChip()}</div>
     <div class="progress-title">Progress</div>
     <div class="stat-row" aria-label="All time">
       <div class="stat-cell">

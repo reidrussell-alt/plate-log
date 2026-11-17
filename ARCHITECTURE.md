@@ -178,6 +178,11 @@ graph LR
     backgroundPicker.js --> utils.js
 
     profilePhoto.js --> media.js
+    profilePhoto.js --> data.js
+    home.js --> profilePhoto.js
+    myplans.js --> profilePhoto.js
+    progress.js --> profilePhoto.js
+    settings.js --> profilePhoto.js
     profilePhoto.js --> utils.js
 
     onboarding.js --> data.js
@@ -220,7 +225,7 @@ graph LR
 | `exerciseSelector.js` | `exerciseLibrary.js`, `data.js`, `utils.js` | Modal for picking exercises (search, muscle filter) or creating custom ones (saved to `customExercises`). |
 | `restTimer.js` | _(none)_ | Floating rest timer pill. Auto-starts after set logged; stays accurate in the background (`reconcileTimer()`); traffic-light states; optional vibrate. |
 | `sessionBanner.js` | `data.js` | Persistent banner shown on non-session tabs when a session is in progress. |
-| `profilePhoto.js` | `media.js`, `utils.js` | Profile photo options sheet (take photo with the front camera, choose from library, remove), crop step (drag + zoom in a circle), saves a 400×400 JPEG. |
+| `profilePhoto.js` | `media.js`, `utils.js`, `data.js` | Profile photo options sheet (take photo with the front camera, choose from library, remove), crop step (drag + zoom in a circle), saves a 400×400 JPEG. Also builds the profile chip (name + small photo) shown top right on Home, My Plans, Progress and Profile. |
 | `backgroundPicker.js` | `data.js`, `backgrounds.js`, `utils.js` | Background sheet for the Profile cover: Cities / Nature / None tabs, photo grid, live preview on the cover, photo credit, saves `profile.background`. |
 | `backgrounds.js` | _(none)_ | The 36 curated cover photos (18 cities, 18 nature) from Wikimedia Commons: id, label, photographer, licence. Files in `img/backgrounds/full/` (1200px) and `img/backgrounds/thumbs/` (480×300); rebuilt by `scripts/backgrounds/`. |
 | `media.js` | _(none)_ | Stores the profile photo on the device in IndexedDB (`plateLogMedia` database), separate from localStorage. Load/save/remove, and data-URL conversion for backups. |
@@ -510,7 +515,7 @@ flowchart TD
 
 **Remote:** `https://github.com/reidrussell-alt/plate-log.git` (live at `https://reidrussell-alt.github.io/plate-log/`; the old `lifting-tracker-Application` repository is kept as an archive)  
 **Auth:** Personal Access Token (GitHub no longer accepts passwords)  
-**Current SW cache version:** `lift-tracker-v30`  
+**Current SW cache version:** `lift-tracker-v31`  
 **Background photos** are not precached: the service worker keeps them in a separate `plate-log-backgrounds-v1` cache as they are viewed, and that cache survives app updates.  
 **Auto-update:** when a new service worker takes control, the app reloads itself. On iOS a delete + re-add is still the reliable way to force fresh code.
 
@@ -542,6 +547,7 @@ flowchart TD
 
 | Date | Change |
 |------|--------|
+| 2026-11-16 | Your name and profile photo now sit together in a small rounded button in the top-right corner of Home, My Plans, Progress and Profile, inspired by the PayPal app. Until you add a photo it shows your initial. Tap it to jump to your profile. On Profile it sits on the cover photo and the change-background button moves to the left; the workout screen is left as it was; SW bumped to v31 |
 | 2026-11-16 | The Profile tab gets a new header: a soft orange cover across the top, your profile photo in a circle in the middle, and your name with when you joined and how you train underneath. Tap the photo to take a selfie or pick one from your phone, then move and zoom it to fit the circle; you can remove it too. The photo stays on your phone, is included when you export a backup, and comes back when you restore one. A button on the cover opens a library of 36 background photos — 18 famous cities and landmarks around the world and 18 nature scenes (waterfalls, mountains, forests, deserts, northern lights) — with a live preview before you save; the photographer is credited under the photo and at the bottom of the page. Photos download the first time you see them and then work offline; SW bumped to v30 |
 | 2026-11-16 | First-time users now see the same welcome screen as everyone else (plate logo, turning dots, "Welcome in") instead of the old "Welcome to Lift Tracker" page with a weightlifter emoji. Tapping "Let's get moving" walks them through setup — their name, then structured plan or track as you go — and lands them on Home. Emoji removed from the setup steps; SW bumped to v29 |
 | 2026-11-16 | Home gets a soft burnt-orange glow at the top of the screen that fades to white by the "This week" card, inspired by the Copilot app. The date and day stay black, and the Start button turns white with orange text so it stands out against the colour. Only Home has it; the other tabs stay plain white |

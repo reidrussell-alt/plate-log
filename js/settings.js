@@ -5,6 +5,7 @@ import { showToast, showConfirm, showPrompt } from './utils.js';
 import { getCachedAvatarUrl, isAvatarLoaded, loadAvatar } from './media.js';
 import { getBackgroundById, backgroundFullUrl } from './backgrounds.js';
 import { backgroundCreditHtml } from './backgroundPicker.js';
+import { buildProfileChip } from './profilePhoto.js';
 import { getTimerSettings, setTimerEnabled, setTimerDuration, setTimerAlertEnabled, formatRestDuration } from './restTimer.js';
 import { isHealthKitAvailable, getHealthSettings, setHealthEnabled, setReadSteps, setReadWeight, requestHealthPermissions } from './healthkit.js';
 
@@ -32,6 +33,7 @@ function buildProfileHeader(profile) {
       <button type="button" class="pf-cover-btn" onclick="showBackgroundPicker()" aria-label="Change background">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
       </button>
+      <div class="me-chip-on-cover">${buildProfileChip()}</div>
     </div>
     <button type="button" class="pf-avatar-wrap" onclick="showProfilePhotoOptions()" aria-label="${photoUrl ? 'Change profile photo' : 'Add a profile photo'}">
       <span class="pf-avatar" id="pfAvatar">${avatarInner}</span>

@@ -1,6 +1,7 @@
 import { state } from './data.js';
 import { PROGRAM_TEMPLATES } from './programTemplates.js';
 import { getSuggestedDay } from './home.js';
+import { buildProfileChip } from './profilePhoto.js';
 
 export const MAX_CUSTOM_PROGRAMS = 5;
 
@@ -14,6 +15,7 @@ export function renderMyPlans() {
   const libraryPrograms = programs.filter(p => !p.isActive);
 
   el.innerHTML = `
+    <div class="me-chip-row">${buildProfileChip()}</div>
     ${buildHeader()}
     ${state.profile.trainingMode === 'trackAsYouGo'
       ? buildTAYGSection()

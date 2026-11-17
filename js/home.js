@@ -1,5 +1,6 @@
 import { state } from './data.js';
 import { getSuggestion, getLastPerformance } from './session.js';
+import { buildProfileChip } from './profilePhoto.js';
 
 export function renderHome() {
   const el = document.getElementById('homePage');
@@ -18,6 +19,7 @@ export function renderHome() {
   const suggestedDay = activeProgram ? getSuggestedDay(activeProgram) : null;
 
   el.innerHTML = `
+    <div class="me-chip-row">${buildProfileChip()}</div>
     ${buildHeader(streak)}
     <button class="home-start-btn" onclick="window.homeStartWorkout()">
       ${suggestedDay && state.profile?.trainingMode === 'structured' ? `Start ${abbreviateTitle(suggestedDay.name)}` : 'Start workout'}

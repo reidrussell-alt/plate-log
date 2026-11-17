@@ -10,6 +10,7 @@ One row per design idea taken from another app. Keep the newest at the top of ea
 
 | Source app | Platform | Captured on | Notes |
 |------------|----------|-------------|-------|
+| PayPal (via Mobbin) | iOS | 2026-11-16 | Money app home. Only the round profile photo in the top-right corner is wanted. |
 | Ladder (via Mobbin) | iOS | 2026-11-16 | Fitness app profile. Only the cover photo + centred profile photo layout is wanted. |
 | Copilot (via Mobbin) | iOS | 2026-11-16 | Money app. Only the background colour is of interest — the screen's content is ignored. |
 | How We Feel (via Mobbin) | iOS | 2026-11-16 | Mood-tracking app. Opening screens: calm, near-empty, one moving element. |
@@ -18,6 +19,7 @@ One row per design idea taken from another app. Keep the newest at the top of ea
 
 | # | Pattern | Source + capture | Plate Log screen | How it maps to Daylight | Status |
 |---|---------|------------------|------------------|--------------------------|--------|
+| 5 | Your photo and name in the top-right corner of every main screen | PayPal · `captures/paypal_home_avatar-top-right.webp` | Home, My Plans, Progress, Profile | Initial on `--surface-2` until a photo is set; ring in `--bg`; no orange; tapping opens Profile. Options in `mockups/profile-corner.html`: A pill, B round photo (closest to source), C on the title line | Built 16 Nov (not yet deployed) — Reid picked **A, pill**: name + 32px photo in one chip on its own row; Profile shows it on the cover |
 | 4 | Profile header: a cover photo across the top, the profile photo half over it, name below | Ladder · `captures/ladder_profile_cover-photo-centred-avatar.webp` | Profile | Default cover is the Home orange fade (`--home-fade`); photos fade into `--bg` at the bottom; profile photo centred (not left like the source) with a `--bg` ring; camera badge in `--select` ink; curated cities + nature backgrounds | Built 16 Nov (not yet deployed): 240px cover (Reid picked medium), profile photo, 36-photo background library |
 | 3 | Background colour that is strong at the top and fades lighter down the screen, behind the content | Copilot · `captures/copilot_dashboard_top-gradient-background.webp` | Main tabs (Home first; maybe all four) | Fade from `--accent` (our cobalt, already very close to theirs) at the top into `--bg`; white cards sit on top as now | Built 16 Nov (not yet deployed) — Home only, 50% burnt orange, black date, white Start button. Had been dropped for the palette brief, then brought back at Reid's request |
 | 2 | Logo-only splash: the app mark centred on a plain background, nothing else | How We Feel · `captures/how-we-feel_splash_logo-mark.webp` | Welcome screen (first moment on open) | Our plate icon centred on `--bg`; no text | Built 16 Nov (not yet deployed) |

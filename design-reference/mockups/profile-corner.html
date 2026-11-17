@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Profile corner</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<!-- Uses the app's real stylesheet, so serve it through localhost:8082 -->
+<link rel="stylesheet" href="../../css/main.css">
+<style>
+/* Mock-up of pattern 5 (../patterns.md): the user's photo and name in the top
+   right of every main screen. Only the corner photo is taken from the source
+   (PayPal home); nothing else from that screen.
+   ?shot=A|B|C  → one option across the four tabs (for screenshots)
+   ?shot=home   → Home in every option side by side
+   no parameter → everything, with notes */
+
+/* ---------- Mock-up page chrome (not part of the design) ---------- */
+html, body, body:has(#homePage.active) { background: #eceae6; overflow-x: hidden; }
+body { padding: 24px 16px 40px; min-height: 100vh; }
+.mock-head { max-width: 1640px; margin: 0 auto 20px; }
+.mock-head h1 { font-family: var(--font-display); font-weight: 800; font-size: 22px; color: var(--text); }
+.mock-head p { font-size: 13px; color: var(--text-dim); margin-top: 2px; }
+.set { max-width: 1640px; margin: 0 auto 36px; }
+.set h2 { font-family: var(--font-display); font-weight: 800; font-size: 18px; color: var(--text); margin: 0 0 4px; }
+.set > p { font-size: 13px; color: var(--text-dim); margin: 0 0 14px; }
+.phones { display: flex; flex-wrap: wrap; gap: 20px; }
+figure { margin: 0; display: flex; flex-direction: column; gap: 8px; }
+figcaption { font: 700 14px var(--font-body); color: var(--text); }
+.phone {
+  width: 375px; height: 812px; border-radius: 28px; overflow: hidden;
+  position: relative; background: var(--bg);
+  transform: translateZ(0); /* keeps the app's fixed tab bar inside the phone */
+  box-shadow: 0 0 0 1px #d6d3cd, 0 20px 50px -24px rgba(32,35,38,.35);
+}
+.phone .page { display: block; animation: none; }
+.phone .scroll { height: 100%; overflow: hidden; }
+.status {
+  height: 44px; display: flex; justify-content: space-between; align-items: center;
+  padding: 0 26px; font: 700 14px var(--font-body); color: var(--text);
+  position: relative; z-index: 3;
+}
+.phone.profile .status { position: absolute; top: 0; left: 0; right: 0; }
+.phone.profile .page { padding-top: 0; }
+.phone.profile #settingsPage .pf-cover { margin-top: 0; }
+.phone.home .scroll {
+  background:
+    linear-gradient(to bottom,
+      var(--home-fade) 0px,
+      color-mix(in srgb, var(--home-fade) 80%, var(--bg)) 120px,
+      color-mix(in srgb, var(--home-fade) 40%, var(--bg)) 230px,
+      color-mix(in srgb, var(--home-fade) 12%, var(--bg)) 330px,
+      var(--bg) 420px) no-repeat, var(--bg);
+}
+.notes { max-width: 1640px; margin: 8px auto 0; font-size: 14px; line-height: 1.55; color: var(--text); }
+.notes h3 { font-family: var(--font-display); font-weight: 700; font-size: 16px; margin: 14px 0 6px; }
+.notes ul { padding-left: 18px; margin: 0; }
+body.shot { padding: 20px; }
+body.shot .mock-head, body.shot .notes, body.shot .set > p { display: none; }
+body.shot .set { margin: 0; }
+body.shot .phone { box-shadow: 0 0 0 1px #d6d3cd; }
+
+/* ================= The design ================= */
+/* Shared: the corner is one button that opens the Profile tab */
+.me {
+  display: inline-flex; align-items: center; gap: 8px;
+  border: 0; background: none; padding: 0; cursor: pointer;
+  font: 700 14px var(--font-body); color: var(--text);
+  -webkit-tap-highlight-color: transparent;
+}
+.me-photo {
+  border-radius: 50%; display: grid; place-items: center; overflow: hidden; flex-shrink: 0;
+  background: var(--surface-2); color: var(--text-secondary);
+  font-family: var(--font-display); font-weight: 800;
+}
+.me-row { display: flex; justify-content: flex-end; padding: 0 4px 6px; }
+
+/* A — pill: name and a small photo together in one rounded chip, on its own row */
+.optA .me {
+  padding: 4px 4px 4px 14px; border-radius: 99px;
+  background: var(--bg); border: 1px solid var(--border);
+}
+.optA .me-photo { width: 32px; height: 32px; font-size: 14px; background: var(--surface-3); }
+.optA.home .me, .optA.profile .me { border-color: transparent; box-shadow: var(--shadow-raised); }
+
+/* B — like the reference: a large round photo with a white ring, name beside it in plain text */
+.optB .me { gap: 10px; font-size: 15px; }
+.optB .me-photo {
+  width: 46px; height: 46px; font-size: 19px;
+  border: 3px solid var(--bg); box-shadow: var(--shadow-raised);
+}
+
+/* C — no extra row: photo and name sit on the same line as the page title */
+.optC .me { flex-direction: row; gap: 9px; font-size: 14px; }
+.optC .me-photo {
+  width: 40px; height: 40px; font-size: 17px;
+  border: 2px solid var(--bg); box-shadow: 0 0 0 1px var(--border-bright);
+}
+.optC .me-inline { margin-left: auto; }
+.optC .progress-title { display: flex; align-items: center; }
+.optC .myplans-header { gap: 10px; justify-content: flex-start; }
+.optC .myplans-add-btn { order: 0; }
+.optC .home-header-left .home-streak-line {
+  font: 700 12px var(--font-body); color: var(--text-secondary); margin-top: 4px;
+}
+.optC .home-header-left .home-streak-line strong { color: var(--text); }
+
+/* Profile: the corner sits over the cover; the background button moves to the left */
+.profile .pf-cover .me-on-cover { position: absolute; top: 52px; right: 16px; z-index: 2; }
+.profile.optA .pf-cover-btn, .profile.optB .pf-cover-btn, .profile.optC .pf-cover-btn { top: 56px; left: 16px; right: auto; }
+.profile .me-on-cover .me { color: var(--text); }
+.optB.profile .me-on-cover .me span:first-child,
+.optC.profile .me-on-cover .me span:first-child {
+  background: color-mix(in srgb, var(--bg) 82%, transparent);
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+  padding: 4px 10px; border-radius: 99px;
+}
+</style>
+</head>
+<body>
+<header class="mock-head">
+  <h1>Your photo and name in the top corner</h1>
+  <p>Pattern 5 — only the round photo in the top right of the PayPal home screen is taken as inspiration. Shown with the initial "R" because no photo is set; your photo fills the circle once you add one.</p>
+</header>
+
+<div id="sets"></div>
+
+<section class="notes">
+  <h3>How the options differ</h3>
+  <ul>
+    <li><strong>A · Pill</strong> — name and a small photo in one rounded chip, on its own row above the page title. Quiet; reads as one button.</li>
+    <li><strong>B · Round photo</strong> — closest to the reference: a large round photo with a white ring and your name beside it in plain text, on its own row.</li>
+    <li><strong>C · On the title line</strong> — no extra row; the photo and name share the line with the date or page title, so nothing moves down. On Home the streak drops under the weekday; on My Plans the + moves next to the title.</li>
+  </ul>
+  <h3>Same in every option</h3>
+  <ul>
+    <li>Tapping it opens the Profile tab. Shown on Home, My Plans, Progress and Profile; not on the workout screen, which keeps its own Back and reorder buttons.</li>
+    <li>On Profile it sits over the cover, and the change-background button moves to the left. It could instead be left off Profile, since the big photo is already there.</li>
+    <li>Colours are the existing tokens; nothing orange is added.</li>
+  </ul>
+</section>
+
+<!-- ============ Screen templates (markup copied from the running app) ============ -->
+<template id="tpl-home">
+  <div id="homePage" class="page active">
+    <div class="home-header">
+      <div class="home-header-left">
+        <div class="home-day-label">16 November</div>
+        <div class="home-greeting">Monday</div>
+      </div>
+      <div class="home-streak-badge"><strong>3</strong>weeks in a row</div>
+    </div>
+    <button class="home-start-btn">Start Lower A</button>
+    <div class="home-start-meta">7 exercises · about 45 min · last trained 4 days ago</div>
+    <div class="home-split-card">
+      <div class="home-split-header"><span class="home-split-label">This week</span><span class="home-split-status">1 of 4 done</span></div>
+      <div class="home-week-grid">
+        <div class="home-week-cell"><div class="home-week-dow">S</div><div class="home-week-badge home-week-badge--skipped"></div></div>
+        <div class="home-week-cell"><div class="home-week-dow home-week-dow--today">M</div><div class="home-week-badge home-week-badge--push">UA</div></div>
+        <div class="home-week-cell"><div class="home-week-dow">T</div><div class="home-week-badge home-week-badge--future"></div></div>
+        <div class="home-week-cell"><div class="home-week-dow">W</div><div class="home-week-badge home-week-badge--future"></div></div>
+        <div class="home-week-cell"><div class="home-week-dow">T</div><div class="home-week-badge home-week-badge--future"></div></div>
+        <div class="home-week-cell"><div class="home-week-dow">F</div><div class="home-week-badge home-week-badge--future"></div></div>
+        <div class="home-week-cell"><div class="home-week-dow">S</div><div class="home-week-badge home-week-badge--future"></div></div>
+      </div>
+      <div class="home-week-legend"><div class="home-legend-item"><span class="home-legend-dot home-legend-dot--push"></span><span>Push</span></div></div>
+    </div>
+    <div class="home-section-label">Lately</div>
+    <div class="home-momentum-row">
+      <div class="home-momentum-card home-momentum-card--warm">
+        <div class="home-momentum-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:11px;height:11px;flex-shrink:0;"><path d="M6 9H4.5a2.5 2.5 0 010-5H6"/><path d="M18 9h1.5a2.5 2.5 0 000-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0012 0V2z"/></svg> Personal best</div>
+        <div class="home-momentum-name">Tricep Extensions (Rope Up)</div>
+        <div class="home-momentum-value">175 lb</div>
+        <div class="home-momentum-delta">Up from 170 lb</div>
+      </div>
+      <div class="home-momentum-card home-momentum-card--cool">
+        <div class="home-momentum-tag home-momentum-tag--cool"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:11px;height:11px;flex-shrink:0;"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg> Next session</div>
+        <div class="home-momentum-name">Hanging Leg Raises</div>
+        <div class="home-momentum-value">11+ reps</div>
+        <div class="home-momentum-delta home-momentum-delta--muted">You hit 10 last time</div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<template id="tpl-myPlans">
+  <div id="myPlansPage" class="page active">
+    <div class="myplans-header">
+      <div class="myplans-title">My Plans</div>
+      <button class="myplans-add-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+    </div>
+    <div class="myplans-section-label">Active</div>
+    <div class="myplans-program-identity">
+      <div class="myplans-program-name">Reid's 4-Day Push/Pull/Legs</div>
+      <div class="myplans-program-subtitle">4 workouts · next up is Lower A</div>
+    </div>
+    <div class="myplans-day-list">
+      <div class="myplans-day-card"><div class="myplans-day-badge">1</div><div class="myplans-day-content"><div class="myplans-day-row"><span class="myplans-day-name">Upper A - Push</span><span class="myplans-day-meta">6 exercises · 20 sets</span></div><div class="myplans-day-preview">Dumbbell Press, Shoulder Press, Lateral Raise…</div></div><button class="myplans-day-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;"><polyline points="9 18 15 12 9 6"/></svg></button></div>
+      <div class="myplans-day-card"><div class="myplans-day-badge myplans-day-badge--next">2</div><div class="myplans-day-content"><div class="myplans-day-row"><span class="myplans-day-name">Lower A - Quads</span><span class="myplans-day-meta">7 exercises · 21 sets</span></div><div class="myplans-day-preview">Hack Squat, Leg Extension, Leg Press…</div></div><button class="myplans-day-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;"><polyline points="9 18 15 12 9 6"/></svg></button></div>
+      <div class="myplans-day-card"><div class="myplans-day-badge">3</div><div class="myplans-day-content"><div class="myplans-day-row"><span class="myplans-day-name">Upper B - Pull</span><span class="myplans-day-meta">6 exercises · 19 sets</span></div><div class="myplans-day-preview">Chest Supported Row, Lat Pulldown…</div></div><button class="myplans-day-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;"><polyline points="9 18 15 12 9 6"/></svg></button></div>
+      <div class="myplans-day-card"><div class="myplans-day-badge">4</div><div class="myplans-day-content"><div class="myplans-day-row"><span class="myplans-day-name">Lower B - Posterior</span><span class="myplans-day-meta">6 exercises · 18 sets</span></div><div class="myplans-day-preview">Romanian Deadlift, Leg Curl…</div></div><button class="myplans-day-chevron"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px;"><polyline points="9 18 15 12 9 6"/></svg></button></div>
+    </div>
+    <div class="myplans-section-label">Library</div>
+    <div class="myplans-empty-box"><div class="myplans-empty-library">No other plans yet. Start from a template or build your own.</div><button class="myplans-create-cta">Create a plan</button></div>
+  </div>
+</template>
+
+<template id="tpl-progress">
+  <div id="progressPage" class="page active">
+    <div class="progress-title">Progress</div>
+    <div class="stat-row"><div class="stat-cell"><div class="stat-value">38</div><div class="stat-label">Sessions</div></div><div class="stat-cell"><div class="stat-value">612</div><div class="stat-label">Sets logged</div></div><div class="stat-cell"><div class="stat-value">196<span class="stat-unit"> lb</span></div><div class="stat-label">Bodyweight</div></div></div>
+    <div class="chart-card calendar-card">
+      <div class="calendar-nav"><button class="cal-nav-btn">←</button><div class="calendar-month-label">November 2026</div><button class="cal-nav-btn">→</button></div>
+      <div class="calendar-legend">
+        <span class="cal-legend-item"><span class="cal-legend-dot" style="background:var(--push)"></span><span>Upper A - Push</span></span>
+        <span class="cal-legend-item"><span class="cal-legend-dot" style="background:var(--legs)"></span><span>Lower A - Quads</span></span>
+        <span class="cal-legend-item"><span class="cal-legend-dot" style="background:var(--pull)"></span><span>Upper B - Pull</span></span>
+      </div>
+      <div class="calendar-grid" id="calGrid"></div>
+    </div>
+  </div>
+</template>
+
+<template id="tpl-profile">
+  <div id="settingsPage" class="page active">
+    <div class="pf-cover pf-cover--photo" style="background-image:url('../../img/backgrounds/full/morainelake.jpg')">
+      <button type="button" class="pf-cover-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></button>
+    </div>
+    <button type="button" class="pf-avatar-wrap"><span class="pf-avatar">R</span><span class="pf-avatar-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></span></button>
+    <div class="pf-name">Reid</div>
+    <div class="pf-meta">Member since May 2026 · Structured plan</div>
+    <div class="profile-stats-card"><div class="profile-stats-grid">
+      <div class="profile-stat"><div class="profile-stat-value">38</div><div class="profile-stat-label">Sessions</div></div>
+      <div class="profile-stat"><div class="profile-stat-value">29</div><div class="profile-stat-label">Weeks Active</div></div>
+      <div class="profile-stat profile-stat--wide"><div class="profile-stat-value profile-stat-value--sm">Upper A</div><div class="profile-stat-label">Fav. Workout</div></div>
+    </div></div>
+    <div class="settings-section">
+      <div class="settings-section-title">Profile</div>
+      <div class="settings-row"><span class="settings-row-label">Name</span><div class="settings-row-right"><span class="settings-row-value">Reid</span><button class="settings-edit-btn">Edit</button></div></div>
+      <div class="settings-row"><span class="settings-row-label">Mode</span><div class="settings-row-right"><span class="settings-row-value">Structured Plan</span><button class="settings-edit-btn">Switch</button></div></div>
+    </div>
+  </div>
+</template>
+
+<template id="tpl-tabs">
+  <div class="tab-nav"><div class="tabs">
+    <button class="tab" data-tab="home"><svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span class="tab-label">Home</span></button>
+    <button class="tab" data-tab="myPlans"><svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="8" y1="16" x2="12" y2="16"/></svg><span class="tab-label">My Plans</span></button>
+    <button class="tab" data-tab="progress"><svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg><span class="tab-label">Progress</span></button>
+    <button class="tab" data-tab="profile"><svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span class="tab-label">Profile</span></button>
+  </div></div>
+</template>
+
+<script>
+const NAME = 'Reid';
+const SCREENS = [
+  { key: 'home', tab: 'home', label: 'Home' },
+  { key: 'myPlans', tab: 'myPlans', label: 'My Plans' },
+  { key: 'progress', tab: 'progress', label: 'Progress' },
+  { key: 'profile', tab: 'profile', label: 'Profile' },
+];
+const OPTIONS = {
+  today: { title: 'Today', blurb: 'For comparison.' },
+  A: { title: 'A · Pill', blurb: 'Name and a small photo in one rounded chip, on its own row above the title.' },
+  B: { title: 'B · Round photo', blurb: 'Closest to the reference: a large round photo with a white ring, name beside it.' },
+  C: { title: 'C · On the title line', blurb: 'No extra row — photo and name share the line with the date or page title.' },
+};
+
+function meButton(opt) {
+  return `<button type="button" class="me" aria-label="Open your profile"><span>${NAME}</span><span class="me-photo">${NAME[0]}</span></button>`;
+}
+
+function calendar(root) {
+  const g = root.querySelector('#calGrid'); if (!g) return;
+  const dots = { 2: 'push', 4: 'legs', 6: 'pull', 9: 'push', 11: 'legs', 13: 'pull', 16: 'push' };
+  let h = ['Su','Mo','Tu','We','Th','Fr','Sa'].map(d => `<div class="cal-dow">${d}</div>`).join('');
+  for (let d = 1; d <= 30; d++) {
+    h += `<div class="cal-day${d === 16 ? ' cal-day--today' : ''}"><span class="cal-day-num">${d}</span><div class="cal-dots">${dots[d] ? `<span class="cal-dot" style="background:var(--${dots[d]})"></span>` : ''}</div></div>`;
+  }
+  g.innerHTML = h;
+}
+
+function applyOption(root, screen, opt) {
+  if (opt === 'today') return;
+  const page = root.querySelector('.page');
+  if (screen === 'profile') {
+    const wrap = document.createElement('div');
+    wrap.className = 'me-on-cover'; wrap.innerHTML = meButton(opt);
+    root.querySelector('.pf-cover').appendChild(wrap);
+    return;
+  }
+  if (opt === 'A' || opt === 'B') {
+    const row = document.createElement('div');
+    row.className = 'me-row'; row.innerHTML = meButton(opt);
+    page.prepend(row);
+    return;
+  }
+  // C — on the title line
+  const holder = document.createElement('span');
+  holder.className = 'me-inline'; holder.innerHTML = meButton(opt);
+  if (screen === 'home') {
+    const badge = root.querySelector('.home-streak-badge');
+    const line = document.createElement('div');
+    line.className = 'home-streak-line'; line.innerHTML = '<strong>3 weeks</strong> in a row';
+    root.querySelector('.home-header-left').appendChild(line);
+    badge.replaceWith(holder);
+  } else if (screen === 'myPlans') {
+    root.querySelector('.myplans-header').appendChild(holder);
+  } else if (screen === 'progress') {
+    root.querySelector('.progress-title').appendChild(holder);
+  }
+}
+
+function phone(screen, opt) {
+  const fig = document.createElement('figure');
+  const p = document.createElement('div');
+  p.className = `phone ${screen.key} opt${opt}`;
+  p.innerHTML = `<div class="scroll"><div class="status"><span>9:41</span><span>●●●</span></div>${document.getElementById('tpl-' + screen.key).innerHTML}</div>${document.getElementById('tpl-tabs').innerHTML}`;
+  p.querySelector(`.tab[data-tab="${screen.tab}"]`).classList.add('active');
+  calendar(p);
+  applyOption(p, screen.key, opt);
+  fig.appendChild(p);
+  return fig;
+}
+
+function addSet(title, blurb, figs) {
+  const s = document.createElement('section'); s.className = 'set';
+  s.innerHTML = `<h2>${title}</h2><p>${blurb}</p><div class="phones"></div>`;
+  figs.forEach(f => s.querySelector('.phones').appendChild(f));
+  document.getElementById('sets').appendChild(s);
+}
+
+const shot = new URLSearchParams(location.search).get('shot');
+if (shot) document.body.classList.add('shot');
+const sets = document.getElementById('sets');
+if (shot === 'home') {
+  addSet('Home in each option', '', ['today', 'A', 'B', 'C'].map(o => {
+    const f = phone(SCREENS[0], o);
+    const c = document.createElement('figcaption'); c.textContent = OPTIONS[o].title; f.prepend(c); return f;
+  }));
+} else {
+  (shot ? [shot] : ['A', 'B', 'C']).forEach(o => {
+    addSet(OPTIONS[o].title, OPTIONS[o].blurb, SCREENS.map(s => {
+      const f = phone(s, o);
+      const c = document.createElement('figcaption'); c.textContent = s.label; f.prepend(c); return f;
+    }));
+  });
+}
+</script>
+</body>
+</html>

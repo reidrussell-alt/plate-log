@@ -1,7 +1,40 @@
 // Profile photo: the options sheet (take / choose / remove), a simple crop step
 // (drag and zoom inside a circle), and saving a 400×400 JPEG via media.js.
 import { showToast, showConfirm } from './utils.js';
-import { getCachedAvatarUrl, saveAvatar, removeAvatar } from './media.js';
+import { getCachedAvatarUrl, isAvatarLoaded, loadAvatar, saveAvatar, removeAvatar } from './media.js';
+import { state } from './data.js';
+
+// Profile chip: the user's name and a small round photo in the top right of
+// Home, My Plans, Progress and Profile (design-reference pattern 5). Tapping it
+// opens the Profile tab. Shows the name's initial until a photo is set.
+function _chipPhotoInner() {
+  const url = getCachedAvatarUrl();
+  if (url) return `<img src="${url}" alt="">`;
+  const name = (state.profile?.name || '').trim();
+  return name && name !== '—' ? _esc(name[0].toUpperCase()) : '';
+}
+
+function _esc(str) {
+  return String(str ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+export function buildProfileChip() {
+  const raw = (state.profile?.name || '').trim();
+  const name = raw && raw !== '—' ? raw : '';
+  // The photo is read from the device the first time; fill the chips once it arrives
+  if (!isAvatarLoaded()) {
+    loadAvatar().then(url => {
+      if (!url) return;
+      document.querySelectorAll('.me-chip-photo').forEach(el => { el.innerHTML = _chipPhotoInner(); });
+    });
+  }
+  return `
+    <button type="button" class="me-chip" onclick="window.switchTab('profile')" aria-label="Open your profile">
+      ${name ? `<span class="me-chip-name">${_esc(name)}</span>` : ''}
+      <span class="me-chip-photo" aria-hidden="true">${_chipPhotoInner()}</span>
+    </button>
+  `;
+}
 
 const OUTPUT_SIZE = 400;   // pixels, square
 const CROP_SIZE = 280;     // on-screen crop circle, CSS pixels
