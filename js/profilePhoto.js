@@ -1,6 +1,6 @@
 // Profile photo: the options sheet (take / choose / remove), a simple crop step
 // (drag and zoom inside a circle), and saving a 400×400 JPEG via media.js.
-import { showToast, showConfirm } from './utils.js';
+import { showToast, showConfirm, escapeHtml } from './utils.js';
 import { getCachedAvatarUrl, isAvatarLoaded, loadAvatar, saveAvatar, removeAvatar } from './media.js';
 import { state } from './data.js';
 
@@ -11,11 +11,7 @@ function _chipPhotoInner() {
   const url = getCachedAvatarUrl();
   if (url) return `<img src="${url}" alt="">`;
   const name = (state.profile?.name || '').trim();
-  return name && name !== '—' ? _esc(name[0].toUpperCase()) : '';
-}
-
-function _esc(str) {
-  return String(str ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  return name && name !== '—' ? escapeHtml(name[0].toUpperCase()) : '';
 }
 
 export function buildProfileChip() {
@@ -30,7 +26,7 @@ export function buildProfileChip() {
   }
   return `
     <button type="button" class="me-chip" onclick="window.switchTab('profile')" aria-label="Open your profile">
-      ${name ? `<span class="me-chip-name">${_esc(name)}</span>` : ''}
+      ${name ? `<span class="me-chip-name">${escapeHtml(name)}</span>` : ''}
       <span class="me-chip-photo" aria-hidden="true">${_chipPhotoInner()}</span>
     </button>
   `;

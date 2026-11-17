@@ -3,20 +3,16 @@
 // it to state.profile.background (an id from backgrounds.js, or null for the orange fade).
 import { state, saveData } from './data.js';
 import { BACKGROUNDS, getBackgroundById, backgroundFullUrl, backgroundThumbUrl } from './backgrounds.js';
-import { showToast } from './utils.js';
+import { showToast, escapeHtml } from './utils.js';
 
 let _tab = 'cities';
 let _picked = null;   // id being previewed, or null for none
 
-function _escape(str) {
-  return String(str ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-}
-
 // Credit line for a photo (the licences ask for one wherever the photo is shown).
 export function backgroundCreditHtml(bg) {
   if (!bg) return '';
-  return `Photo: <a href="${_escape(bg.page)}" target="_blank" rel="noopener">${_escape(bg.artist || 'Unknown')}</a>,
-    <a href="${_escape(bg.licenceUrl || bg.page)}" target="_blank" rel="noopener">${_escape(bg.licence)}</a>, via Wikimedia Commons`;
+  return `Photo: <a href="${escapeHtml(bg.page)}" target="_blank" rel="noopener">${escapeHtml(bg.artist || 'Unknown')}</a>,
+    <a href="${escapeHtml(bg.licenceUrl || bg.page)}" target="_blank" rel="noopener">${escapeHtml(bg.licence)}</a>, via Wikimedia Commons`;
 }
 
 // Puts a background (or the default fade) on the cover that is on screen.
@@ -41,8 +37,8 @@ function _renderSheet() {
     body = `<div class="bg-grid">${BACKGROUNDS.filter(b => b.category === _tab).map(b => `
       <button type="button" class="bg-tile${b.id === _picked ? ' on' : ''}" onclick="selectBackground('${b.id}')" aria-pressed="${b.id === _picked}">
         <span class="bg-tile-img"><img src="${backgroundThumbUrl(b)}" alt="" loading="lazy"></span>
-        <span class="bg-tile-name">${_escape(b.label)}</span>
-        <span class="bg-tile-sub">${_escape(b.sub)}</span>
+        <span class="bg-tile-name">${escapeHtml(b.label)}</span>
+        <span class="bg-tile-sub">${escapeHtml(b.sub)}</span>
       </button>`).join('')}</div>`;
   }
 

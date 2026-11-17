@@ -1,5 +1,5 @@
 import { state, saveData } from './data.js';
-import { showToast, showConfirm } from './utils.js';
+import { showToast, showConfirm, escapeHtml } from './utils.js';
 import { openExerciseSelector } from './exerciseSelector.js';
 
 // ─── Builder state ────────────────────────────────────────────────────────────
@@ -360,10 +360,6 @@ function _decr(id, min) {
   if (v > min) el.textContent = v - 1;
 }
 
-function _esc(s) {
-  return String(s ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-}
-
 // ─── HTML generators ──────────────────────────────────────────────────────────
 
 function _exerciseItemHtml(dayId, ex, idx) {
@@ -375,7 +371,7 @@ function _exerciseItemHtml(dayId, ex, idx) {
         </svg>
       </div>
       <div class="pb-ex-info">
-        <div class="pb-ex-name">${_esc(ex.name)}</div>
+        <div class="pb-ex-name">${escapeHtml(ex.name)}</div>
         <div class="pb-ex-detail">${_repSummary(ex)}</div>
       </div>
       <div class="pb-ex-actions">
@@ -402,7 +398,7 @@ function _dayCardHtml(day) {
             <div class="pb-day-label">${dayLabel}</div>
             <input type="text" id="pbDayName_${day.id}" class="pb-day-name-input"
               placeholder="e.g., Push, Pull, Legs, Upper"
-              value="${_esc(day.name)}" maxlength="30"
+              value="${escapeHtml(day.name)}" maxlength="30"
               onclick="event.stopPropagation()"
               oninput="pbSetDayName('${day.id}', this.value)">
           </div>
@@ -428,7 +424,7 @@ function _dayCardHtml(day) {
           <div class="pb-day-label">${dayLabel}</div>
           <input type="text" id="pbDayName_${day.id}" class="pb-day-name-input pb-day-name-input--open"
             placeholder="e.g., Push, Pull, Legs, Upper"
-            value="${_esc(day.name)}" maxlength="30"
+            value="${escapeHtml(day.name)}" maxlength="30"
             onclick="event.stopPropagation()"
             oninput="pbSetDayName('${day.id}', this.value)">
         </div>
@@ -467,7 +463,7 @@ function _builderHtml() {
           <div class="pb-section-title">Program Name</div>
           <input type="text" id="pbNameInput" class="pb-name-input"
             placeholder="e.g., My Summer Bulk, Strength Phase, PPL"
-            value="${_esc(_bs.name)}" maxlength="40"
+            value="${escapeHtml(_bs.name)}" maxlength="40"
             oninput="pbUpdateName(this.value)"
             autocomplete="off" autocorrect="off" autocapitalize="words">
         </div>
@@ -546,8 +542,8 @@ function _srHtml() {
         </div>
 
         <div class="pb-sr-ex">
-          <div class="pb-sr-ex-name">${_esc(_sr.exercise.name)}</div>
-          <div class="pb-sr-ex-group">${_esc(_sr.exercise.muscleGroup)}</div>
+          <div class="pb-sr-ex-name">${escapeHtml(_sr.exercise.name)}</div>
+          <div class="pb-sr-ex-group">${escapeHtml(_sr.exercise.muscleGroup)}</div>
         </div>
 
         <div class="pb-sr-divider"></div>

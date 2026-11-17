@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { todayDateString, isoDateOnly, formatDate, formatDateShort } from '../js/utils.js';
+import { todayDateString, isoDateOnly, formatDate, formatDateShort, escapeHtml } from '../js/utils.js';
 import { setNow } from './helpers.js';
 
 describe('todayDateString', () => {
@@ -39,5 +39,23 @@ describe('formatDate', () => {
 describe('formatDateShort', () => {
   it('uses en-US month and day', () => {
     expect(formatDateShort('2026-04-15T12:00:00Z')).toBe('Apr 15');
+  });
+});
+
+// Shared by settings, welcome, profilePhoto, programBuilder and backgroundPicker
+// (REFACTOR_PLAN.md 2.1).
+describe('escapeHtml', () => {
+  it('escapes & < > " and the apostrophe', () => {
+    expect(escapeHtml(`Tom & "Jerry" <b>it's</b>`)).toBe('Tom &amp; &quot;Jerry&quot; &lt;b&gt;it&#39;s&lt;/b&gt;');
+  });
+
+  it('null and undefined become an empty string', () => {
+    expect(escapeHtml(null)).toBe('');
+    expect(escapeHtml(undefined)).toBe('');
+  });
+
+  it('other values are turned into text; plain text is unchanged', () => {
+    expect(escapeHtml(0)).toBe('0');
+    expect(escapeHtml('Upper A')).toBe('Upper A');
   });
 });

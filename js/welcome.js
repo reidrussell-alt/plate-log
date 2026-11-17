@@ -1,4 +1,5 @@
 import { state } from './data.js';
+import { escapeHtml } from './utils.js';
 
 // Welcome screen shown on every app open: the plate logo on its own, then a
 // slowly turning disc of dots shaped like a weight plate, "Welcome in, {name}"
@@ -14,10 +15,6 @@ const DOTS = [];
   const n = Math.round((2 * Math.PI * r) / 0.105);
   for (let k = 0; k < n; k++) DOTS.push({ r, a: (k / n) * Math.PI * 2 + (i % 2) * (Math.PI / n) });
 });
-
-function escapeHtml(s) {
-  return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-}
 
 const PLATE_SVG = `
   <svg viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">

@@ -1,17 +1,13 @@
 import { state, saveData, openResetModal } from './data.js';
 import { PROGRAM_TEMPLATES, buildProgramFromTemplate } from './programTemplates.js';
 import { MAX_CUSTOM_PROGRAMS } from './myplans.js';
-import { showToast, showConfirm, showPrompt } from './utils.js';
+import { showToast, showConfirm, showPrompt, escapeHtml } from './utils.js';
 import { getCachedAvatarUrl, isAvatarLoaded, loadAvatar } from './media.js';
 import { getBackgroundById, backgroundFullUrl } from './backgrounds.js';
 import { backgroundCreditHtml } from './backgroundPicker.js';
 import { buildProfileChip } from './profilePhoto.js';
 import { getTimerSettings, setTimerEnabled, setTimerDuration, setTimerAlertEnabled, formatRestDuration } from './restTimer.js';
 import { isHealthKitAvailable, getHealthSettings, setHealthEnabled, setReadSteps, setReadWeight, requestHealthPermissions } from './healthkit.js';
-
-function escapeHtml(str) {
-  return String(str ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-}
 
 // Cover (orange fade for now) with the profile photo centred half over it, then name and a line of facts.
 function buildProfileHeader(profile) {

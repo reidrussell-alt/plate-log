@@ -11,6 +11,11 @@ export function isoDateOnly(iso) {
   return iso.split('T')[0];
 }
 
+// Escapes text for HTML content and quoted attributes. null/undefined become ''.
+export function escapeHtml(str) {
+  return String(str ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
 export function formatDate(iso) {
   const d = new Date(iso);
   const today = new Date();
