@@ -19,8 +19,8 @@ vi.mock('../js/charts.js', async importOriginal => ({
 
 const NOW = '2026-11-18T15:00:00Z'; // Wednesday; week starts Sun 15 Nov
 
-// progress.js reads the calendar month from the clock when it loads, so every app
-// module is imported after the clock is frozen.
+// calendar.js (loaded through progress.js) reads the calendar month from the clock
+// when it loads, so every app module is imported after the clock is frozen.
 let state, renderHome, renderMyPlans, renderProgress, renderSettings;
 let renderSession, openExercise, toggleReorderMode, leaveSession;
 let setTimerEnabled, setTimerDuration, setTimerAlertEnabled;
