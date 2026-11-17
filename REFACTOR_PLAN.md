@@ -21,7 +21,7 @@ Audit of `js/` (23 modules, ~6,700 lines), `index.html` and `css/main.css` on br
 
 ## Batch 0 — Safety nets (tests only, no app code)
 
-Adds coverage that later batches rely on. No constraint touched. 0.1–0.4 **done** (4 commits, suite 91 → 144 tests); 0.5 added 17 Nov after review.
+Adds coverage that later batches rely on. No constraint touched. **Done** (5 commits, suite 91 → 152 tests; 0.5 added 17 Nov after review).
 
 | # | Location | Problem | Proposed change | Risk | Effort | Coverage | Constraint |
 |---|----------|---------|-----------------|------|--------|----------|------------|
@@ -29,21 +29,21 @@ Adds coverage that later batches rely on. No constraint touched. 0.1–0.4 **don
 | 0.2 ✓ `dc7ac26` | `renderMyPlans`, `renderSettings`, `renderProgress`, `renderSession`, `renderHome` | Screen markup is untested except Home. Batches 4–6 restructure these renderers. | jsdom render tests with fixture state: whitespace-normalised `innerHTML` snapshots per screen (structured + track-as-you-go, empty + with history, an in-progress session with logged/extra sets). Canvas drawing stubbed. | L | M | — (new) | — |
 | 0.3 ✓ `616bdbd` | `settings.js` program actions (`setActiveProgram`, `deleteProgram`, `duplicateProgram`, `activateTemplate`, `duplicateTemplate`) | Change saved programs; no tests. | Tests that drive `showConfirm` (click OK) and assert `state.programs` + `liftTrackerData` afterwards. | L | S | — (new) | — |
 | 0.4 ✓ `7dc91ac` | `data.js` `importData()`, `onboarding.js` `obProcessImport()` | Backup parse/validate paths untested (FileReader). | Tests with a jsdom `File`: valid v2/v5 backup, missing `history`, invalid JSON; assert toasts and state. | L | S | — (new) | — |
-| 0.5 | `progress.js` `openCalendarDay`, `openManualWorkoutSelect`, `openEditModal`, `openSessionEdit`; `programBuilder.js` `showProgramBuilder`, `pbToggleDay` | Overlays that Batch 5 (5.1, 5.5, 5.6) moves or restructures have no markup tests; 0.2 covers screens only. | File snapshots in `screens.test.js`, same fixtures and clock as 0.2: calendar day sheet (a day with a workout, an empty day), manual workout picker, per-exercise edit modal (weighted, bodyweight), whole-workout edit modal, program builder (one open day card + collapsed cards; an empty day opened too). Only the JS-filled body element (or `#pbOverlay`) is snapshotted. | L | S | — (new) | — |
+| 0.5 ✓ `84358e3` | `progress.js` `openCalendarDay`, `openManualWorkoutSelect`, `openEditModal`, `openSessionEdit`; `programBuilder.js` `showProgramBuilder`, `pbToggleDay` | Overlays that Batch 5 (5.1, 5.5, 5.6) moves or restructures have no markup tests; 0.2 covers screens only. | File snapshots in `screens.test.js`, same fixtures and clock as 0.2: calendar day sheet (a day with a workout, an empty day), manual workout picker, per-exercise edit modal (weighted, bodyweight), whole-workout edit modal, program builder (one open day card + collapsed cards; an empty day opened too). Only the JS-filled body element (or `#pbOverlay`) is snapshotted. | L | S | — (new) | — |
 
 ## Batch 1 — Dead code removal
 
-No files added or removed, so no SW change. `healthkit.js` dead code (formerly 1.5) is left alone: out of scope until BUGS.md S1 is resolved. Verified with `grep` over `js/` and `index.html`: each item is only defined (or only bound to `window`) and never called.
+No files added or removed, so no SW change. `healthkit.js` dead code (formerly 1.5) is left alone: out of scope until BUGS.md S1 is resolved. Verified with `grep` over `js/` and `index.html`: each item is only defined (or only bound to `window`) and never called. **Done** (7 commits, suite 152 → 151 tests: 1.8 removed the `getMostTrainedDay` test). 1.1 left `activateTemplate` with no caller (its only one was the deleted template card); its function and binding are kept and it is on the 0.1 pinned list. 1.6 found three doubled calls, not four: the fourth was in `editProgram`, deleted by 1.3.
 
 | # | Location | Problem | Proposed change | Risk | Effort | Coverage | Constraint |
 |---|----------|---------|-----------------|------|--------|----------|------------|
-| 1.1 | `settings.js` `renderProgramsListHtml`, `renderProgramCard`, `renderTemplateCard`, `getTotalExercises` | Old Settings program list; nothing renders it. | Delete. | L | S | N (dead) | — |
-| 1.2 | `settings.js` `showCreateProgram`, `closeCreateProgram`, `confirmCreateProgram`; bindings in `app.js` | Old "Create Program" modal; nothing opens it. `confirmCreateProgram` calls `refreshProgramsList()`, which doesn't exist. | Delete functions and their 3 `window` bindings. | L | S | N (dead; 0.1 confirms no callers) | — |
-| 1.3 | `settings.js` `editProgram` + binding | Rename-program prompt; no caller. | Delete. | L | S | N | — |
-| 1.4 | `app.js` `window.renderPlan` alias; `session.js` `updateBw` + binding | Alias unused; bodyweight input was removed from the workout screen. | Delete. (`switchTab('plan')` alias stays — documented.) | L | S | N | — |
-| 1.6 | `settings.js` lines 361–362, 379–380, 438–439, 476–477 | `window.renderMyPlans()` called twice in a row. | Call once. | L | S | C 12 | — |
-| 1.7 | `settings.js:108` | `${isStructured ? 'Switch' : 'Switch'}` | Plain `Switch`. | L | S | T (0.2) | — |
-| 1.8 | `progress.js` `getMostTrainedDay`; the `sessionsByDay` tally in `renderProgress` that only fed it | Unused by the app; only `progress-logic.test.js` calls it. | **Decided:** delete the function, its `getMostTrainedDay` test block and its import in that test file, and the unused `sessionsByDay` block in `renderProgress` (output unchanged). `searchExercises` and `getExercisesByMuscleGroup` stay (decided: keep). | L | S | T | — |
+| 1.1 ✓ `2f1cb12` | `settings.js` `renderProgramsListHtml`, `renderProgramCard`, `renderTemplateCard`, `getTotalExercises` | Old Settings program list; nothing renders it. | Delete. | L | S | N (dead) | — |
+| 1.2 ✓ `601975d` | `settings.js` `showCreateProgram`, `closeCreateProgram`, `confirmCreateProgram`; bindings in `app.js` | Old "Create Program" modal; nothing opens it. `confirmCreateProgram` calls `refreshProgramsList()`, which doesn't exist. | Delete functions and their 3 `window` bindings. | L | S | N (dead; 0.1 confirms no callers) | — |
+| 1.3 ✓ `bf40b48` | `settings.js` `editProgram` + binding | Rename-program prompt; no caller. | Delete. | L | S | N | — |
+| 1.4 ✓ `4757ba7` | `app.js` `window.renderPlan` alias; `session.js` `updateBw` + binding | Alias unused; bodyweight input was removed from the workout screen. | Delete. (`switchTab('plan')` alias stays — documented.) | L | S | N | — |
+| 1.6 ✓ `d55cce7` | `settings.js` lines 361–362, 379–380, 438–439, 476–477 | `window.renderMyPlans()` called twice in a row. | Call once. | L | S | C 12 | — |
+| 1.7 ✓ `4a776ce` | `settings.js:108` | `${isStructured ? 'Switch' : 'Switch'}` | Plain `Switch`. | L | S | T (0.2) | — |
+| 1.8 ✓ `f25606e` | `progress.js` `getMostTrainedDay`; the `sessionsByDay` tally in `renderProgress` that only fed it | Unused by the app; only `progress-logic.test.js` calls it. | **Decided:** delete the function, its `getMostTrainedDay` test block and its import in that test file, and the unused `sessionsByDay` block in `renderProgress` (output unchanged). `searchExercises` and `getExercisesByMuscleGroup` stay (decided: keep). | L | S | T | — |
 
 ## Batch 2 — Shared helpers inside existing files
 
