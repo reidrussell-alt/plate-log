@@ -232,18 +232,33 @@ export async function exportData() {
   showToast(`Exported ${state.history.length} sessions`, 'success');
 }
 
+// Parse a backup file's text, check it has a history list, and migrate it.
+// Returns { data } or { error: 'invalid' } (no history list) or
+// { error: 'unreadable' } (bad JSON, or anything else that throws).
+// Shared by both import paths; each caller keeps its own toasts and flow.
+export function parseBackup(text) {
+  try {
+    const data = JSON.parse(text);
+    if (!data.history || !Array.isArray(data.history)) return { error: 'invalid' };
+    return { data: migrateToLatest(data) };
+  } catch (err) {
+    return { error: 'unreadable' };
+  }
+}
+
 export function importData(event, onSuccess) {
   const file = event.target.files[0];
   if (!file) return;
   const reader = new FileReader();
   reader.onload = (e) => {
     try {
-      let data = JSON.parse(e.target.result);
-      if (!data.history || !Array.isArray(data.history)) {
+      const result = parseBackup(e.target.result);
+      if (result.error === 'invalid') {
         showToast('Invalid backup file');
         return;
       }
-      data = migrateToLatest(data);
+      if (result.error) throw new Error('Unreadable backup');
+      const data = result.data;
       const incomingCount = data.history.length;
       const currentCount = state.history.length;
       const confirmMsg = currentCount === 0

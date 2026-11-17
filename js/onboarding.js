@@ -1,4 +1,4 @@
-import { state, saveData, migrateToLatest, applyImportedData } from './data.js';
+import { state, saveData, parseBackup, applyImportedData } from './data.js';
 import { PROGRAM_TEMPLATES, buildProgramFromTemplate } from './programTemplates.js';
 import { showToast } from './utils.js';
 
@@ -173,12 +173,13 @@ export function obProcessImport() {
   const reader = new FileReader();
   reader.onload = (e) => {
     try {
-      let data = JSON.parse(e.target.result);
-      if (!data.history || !Array.isArray(data.history)) {
+      const result = parseBackup(e.target.result);
+      if (result.error === 'invalid') {
         showToast('Invalid backup file');
         return;
       }
-      data = migrateToLatest(data);
+      if (result.error) throw new Error('Unreadable backup');
+      const data = result.data;
       const name = onboardingData.name;
       if (name && data.profile) data.profile.name = name;
 

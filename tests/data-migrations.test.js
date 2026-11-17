@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import {
-  state, migrateV2ToV3, migrateV3ToV4, migrateV4ToV5, migrateToLatest, applyImportedData,
+  state, migrateV2ToV3, migrateV3ToV4, migrateV4ToV5, migrateToLatest, applyImportedData, parseBackup,
 } from '../js/data.js';
 import { program } from '../js/program.js';
 import { resetState, setNow } from './helpers.js';
@@ -144,5 +144,25 @@ describe('applyImportedData', () => {
     state.currentSession = { dayId: 'upperA' };
     applyImportedData({ history: [] });
     expect(state.currentSession).toEqual({ dayId: 'upperA' });
+  });
+});
+
+describe('parseBackup (REFACTOR_PLAN 4.2)', () => {
+  it('a valid backup comes back migrated to v5', () => {
+    const { data, error } = parseBackup(JSON.stringify(v2Backup()));
+    expect(error).toBeUndefined();
+    expect(data.version).toBe(5);
+    expect(data.history).toHaveLength(v2Backup().history.length);
+    expect(data.history[0].programId).toBe('program_default');
+  });
+
+  it('no history, or history that is not a list: "invalid"', () => {
+    expect(parseBackup('{"version":5}')).toEqual({ error: 'invalid' });
+    expect(parseBackup('{"version":5,"history":{}}')).toEqual({ error: 'invalid' });
+  });
+
+  it('bad JSON or a null backup: "unreadable"', () => {
+    expect(parseBackup('{oops')).toEqual({ error: 'unreadable' });
+    expect(parseBackup('null')).toEqual({ error: 'unreadable' });
   });
 });
