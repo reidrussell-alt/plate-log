@@ -550,7 +550,7 @@ flowchart TD
 
 **Remote:** `https://github.com/reidrussell-alt/plate-log.git` (live at `https://reidrussell-alt.github.io/plate-log/`; the old `lifting-tracker-Application` repository is kept as an archive)  
 **Auth:** Personal Access Token (GitHub no longer accepts passwords)  
-**Current SW cache version:** `lift-tracker-v35`  
+**Current SW cache version:** `lift-tracker-v36`  
 **Background photos** are not precached: the service worker keeps them in a separate `plate-log-backgrounds-v1` cache as they are viewed, and that cache survives app updates.  
 **Auto-update:** when a new service worker takes control, the app reloads itself. On iOS a delete + re-add is still the reliable way to force fresh code.
 
@@ -582,6 +582,7 @@ flowchart TD
 
 | Date | Change |
 |------|--------|
+| 2026-11-16 | Behind-the-scenes tidy-up, nothing changes on screen: the Progress tab's code is split into three parts — the charts, the calendar (with the day sheet and add-workout picker), and editing past workouts — so each can be checked and changed on its own. The two edit screens for past workouts now build their set rows the same way. Extra automatic checks for the Progress numbers; SW bumped to v36 |
 | 2026-11-16 | Behind-the-scenes tidy-up, nothing changes on screen: saving and loading the rest timer settings and chart ranges now share one piece of code, and so do the two ways of restoring a backup (during setup and from Profile). If the phone ever fails to save a rest timer setting, the app now notes it for troubleshooting instead of failing silently. SW bumped to v35 so phones pick up the change |
 | 2026-11-16 | Behind-the-scenes tidy-up, nothing changes on screen: the workout suggestions, the Home stats (personal best, streak, next day) and the plan actions (switch, copy, delete a plan) each now live in their own part of the app, so they can be checked and changed on their own. Extra automatic checks were added for the Home stats; SW bumped to v34 |
 | 2026-11-16 | Your name and profile photo now sit together in a small rounded button in the top-right corner of Home, My Plans, Progress and Profile, inspired by the PayPal app. Until you add a photo it shows your initial. Tap it to jump to your profile. On Profile it sits on the cover photo and the change-background button moves to the left; the workout screen is left as it was; SW bumped to v31 |

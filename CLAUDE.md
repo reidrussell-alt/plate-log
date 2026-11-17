@@ -364,7 +364,7 @@ Welcome screen shown on every app open (design: `design-reference/patterns.md`, 
 ## Service worker
 
 - Cache name must be bumped (v1 → v2 → v3...) whenever any precached file changes — during the refactor, once per batch in its docs commit
-- Currently: `lift-tracker-v35`
+- Currently: `lift-tracker-v36`
 - Every JS file must be listed in the `ASSETS` array — add new modules there, remove deleted ones
 - Cover photos (`img/backgrounds/`) are **not** in `ASSETS`: they go in a separate `plate-log-backgrounds-v1` cache when first viewed, kept across versions
 - Cover photos are from Wikimedia Commons (CC BY / BY-SA / CC0); their licences require the credit line shown in the picker and under the Profile page — keep it
