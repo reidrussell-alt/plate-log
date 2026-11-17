@@ -382,66 +382,6 @@ export function editProgram(programId) {
   });
 }
 
-export function showCreateProgram() {
-  const customCount = state.programs.filter(p => p.isCustom === true).length;
-  if (customCount >= MAX_CUSTOM_PROGRAMS) {
-    showToast(`Max ${MAX_CUSTOM_PROGRAMS} custom programs. Delete one first.`);
-    return;
-  }
-
-  const templateOptions = PROGRAM_TEMPLATES.map(t =>
-    `<option value="${t.id}">${t.name} (${t.daysPerWeek}×/week)</option>`
-  ).join('');
-
-  const html = `
-    <div class="modal-bg active" id="createProgramModal" onclick="closeCreateProgram()">
-      <div class="modal" style="max-width:440px;text-align:left;max-height:85vh;overflow-y:auto;" onclick="event.stopPropagation()">
-        <div class="modal-title" style="text-align:left;margin-bottom:16px;">Create Program</div>
-        <div style="margin-bottom:12px;">
-          <div class="settings-row-label" style="margin-bottom:6px;">Program Name</div>
-          <input type="text" id="newProgName" class="ob-input" placeholder="My Program" style="width:100%;">
-        </div>
-        <div style="margin-bottom:16px;">
-          <div class="settings-row-label" style="margin-bottom:6px;">Start from Template</div>
-          <select id="newProgTemplate" class="chart-select" style="margin-bottom:0;">
-            ${templateOptions}
-          </select>
-        </div>
-        <div class="modal-actions">
-          <button class="modal-btn" onclick="closeCreateProgram()">Cancel</button>
-          <button class="modal-btn primary" onclick="confirmCreateProgram()">Create</button>
-        </div>
-      </div>
-    </div>
-  `;
-  document.body.insertAdjacentHTML('beforeend', html);
-}
-
-export function closeCreateProgram() {
-  document.getElementById('createProgramModal')?.remove();
-}
-
-export function confirmCreateProgram() {
-  const nameInput = document.getElementById('newProgName');
-  const templateSelect = document.getElementById('newProgTemplate');
-  const name = nameInput?.value.trim();
-  if (!name) { showToast('Please enter a program name'); return; }
-
-  const templateId = templateSelect?.value;
-  const template = PROGRAM_TEMPLATES.find(t => t.id === templateId);
-  if (!template) { showToast('Please select a template'); return; }
-
-  const hasActive = state.programs.some(p => p.isActive);
-  const newProg = buildProgramFromTemplate(name, template, !hasActive, true);
-
-  state.programs.push(newProg);
-  saveData();
-  closeCreateProgram();
-  refreshProgramsList();
-  showToast(`Created: ${name}`, 'success');
-}
-
-
 export function toggleRestTimer(enabled) {
   setTimerEnabled(enabled);
   const opts = document.getElementById('restTimerOptions');

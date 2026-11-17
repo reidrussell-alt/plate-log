@@ -86,7 +86,6 @@ describe('window bindings', () => {
       'renderHome',
       'renderPlan',
       'renderProgress',
-      'showCreateProgram',
       'showOnboarding',
       'showWelcomeScreen',
       'updateBw',
