@@ -177,7 +177,6 @@ graph LR
     calendar.js --> data.js
     calendar.js --> utils.js
     calendar.js --> charts.js
-    calendar.js -.->|renderProgress| progress.js
 
     historyEdit.js --> data.js
     historyEdit.js --> utils.js
@@ -264,7 +263,7 @@ graph LR
 | `media.js` | _(none)_ | Stores the profile photo on the device in IndexedDB (`plateLogMedia` database), separate from localStorage. Load/save/remove, and data-URL conversion for backups. |
 | `healthkit.js` | _(none)_ | iOS Capacitor HealthKit integration (steps, weight). No-ops on non-iOS. |
 | `progress.js` | `data.js`, `program.js`, `exerciseLibrary.js`, `utils.js`, `charts.js`, `profilePhoto.js`, `calendar.js` | Progress tab: stats, per-muscle charts with 10/20/30/All range (re-renders only the changed chart), sets-per-session and bodyweight charts, session history list. |
-| `calendar.js` | `data.js`, `utils.js`, `charts.js`, `progress.js` | Progress calendar: month state and navigation, month grid (dynamic colours by dayId hash), calendar-day sheet, add-workout picker, `_liveSessionIdx()`. Imports `renderProgress` back from `progress.js` (deliberate, load-safe cycle). |
+| `calendar.js` | `data.js`, `utils.js`, `charts.js` | Progress calendar: month state and navigation, month grid (dynamic colours by dayId hash), calendar-day sheet, add-workout picker, `_liveSessionIdx()`. Re-renders Progress through `window.renderProgress()` rather than importing it, since `progress.js` imports this file. |
 | `historyEdit.js` | `data.js`, `utils.js`, `progress.js`, `calendar.js` | Editing past workouts: per-exercise edit modal, whole-workout edit modal (draft copy), delete workout. |
 | `charts.js` | `utils.js` | `drawSingleLineChart()` — canvas-based line chart. |
 | `welcome.js` | `data.js`, `utils.js` | Welcome screen: plate logo, then a turning canvas disc of dots, "Welcome in, {name}" and a "Let's get moving" button that goes to Home. Respects reduced motion. |
@@ -550,7 +549,7 @@ flowchart TD
 
 **Remote:** `https://github.com/reidrussell-alt/plate-log.git` (live at `https://reidrussell-alt.github.io/plate-log/`; the old `lifting-tracker-Application` repository is kept as an archive)  
 **Auth:** Personal Access Token (GitHub no longer accepts passwords)  
-**Current SW cache version:** `lift-tracker-v36`  
+**Current SW cache version:** `lift-tracker-v37`  
 **Background photos** are not precached: the service worker keeps them in a separate `plate-log-backgrounds-v1` cache as they are viewed, and that cache survives app updates.  
 **Auto-update:** when a new service worker takes control, the app reloads itself. On iOS a delete + re-add is still the reliable way to force fresh code.
 
@@ -582,6 +581,7 @@ flowchart TD
 
 | Date | Change |
 |------|--------|
+| 2026-11-16 | Behind-the-scenes tidy-up, nothing changes on screen: the workout screen, the Profile tab and the plan editor are each built from smaller named pieces (header, exercise, set row and so on), so a change to one part can't disturb the rest. The calendar and the Progress charts no longer depend on each other in a loop. SW bumped to v37 |
 | 2026-11-16 | Behind-the-scenes tidy-up, nothing changes on screen: the Progress tab's code is split into three parts — the charts, the calendar (with the day sheet and add-workout picker), and editing past workouts — so each can be checked and changed on its own. The two edit screens for past workouts now build their set rows the same way. Extra automatic checks for the Progress numbers; SW bumped to v36 |
 | 2026-11-16 | Behind-the-scenes tidy-up, nothing changes on screen: saving and loading the rest timer settings and chart ranges now share one piece of code, and so do the two ways of restoring a backup (during setup and from Profile). If the phone ever fails to save a rest timer setting, the app now notes it for troubleshooting instead of failing silently. SW bumped to v35 so phones pick up the change |
 | 2026-11-16 | Behind-the-scenes tidy-up, nothing changes on screen: the workout suggestions, the Home stats (personal best, streak, next day) and the plan actions (switch, copy, delete a plan) each now live in their own part of the app, so they can be checked and changed on their own. Extra automatic checks were added for the Home stats; SW bumped to v34 |

@@ -95,14 +95,14 @@ Split after the Batch 4 review into **5a** (5.1, 5.4, 5.5 — the Progress files
 
 ### Batch 5b — Workout screen, Profile, program builder: 5.7, then 5.2, 5.3, 5.6
 
-5.7 added 16 Nov after the Batch 5a review.
+5.7 added 16 Nov after the Batch 5a review. **Done** 16 Nov (4 commits, suite stays at 174 tests). No snapshot changed. 5.7: the only change to 0.1's pinned list is `renderProgress` coming off it; a scan of every `import … from` in `js/` finds no import cycle left (the same scan finds the old one at 5a's head). 5.2 also fixed the stale comment in `tests/screens.test.js` (the calendar month is read at load by `calendar.js`, not `progress.js`). 5.3's builders follow the file's existing `build*` names (`buildProfileSection`, `buildWorkoutSection`, `buildHealthSection`, `buildDataSection`). 5.6 kept the name `_rerenderDayCards`, now with a `withPills` flag replacing `_rerenderAll`. One version bump for the batch, v36 → v37, in the docs commit.
 
 | # | Location | Problem | Proposed change | Risk | Effort | Coverage | Constraint |
 |---|----------|---------|-----------------|------|--------|----------|------------|
-| 5.7 | `calendar.js` import of `renderProgress` from `progress.js` | Import cycle `calendar.js` ↔ `progress.js`, left in 5.1 so 0.1's pinned list stayed unchanged. | `navigateCalendar` calls `window.renderProgress()` (the documented pattern for avoiding circular imports) and the import goes. 0.1's pinned list loses `renderProgress`, which is now reached through `window` — the only change allowed to that list. Afterwards confirm no import cycle remains between any modules. | L | S | T (0.1) + C 2 | — |
-| 5.2 | `session.js` `renderSession` (~200 lines) | One function builds header, reorder list, collapsed rows, open exercise, set rows and footer. | Private builders in the same file: `_headerHtml`, `_reorderListHtml`, `_collapsedRowHtml`, `_openExerciseHtml`, `_setRowHtml`, `_footerHtml`. | M | M | T (0.2) + C 4–8 ⚠ | — |
-| 5.3 | `settings.js` `renderSettings` (~140 lines) | Profile, timer, Health and Data sections in one template. | Section builders in the same file. | L | S | T (0.2) + C 13 ⚠ | — |
-| 5.6 | `programBuilder.js` `_dayCardHtml` | Collapsed and open variants repeat the day-name input; `_rerenderAll` vs `_rerenderDayCards` near-duplicates. | Shared `_dayNameInputHtml(day, open)`; one re-render function. | L | S | T (0.5) + C 12 | — |
+| 5.7 ✓ `62e21bf` | `calendar.js` import of `renderProgress` from `progress.js` | Import cycle `calendar.js` ↔ `progress.js`, left in 5.1 so 0.1's pinned list stayed unchanged. | `navigateCalendar` calls `window.renderProgress()` (the documented pattern for avoiding circular imports) and the import goes. 0.1's pinned list loses `renderProgress`, which is now reached through `window` — the only change allowed to that list. Afterwards confirm no import cycle remains between any modules. | L | S | T (0.1) + C 2 | — |
+| 5.2 ✓ `b139180` | `session.js` `renderSession` (~200 lines) | One function builds header, reorder list, collapsed rows, open exercise, set rows and footer. | Private builders in the same file: `_headerHtml`, `_reorderListHtml`, `_collapsedRowHtml`, `_openExerciseHtml`, `_setRowHtml`, `_footerHtml`. | M | M | T (0.2) + C 4–8 ⚠ | — |
+| 5.3 ✓ `e7dd0b7` | `settings.js` `renderSettings` (~140 lines) | Profile, timer, Health and Data sections in one template. | Section builders in the same file. | L | S | T (0.2) + C 13 ⚠ | — |
+| 5.6 ✓ `7250800` | `programBuilder.js` `_dayCardHtml` | Collapsed and open variants repeat the day-name input; `_rerenderAll` vs `_rerenderDayCards` near-duplicates. | Shared `_dayNameInputHtml(day, open)`; one re-render function. | L | S | T (0.5) + C 12 | — |
 
 ## Batch 6 — Consistency of UI patterns (optional, decide after Batch 5)
 

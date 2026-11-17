@@ -350,7 +350,7 @@ Welcome screen shown on every app open (design: `design-reference/patterns.md`, 
 - `renderCalendar()` — returns the monthly grid HTML (workout dots, colours derived from the day); used by `renderProgress()`
 - `navigateCalendar(dir)` — bound to window, called by calendar arrow buttons
 - `openCalendarDay()` / `openManualWorkoutSelect()` — the shared `calendarDayModal` sheet; `_liveSessionIdx()` finds a workout by date + day (BUGS H5)
-- Imports `renderProgress` from `progress.js`, which imports `renderCalendar` back: a deliberate cycle, safe because neither is called at load time
+- Calls `window.renderProgress()` rather than importing it, because `progress.js` imports `renderCalendar` from here (no import cycles between modules)
 
 ### `historyEdit.js`
 - `openEditModal()` (one exercise of a past workout) and `openSessionEdit()` (whole workout, edited as a draft), their save/delete handlers, and `deleteSession()`
@@ -364,7 +364,7 @@ Welcome screen shown on every app open (design: `design-reference/patterns.md`, 
 ## Service worker
 
 - Cache name must be bumped (v1 → v2 → v3...) whenever any precached file changes — during the refactor, once per batch in its docs commit
-- Currently: `lift-tracker-v36`
+- Currently: `lift-tracker-v37`
 - Every JS file must be listed in the `ASSETS` array — add new modules there, remove deleted ones
 - Cover photos (`img/backgrounds/`) are **not** in `ASSETS`: they go in a separate `plate-log-backgrounds-v1` cache when first viewed, kept across versions
 - Cover photos are from Wikimedia Commons (CC BY / BY-SA / CC0); their licences require the credit line shown in the picker and under the Profile page — keep it
