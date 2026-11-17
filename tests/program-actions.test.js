@@ -3,7 +3,7 @@
 // state.programs and what was written to localStorage (liftTrackerData).
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { state } from '../js/data.js';
-import { setActiveProgram, deleteProgram, duplicateProgram, duplicateTemplate } from '../js/settings.js';
+import { setActiveProgram, deleteProgram, duplicateProgram, duplicateTemplate } from '../js/programActions.js';
 import { PROGRAM_TEMPLATES } from '../js/programTemplates.js';
 import { resetState, setNow, mountAppChrome } from './helpers.js';
 

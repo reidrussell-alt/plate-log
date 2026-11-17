@@ -7,9 +7,6 @@ import { buildProfileChip } from './profilePhoto.js';
 import { getTimerSettings, setTimerEnabled, setTimerDuration, setTimerAlertEnabled, formatRestDuration } from './restTimer.js';
 import { isHealthKitAvailable, getHealthSettings, setHealthEnabled, setReadSteps, setReadWeight, requestHealthPermissions } from './healthkit.js';
 
-// Kept so tests/program-actions.test.js (REFACTOR_PLAN 0.3) runs unedited after 3.3.
-export { setActiveProgram, deleteProgram, duplicateProgram, duplicateTemplate } from './programActions.js';
-
 // Cover (orange fade for now) with the profile photo centred half over it, then name and a line of facts.
 function buildProfileHeader(profile) {
   const name = profile.name && profile.name !== '—' ? profile.name : '';

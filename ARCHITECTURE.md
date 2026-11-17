@@ -173,7 +173,6 @@ graph LR
     welcome.js --> utils.js
 
     settings.js --> data.js
-    settings.js --> programActions.js
     settings.js --> restTimer.js
     settings.js --> healthkit.js
     settings.js --> utils.js
@@ -235,7 +234,7 @@ graph LR
 | `exerciseLibrary.js` | _(none)_ | 127 exercises with id, name, muscleGroup, loadType. `MUSCLE_GROUP_ORDER`, `MUSCLE_GROUP_META`, `getExerciseById()` and search helpers. |
 | `programTemplates.js` | `exerciseLibrary.js` | 6 program templates (3-day full body, 4-day upper/lower, 4-day PPL, 5-day PPL, 6-day PPL 2×, 5-day bro split). `getTemplateById()`. |
 | `onboarding.js` | `data.js`, `programTemplates.js`, `utils.js` | Multi-step new-user onboarding, opened from the welcome screen's button: name → mode → template/track-as-you-go → save, then Home. Also handles backup import during onboarding. |
-| `settings.js` | `data.js`, `programActions.js` (re-export only), `restTimer.js`, `healthkit.js`, `utils.js`, `media.js`, `backgrounds.js`, `backgroundPicker.js` | Profile tab: header (cover — orange fade or the chosen background photo, with its credit at the bottom of the page — centred profile photo, name, member since, mode), stats card, profile editing, rest timer settings, HealthKit toggles, data backup/restore. Re-exports the program actions from `programActions.js` (kept for the program-action tests). |
+| `settings.js` | `data.js`, `restTimer.js`, `healthkit.js`, `utils.js`, `media.js`, `backgrounds.js`, `backgroundPicker.js` | Profile tab: header (cover — orange fade or the chosen background photo, with its credit at the bottom of the page — centred profile photo, name, member since, mode), stats card, profile editing, rest timer settings, HealthKit toggles, data backup/restore. |
 | `programActions.js` | `data.js`, `programTemplates.js`, `utils.js` | Program actions used by My Plans: `setActiveProgram()`, `deleteProgram()`, `duplicateProgram()`, `duplicateTemplate()`, each confirmed first; `MAX_CUSTOM_PROGRAMS` (5). Bound to `window` in `app.js`. |
 | `session.js` | `data.js`, `overload.js`, `exerciseLibrary.js`, `exerciseSelector.js`, `restTimer.js`, `healthkit.js`, `utils.js` | Structured and TAYG session lifecycle. `startSession()`, `startTrackAsYouGoWorkout()`, `renderSession()`, add/replace/remove exercise, add/remove set, reorder. In-progress session persisted separately so it survives app close. |
 | `overload.js` | `data.js`, `utils.js` | Progressive overload logic, no DOM: `getLastPerformance()`, `getSuggestion()`, `getLastExerciseNote()`. Used by the workout screen and Home's coaching card. |
