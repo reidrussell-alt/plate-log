@@ -60,13 +60,13 @@ No new files. Output must stay byte-identical. **Done** (5 commits, suite 147 �
 
 ## Batch 3 — Extract pure logic into its own modules
 
-New files: **update `ASSETS` and bump the cache version in the same commit** (one bump for the batch).
+New files: **update `ASSETS` and bump the cache version in the same commit**. **Done** (3 commits, suite 150 → 161 tests: new `stats.test.js`). Each item added a file, so each bumped the version: v31 → v34 (the "one bump for the batch" note was superseded by the per-commit rule). No snapshot changed; 0.1 and 0.3 ran unedited. The SW guard (`every js/ module is precached`) already existed and was confirmed to fail on an unlisted module, so no extra commit. 3.2 also moved `_weekStart` (needed by `calcWeekStreak`). 3.3 keeps a re-export of the four actions in `settings.js` so 0.3 runs unedited, and removed `settings.js`'s now-unused `programTemplates.js` import.
 
 | # | Location | Problem | Proposed change | Risk | Effort | Coverage | Constraint |
 |---|----------|---------|-----------------|------|--------|----------|------------|
-| 3.1 | `session.js` `getLastPerformance`, `getSuggestion`, `getLastExerciseNote` | Pure overload logic inside the 786-line workout UI module; Home imports the whole session module for it. | Move to new `js/overload.js`. `session.js` and `home.js` import from it; `session.js` re-exports for one batch so tests keep passing, then tests switch imports. | L | S | T (`session-logic.test.js`) | SW |
-| 3.2 | `home.js` `detectMostRecentPr`, `calcWeekStreak`, `getDayType`, `abbreviateTitle`, `abbreviateDay`, `getSuggestedDay` | Pure stats/rotation logic mixed with Home markup. `myplans.js` imports `home.js` only for `getSuggestedDay`. | Move to new `js/stats.js` (exported); add direct unit tests alongside the existing render tests. Breaks the My Plans → Home dependency. | L | M | T (`home.test.js` via `renderHome`) | SW |
-| 3.3 | `settings.js` program actions + `myplans.js` `MAX_CUSTOM_PROGRAMS` | Program management lives in the Profile module but is used by My Plans; `settings.js` imports a constant from `myplans.js`. | Move actions and the constant to new `js/programActions.js`. Window bindings unchanged. | M | M | T (0.3) ⚠ | SW |
+| 3.1 ✓ `94ceaf8` | `session.js` `getLastPerformance`, `getSuggestion`, `getLastExerciseNote` | Pure overload logic inside the 786-line workout UI module; Home imports the whole session module for it. | Move to new `js/overload.js`. `session.js` and `home.js` import from it; `session.js` re-exports for one batch so tests keep passing, then tests switch imports. | L | S | T (`session-logic.test.js`) | SW |
+| 3.2 ✓ `478ae06` | `home.js` `detectMostRecentPr`, `calcWeekStreak`, `getDayType`, `abbreviateTitle`, `abbreviateDay`, `getSuggestedDay` | Pure stats/rotation logic mixed with Home markup. `myplans.js` imports `home.js` only for `getSuggestedDay`. | Move to new `js/stats.js` (exported); add direct unit tests alongside the existing render tests. Breaks the My Plans → Home dependency. | L | M | T (`home.test.js` via `renderHome`) | SW |
+| 3.3 ✓ `d31957c` | `settings.js` program actions + `myplans.js` `MAX_CUSTOM_PROGRAMS` | Program management lives in the Profile module but is used by My Plans; `settings.js` imports a constant from `myplans.js`. | Move actions and the constant to new `js/programActions.js`. Window bindings unchanged. | M | M | T (0.3) ⚠ | SW |
 
 ## Batch 4 — Storage and import plumbing (keys and shapes unchanged)
 
