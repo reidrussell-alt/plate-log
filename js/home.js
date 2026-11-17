@@ -9,11 +9,7 @@ export function renderHome() {
   const streak = calcWeekStreak();
   const activeProgram = (state.programs || []).find(p => p.isActive);
 
-  const today = new Date();
-  const dow = today.getDay();
-  const weekStart = new Date(today);
-  weekStart.setDate(today.getDate() - dow);
-  weekStart.setHours(0, 0, 0, 0);
+  const weekStart = _weekStart(new Date());
   const sessionsThisWeek = (state.history || []).filter(s => new Date(s.date) >= weekStart).length;
 
   const suggestedDay = activeProgram ? getSuggestedDay(activeProgram) : null;
@@ -77,6 +73,15 @@ function buildStartMeta(suggestedDay) {
   return parts.length ? `<div class="home-start-meta">${parts.join(' · ')}</div>` : '';
 }
 
+// Sunday 00:00 local time of the week containing `date` (a new Date; `date` is
+// not changed). Date keys elsewhere still come from toISOString() (BUGS.md M1).
+function _weekStart(date) {
+  const start = new Date(date);
+  start.setDate(date.getDate() - date.getDay());
+  start.setHours(0, 0, 0, 0);
+  return start;
+}
+
 function startOfDay(d) {
   const x = new Date(d);
   x.setHours(0, 0, 0, 0);
@@ -89,9 +94,7 @@ function buildSplitProgress(activeProgram, suggestedDay, sessionsThisWeek, strea
   const today = new Date();
   const dow = today.getDay();
 
-  const weekStart = new Date(today);
-  weekStart.setDate(today.getDate() - dow);
-  weekStart.setHours(0, 0, 0, 0);
+  const weekStart = _weekStart(today);
 
   const byDay = {};
   for (const s of (state.history || [])) {
@@ -327,9 +330,7 @@ function buildStatFooter() {
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function calcWeekStreak() {
-  let checkStart = new Date();
-  checkStart.setDate(checkStart.getDate() - checkStart.getDay());
-  checkStart.setHours(0, 0, 0, 0);
+  let checkStart = _weekStart(new Date());
 
   const MAX_STREAK_WEEKS = 260; // 5-year cap prevents infinite loop on corrupted dates
   let streak = 0;
