@@ -2,7 +2,8 @@
 // tests pin them through renderHome()'s output.
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { state } from '../js/data.js';
-import { renderHome, getSuggestedDay } from '../js/home.js';
+import { renderHome } from '../js/home.js';
+import { getSuggestedDay } from '../js/stats.js';
 import { resetState, session, ex, setNow, mountAppChrome } from './helpers.js';
 
 const exercises = n => Array.from({ length: n }, (_, i) => ({ id: `e${i}`, name: `E${i}`, sets: 4, loadType: 'weight' }));

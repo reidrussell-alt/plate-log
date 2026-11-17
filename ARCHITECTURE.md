@@ -122,6 +122,7 @@ graph LR
         media.js
         backgrounds.js
         overload.js
+        stats.js
     end
 
     app.js --> home.js
@@ -142,10 +143,10 @@ graph LR
 
     home.js --> data.js
     home.js --> overload.js
-    home.js --> utils.js
+    home.js --> stats.js
 
     myplans.js --> data.js
-    myplans.js --> home.js
+    myplans.js --> stats.js
     myplans.js --> programTemplates.js
     myplans.js --> utils.js
 
@@ -209,6 +210,8 @@ graph LR
     charts.js --> utils.js
     overload.js --> data.js
     overload.js --> utils.js
+    stats.js --> data.js
+    stats.js --> utils.js
 ```
 
 ---
@@ -218,8 +221,9 @@ graph LR
 | Module | Imports | Responsibilities |
 |--------|---------|-----------------|
 | `app.js` | All modules | Entry point. Binds all `window.*` handlers. Calls `loadData()`, then `showWelcomeScreen()` — for a new user its button opens onboarding, otherwise Home. Registers service worker (non-localhost only). |
-| `home.js` | `data.js`, `overload.js`, `utils.js` | Home tab. Week streak, readiness strip (48h rule), split progress grid (3 cell states: completed/today/future), momentum row (most recent PR computed from history + coaching via `getSuggestion`), yesterday card with volume, stat footer. |
-| `myplans.js` | `data.js`, `programTemplates.js`, `home.js` (next day), `utils.js` | My Plans tab — program management workshop only (no Start buttons). Active program day cards with exercise preview + chevron → program builder. Library section with Set Active / Duplicate / Delete overflow. |
+| `home.js` | `data.js`, `overload.js`, `stats.js` | Home tab. Week streak, readiness strip (48h rule), split progress grid (3 cell states: completed/today/future), momentum row (most recent PR computed from history + coaching via `getSuggestion`), yesterday card with volume, stat footer. |
+| `stats.js` | `data.js`, `utils.js` | Pure stats and rotation logic, no DOM: `detectMostRecentPr()`, `calcWeekStreak()`, `_weekStart()`, `getDayType()`, `abbreviateTitle()`, `abbreviateDay()`, `getSuggestedDay()` (next day in the active program's rotation). Used by Home and My Plans. |
+| `myplans.js` | `data.js`, `programTemplates.js`, `stats.js` (next day), `utils.js` | My Plans tab — program management workshop only (no Start buttons). Active program day cards with exercise preview + chevron → program builder. Library section with Set Active / Duplicate / Delete overflow. |
 | `program.js` | `exerciseLibrary.js` | Static data: original 4-day split, `MUSCLE_GROUPS` mapping (covers all exercise library IDs), display metadata. |
 | `data.js` | `utils.js`, `program.js`, `media.js` | `state` object (profile, programs, history, customExercises, currentSession). `loadData()` with v2→v3→v4→v5 migrations (`migrateToLatest()`), `applyImportedData()` shared by both import paths, `saveData()`, `saveCurrentSession()`, `exportData()` (includes the profile photo), `importData()`. |
 | `utils.js` | _(none)_ | `todayDateString()`, `isoDateOnly()`, `escapeHtml()` (shared by Profile, welcome, profile chip, program builder, background picker), `dayTitleBase()` (day title before " - "), `formatDate()`, `formatDateShort()`, `showToast()`, `showConfirm()`, `showPrompt()`. |
@@ -469,7 +473,7 @@ getLastExerciseNote(exerciseId)
 
 These are displayed in the session view as "Last session" hints above each exercise card, and the suggestion for the next workout is surfaced on the Home tab's coaching card.
 
-**PR detection** (`home.js`, `detectMostRecentPr()`): walks history oldest → newest keeping each exercise's best (top weight, or top reps for bodyweight); the last time any exercise beat its previous best is shown on the Home PR card.
+**PR detection** (`stats.js`, `detectMostRecentPr()`): walks history oldest → newest keeping each exercise's best (top weight, or top reps for bodyweight); the last time any exercise beat its previous best is shown on the Home PR card.
 
 ---
 
@@ -523,7 +527,7 @@ flowchart TD
 
 **Remote:** `https://github.com/reidrussell-alt/plate-log.git` (live at `https://reidrussell-alt.github.io/plate-log/`; the old `lifting-tracker-Application` repository is kept as an archive)  
 **Auth:** Personal Access Token (GitHub no longer accepts passwords)  
-**Current SW cache version:** `lift-tracker-v32`  
+**Current SW cache version:** `lift-tracker-v33`  
 **Background photos** are not precached: the service worker keeps them in a separate `plate-log-backgrounds-v1` cache as they are viewed, and that cache survives app updates.  
 **Auto-update:** when a new service worker takes control, the app reloads itself. On iOS a delete + re-add is still the reliable way to force fresh code.
 

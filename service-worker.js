@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lift-tracker-v32';
+const CACHE_NAME = 'lift-tracker-v33';
 // Background photos live in their own cache, kept across app updates, filled as they are viewed
 const BG_CACHE = 'plate-log-backgrounds-v1';
 
@@ -19,6 +19,7 @@ const ASSETS = [
   './js/programTemplates.js',
   './js/onboarding.js',
   './js/home.js',
+  './js/stats.js',
   './js/myplans.js',
   './js/settings.js',
   './js/restTimer.js',

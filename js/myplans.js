@@ -1,6 +1,6 @@
 import { state } from './data.js';
 import { PROGRAM_TEMPLATES } from './programTemplates.js';
-import { getSuggestedDay } from './home.js';
+import { getSuggestedDay } from './stats.js';
 import { buildProfileChip } from './profilePhoto.js';
 import { dayTitleBase } from './utils.js';
 

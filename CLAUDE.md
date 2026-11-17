@@ -45,6 +45,7 @@ lift-tracker/
 └── js/
     ├── app.js              # Entry point — imports everything, binds window.* handlers, switchTab
     ├── home.js             # Home tab: streak, readiness strip, split grid, PR + coaching cards, yesterday card
+    ├── stats.js            # PR detection, week streak, day type, next day in rotation (no DOM)
     ├── myplans.js          # My Plans tab: active program day cards, program library, create-plan sheet
     ├── session.js          # Active workout session; structured + track-as-you-go
     ├── overload.js         # Progressive overload logic: last performance, suggestion, last note (no DOM)
@@ -313,7 +314,7 @@ White-first, warm and grounded: white page, warm off-white cards with light neut
 
 ### `home.js`
 - `renderHome()` — week streak, readiness strip, split progress grid, momentum row, yesterday card, stat footer
-- `detectMostRecentPr()` — walks history and finds the latest session that beat an exercise's previous best (top weight, or top reps for bodyweight). PRs are computed on the fly, not stored.
+- `detectMostRecentPr()` (in `stats.js`, with the streak, day-type and next-day helpers) — walks history and finds the latest session that beat an exercise's previous best (top weight, or top reps for bodyweight). PRs are computed on the fly, not stored.
 - Coaching card surfaces `getSuggestion()` from `overload.js`
 - `homeStartWorkout()` — opens the day-picker sheet (structured) or starts track-as-you-go
 
@@ -349,7 +350,7 @@ Welcome screen shown on every app open (design: `design-reference/patterns.md`, 
 ## Service worker
 
 - Cache name must be bumped (v1 → v2 → v3...) on **every deploy** that changes JS/CSS files
-- Currently: `lift-tracker-v32`
+- Currently: `lift-tracker-v33`
 - Every JS file must be listed in the `ASSETS` array — add new modules there, remove deleted ones
 - Cover photos (`img/backgrounds/`) are **not** in `ASSETS`: they go in a separate `plate-log-backgrounds-v1` cache when first viewed, kept across versions
 - Cover photos are from Wikimedia Commons (CC BY / BY-SA / CC0); their licences require the credit line shown in the picker and under the Profile page — keep it
