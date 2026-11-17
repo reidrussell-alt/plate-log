@@ -209,6 +209,7 @@ graph LR
     program.js --> exerciseLibrary.js
     programTemplates.js --> exerciseLibrary.js
     charts.js --> utils.js
+    restTimer.js --> utils.js
     overload.js --> data.js
     overload.js --> utils.js
     stats.js --> data.js
@@ -230,7 +231,7 @@ graph LR
 | `myplans.js` | `data.js`, `programTemplates.js`, `stats.js` (next day), `programActions.js` (custom-plan limit), `utils.js` | My Plans tab — program management workshop only (no Start buttons). Active program day cards with exercise preview + chevron → program builder. Library section with Set Active / Duplicate / Delete overflow. |
 | `program.js` | `exerciseLibrary.js` | Static data: original 4-day split, `MUSCLE_GROUPS` mapping (covers all exercise library IDs), display metadata. |
 | `data.js` | `utils.js`, `program.js`, `media.js` | `state` object (profile, programs, history, customExercises, currentSession). `loadData()` with v2→v3→v4→v5 migrations (`migrateToLatest()`), `applyImportedData()` shared by both import paths, `saveData()`, `saveCurrentSession()`, `exportData()` (includes the profile photo), `importData()`. |
-| `utils.js` | _(none)_ | `todayDateString()`, `isoDateOnly()`, `escapeHtml()` (shared by Profile, welcome, profile chip, program builder, background picker), `dayTitleBase()` (day title before " - "), `formatDate()`, `formatDateShort()`, `showToast()`, `showConfirm()`, `showPrompt()`. |
+| `utils.js` | _(none)_ | `todayDateString()`, `isoDateOnly()`, `escapeHtml()` (shared by Profile, welcome, profile chip, program builder, background picker), `dayTitleBase()` (day title before " - "), `readJSON()` / `writeJSON()` (small localStorage stores: timer settings, chart ranges; log a warning on failure), `formatDate()`, `formatDateShort()`, `showToast()`, `showConfirm()`, `showPrompt()`. |
 | `exerciseLibrary.js` | _(none)_ | 127 exercises with id, name, muscleGroup, loadType. `MUSCLE_GROUP_ORDER`, `MUSCLE_GROUP_META`, `getExerciseById()` and search helpers. |
 | `programTemplates.js` | `exerciseLibrary.js` | 6 program templates (3-day full body, 4-day upper/lower, 4-day PPL, 5-day PPL, 6-day PPL 2×, 5-day bro split). `getTemplateById()`. |
 | `onboarding.js` | `data.js`, `programTemplates.js`, `utils.js` | Multi-step new-user onboarding, opened from the welcome screen's button: name → mode → template/track-as-you-go → save, then Home. Also handles backup import during onboarding. |
@@ -240,7 +241,7 @@ graph LR
 | `overload.js` | `data.js`, `utils.js` | Progressive overload logic, no DOM: `getLastPerformance()`, `getSuggestion()`, `getLastExerciseNote()`. Used by the workout screen and Home's coaching card. |
 | `programBuilder.js` | `data.js`, `exerciseSelector.js`, `utils.js` | Full-screen program editor overlay. `showProgramBuilder(editingId, focusDayId?)` — optional `focusDayId` pre-expands and scrolls to the target day. Drag-to-reorder via Sortable.js. Per-exercise sets and rep type (range / fixed / AMRAP). |
 | `exerciseSelector.js` | `exerciseLibrary.js`, `data.js`, `utils.js` | Modal for picking exercises (search, muscle filter) or creating custom ones (saved to `customExercises`). |
-| `restTimer.js` | _(none)_ | Floating rest timer pill. Auto-starts after set logged; stays accurate in the background (`reconcileTimer()`); traffic-light states; optional vibrate. |
+| `restTimer.js` | `utils.js` | Floating rest timer pill. Auto-starts after set logged; stays accurate in the background (`reconcileTimer()`); traffic-light states; optional vibrate. |
 | `sessionBanner.js` | `data.js` | Persistent banner shown on non-session tabs when a session is in progress. |
 | `profilePhoto.js` | `media.js`, `utils.js`, `data.js` | Profile photo options sheet (take photo with the front camera, choose from library, remove), crop step (drag + zoom in a circle), saves a 400×400 JPEG. Also builds the profile chip (name + small photo) shown top right on Home, My Plans, Progress and Profile. |
 | `backgroundPicker.js` | `data.js`, `backgrounds.js`, `utils.js` | Background sheet for the Profile cover: Cities / Nature / None tabs, photo grid, live preview on the cover, photo credit, saves `profile.background`. |

@@ -1,7 +1,7 @@
 import { state, saveData } from './data.js';
 import { MUSCLE_GROUPS } from './program.js';
 import { MUSCLE_GROUP_ORDER, MUSCLE_GROUP_META } from './exerciseLibrary.js';
-import { formatDate, formatDateShort, isoDateOnly, todayDateString, showToast, showConfirm } from './utils.js';
+import { formatDate, formatDateShort, isoDateOnly, todayDateString, showToast, showConfirm, readJSON, writeJSON } from './utils.js';
 import { drawSingleLineChart, cssVar } from './charts.js';
 import { buildProfileChip } from './profilePhoto.js';
 
@@ -20,20 +20,12 @@ let _seDraft = null;
 let _seIdx = null;
 
 function _loadChartRanges() {
-  try {
-    const raw = localStorage.getItem(CHART_RANGES_KEY);
-    if (raw) _chartRanges = JSON.parse(raw);
-  } catch (e) {
-    console.warn('Failed to load chart ranges', e);
-  }
+  const stored = readJSON(CHART_RANGES_KEY, undefined);
+  if (stored !== undefined) _chartRanges = stored;
 }
 
 function _saveChartRanges() {
-  try {
-    localStorage.setItem(CHART_RANGES_KEY, JSON.stringify(_chartRanges));
-  } catch (e) {
-    console.warn('Failed to save chart ranges', e);
-  }
+  writeJSON(CHART_RANGES_KEY, _chartRanges);
 }
 
 function _getRange(exId) {

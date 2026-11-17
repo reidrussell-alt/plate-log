@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
-import { todayDateString, isoDateOnly, formatDate, formatDateShort, escapeHtml } from '../js/utils.js';
+import { describe, it, expect, vi } from 'vitest';
+import { todayDateString, isoDateOnly, formatDate, formatDateShort, escapeHtml, readJSON, writeJSON } from '../js/utils.js';
 import { setNow } from './helpers.js';
 
 describe('todayDateString', () => {
@@ -57,5 +57,42 @@ describe('escapeHtml', () => {
   it('other values are turned into text; plain text is unchanged', () => {
     expect(escapeHtml(0)).toBe('0');
     expect(escapeHtml('Upper A')).toBe('Upper A');
+  });
+});
+
+describe('readJSON / writeJSON (REFACTOR_PLAN 4.1)', () => {
+  it('round-trips a value under the given key', () => {
+    writeJSON('k', { a: 1 });
+    expect(localStorage.getItem('k')).toBe('{"a":1}');
+    expect(readJSON('k', 'fb')).toEqual({ a: 1 });
+  });
+
+  it('missing or empty key gives the fallback', () => {
+    expect(readJSON('missing', 'fb')).toBe('fb');
+    localStorage.setItem('empty', '');
+    expect(readJSON('empty', 'fb')).toBe('fb');
+  });
+
+  it('stored JSON null comes back as null, not the fallback', () => {
+    localStorage.setItem('n', 'null');
+    expect(readJSON('n', 'fb')).toBeNull();
+  });
+
+  it('invalid JSON gives the fallback and warns', () => {
+    localStorage.setItem('bad', '{oops');
+    console.warn.mockClear();
+    expect(readJSON('bad', 'fb')).toBe('fb');
+    expect(console.warn).toHaveBeenCalled();
+  });
+
+  it('a failed write warns instead of throwing', () => {
+    const spy = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => { throw new Error('full'); });
+    console.warn.mockClear();
+    try {
+      expect(() => writeJSON('k', 1)).not.toThrow();
+      expect(console.warn).toHaveBeenCalled();
+    } finally {
+      spy.mockRestore();
+    }
   });
 });

@@ -41,6 +41,19 @@ describe('rest timer settings (liftTimerSettings)', () => {
     expect(t.getTimerSettings()).toEqual({ enabled: false, duration: 45, alertEnabled: true, extra: 'x' });
   });
 
+  it('a failed save logs a warning (was silent before REFACTOR_PLAN 4.1)', async () => {
+    const t = await fresh(() => import('../js/restTimer.js'));
+    const spy = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => { throw new Error('full'); });
+    console.warn.mockClear();
+    try {
+      expect(() => t.setTimerDuration(90)).not.toThrow();
+      expect(console.warn).toHaveBeenCalled();
+      expect(t.getTimerSettings().duration).toBe(90);
+    } finally {
+      spy.mockRestore();
+    }
+  });
+
   it('formatRestDuration shows m:ss', async () => {
     const t = await fresh(() => import('../js/restTimer.js'));
     expect(t.formatRestDuration(0)).toBe('0:00');

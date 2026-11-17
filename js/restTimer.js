@@ -1,3 +1,5 @@
+import { readJSON, writeJSON } from './utils.js';
+
 const TIMER_SETTINGS_KEY = 'liftTimerSettings';
 
 const settings = {
@@ -21,18 +23,11 @@ let _interval = null;
 const CIRC = 2 * Math.PI * 28; // r=28 → ~175.93
 
 function loadTimerSettings() {
-  try {
-    const raw = localStorage.getItem(TIMER_SETTINGS_KEY);
-    if (raw) Object.assign(settings, JSON.parse(raw));
-  } catch (e) {
-    console.warn('Failed to load timer settings', e);
-  }
+  Object.assign(settings, readJSON(TIMER_SETTINGS_KEY, null));
 }
 
 function _saveTimerSettings() {
-  try {
-    localStorage.setItem(TIMER_SETTINGS_KEY, JSON.stringify(settings));
-  } catch (e) {}
+  writeJSON(TIMER_SETTINGS_KEY, settings);
 }
 
 export function getTimerSettings() {

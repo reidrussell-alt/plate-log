@@ -17,6 +17,27 @@ export function dayTitleBase(title) {
 }
 
 // Escapes text for HTML content and quoted attributes. null/undefined become ''.
+// Small JSON stores in localStorage (timer settings, chart ranges). Failures are
+// logged, never thrown. readJSON returns `fallback` when the key is missing or
+// empty, or the stored text isn't valid JSON; otherwise the parsed value as is.
+export function readJSON(key, fallback) {
+  try {
+    const raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : fallback;
+  } catch (e) {
+    console.warn(`Failed to read ${key}`, e);
+    return fallback;
+  }
+}
+
+export function writeJSON(key, value) {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch (e) {
+    console.warn(`Failed to save ${key}`, e);
+  }
+}
+
 export function escapeHtml(str) {
   return String(str ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }

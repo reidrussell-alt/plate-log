@@ -68,7 +68,7 @@ lift-tracker/
     ├── program.js          # Original 4-day split data + MUSCLE_GROUPS mapping (no DOM)
     ├── exerciseLibrary.js  # 127 exercises with id/name/muscleGroup/loadType (no DOM)
     ├── programTemplates.js # 6 program templates using exercise library (no DOM)
-    └── utils.js            # Date helpers, showToast(), showConfirm(), showPrompt()
+    └── utils.js            # Date helpers, escapeHtml(), readJSON()/writeJSON(), showToast(), showConfirm(), showPrompt()
 ```
 
 Tabs: **Home · My Plans · Progress · Profile.** `switchTab()` uses `data-tab` attributes; legacy aliases `'plan'` → `'myPlans'` and `'settings'` → `'profile'` still work.
