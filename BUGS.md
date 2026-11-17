@@ -28,6 +28,9 @@ Test references are `file › test name` in `tests/`.
 | M6 | `js/home.js` `getDayType()` | Title fallback: any title containing "upper" and an "a" counts as push (e.g. "Upper Back"). | `home.test.js › day type falls back to the title` |
 | M7 | `js/utils.js` `formatDate()` | Future dates show as "-3d ago". | `utils.test.js › PINNED BUG: a future date shows as a negative "d ago"` |
 | M8 | `js/progress.js` `analyzeTrend()` | A drop in weight or reps uses the `trend-flat` style, the same as no change. | `progress-logic.test.js › PINNED: a drop uses the "flat" style` |
+| M9 | `js/programBuilder.js` `pbSaveProgram()` | After saving, re-renders Profile (`window.renderSettings()`) but not My Plans, where the builder is opened from, so My Plans likely shows the old program until the next tab switch. Found in the refactor audit, 17 Nov. | Not pinned |
+| M10 | `js/session.js` `_setCounts()` vs `js/sessionBanner.js` `showSessionBanner()` and `js/session.js` `finishSession()` | Two "total sets" formulas: the workout header uses `max(targetSets, sets.length)`, the banner and the finish prompt use `targetSets \|\| sets.length`. Once extra sets are added they show different totals. Found in the refactor audit, 17 Nov. | Not pinned |
+| M11 | `js/exerciseSelector.js` `_mount()` | The Escape `keydown` listener is removed only when Escape is pressed. Closing by tapping outside or picking an exercise leaves it attached, and every open adds another. Found in the refactor audit, 17 Nov. | Not pinned |
 
 ## Low / structural
 
@@ -39,10 +42,11 @@ Test references are `file › test name` in `tests/`.
 | L4 | `js/data.js` `migrateV2ToV3()` | With no profile in the old data the name becomes `''`; the docs say "Reid". | `data-migrations.test.js › PINNED: with no profile the name is empty` |
 | L5 | `js/session.js` `getSuggestion()` | Decimal weights get +5 with no rounding to available plates (e.g. 22.5 → 27.5). Possibly intended. | `session-logic.test.js › PINNED: decimal weights add 5 without rounding` |
 | L6 | `ARCHITECTURE.md` | Says finishing a workout returns to Home; the code opens Progress. **During the refactor the code's behaviour (finish → Progress) is the source of truth;** ARCHITECTURE.md may be out of date here and elsewhere. | Not pinned (docs) |
+| L7 | `js/settings.js` `confirmCreateProgram()` | Calls `refreshProgramsList()`, which is not defined anywhere. Unreachable: nothing opens the Create Program modal. **Resolved by REFACTOR_PLAN.md item 1.2** (the dead code is deleted). | Not pinned (dead code) |
 
 ## Separate track — build and iOS
 
 | # | Where | What happens | Pinned by |
 |---|-------|--------------|-----------|
-| S1 | `package.json` | `@capacitor-community/health@^3.0.0` does not exist on npm, so `npm install` in the repo root fails and the iOS build can't be set up as documented. Test tooling lives in `tests/package.json` to avoid this. Candidates: `@capgo/capacitor-health`, `capacitor-health`. | Not pinned |
+| S1 | `package.json` | `@capacitor-community/health@^3.0.0` does not exist on npm, so `npm install` in the repo root fails and the iOS build can't be set up as documented. Test tooling lives in `tests/package.json` to avoid this. Candidates: `@capgo/capacitor-health`, `capacitor-health`. Related, in `js/healthkit.js`: `initHealthKit()` fetches today's steps at startup but nothing uses the result (`app.js` discards it), and several private helpers are never called. `healthkit.js` is out of scope for the refactor until S1 is resolved. | Not pinned |
 | S2 | `capacitor.config.json` | `webDir: "."` copies the whole repo into the iOS app on `cap sync`, including `tests/` (and `tests/node_modules/` once installed), `scripts/`, `design-reference/` and docs. | Not pinned |

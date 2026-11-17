@@ -39,6 +39,7 @@ lift-tracker/
 ├── tests/                  # Vitest characterization tests + their own package.json (not shipped)
 ├── BUGS.md                 # Suspected bugs found while writing tests, with the test that pins each
 ├── MANUAL_TEST_CHECKLIST.md # 15 click-through flows to check in the browser after changes
+├── REFACTOR_PLAN.md        # Batched refactor plan, ground rules and preconditions
 ├── css/
 │   └── main.css            # All styles; CSS variables in :root
 └── js/
@@ -94,14 +95,48 @@ cd tests && npm install && npm test     # or from the root: npm --prefix tests t
 
 ---
 
+## Refactor session
+
+A behaviour-preserving refactor is under way on branch `refactor/initial`.
+- **`REFACTOR_PLAN.md`** — the batches, their ground rules (storage, service worker, no bug fixes, snapshots) and preconditions. Read it before starting a batch.
+- **`BUGS.md`** — suspected bugs. Don't fix them during the refactor; the tests that pin them must stay green.
+- After each batch: tests green, the listed `MANUAL_TEST_CHECKLIST.md` steps, one commit.
+- Never update snapshots in bulk (no `vitest -u` across the suite); list every snapshot change and its reason in the handoff.
+
+**Every response in a refactor session ends with this handoff block**, which Reid pastes to a reviewer. Put it in ONE fenced code block with nothing after it. Keep it factual and concise, don't restate the plan, and write "None" for empty sections rather than removing them. If `REFACTOR_PLAN.md` was created or substantially changed, paste its full contents in a separate code block directly above the handoff.
+
+```
+=== HANDOFF: [Phase name / Batch N] ===
+STATUS: Done | Partial | Blocked
+COMMANDS: [run/test/lint/typecheck commands, only if new or changed]
+CHANGES:
+- [file]: [what changed, one line each]
+COMMITS:
+- [hash] [message]
+TESTS: [pass/fail counts, or "none run" and why]
+SKIPPED / BLOCKED:
+- [item]: [reason]
+SUSPECTED BUGS / RISKS:
+- [location]: [description]
+DECISIONS MADE WITHOUT ASKING:
+- [any judgment call I should know about]
+QUESTIONS FOR ME:
+- [anything you need answered before the next step]
+=== END HANDOFF ===
+```
+
+---
+
 ## Naming conventions
 
-### `render*` vs `show*`
+### `render*`, `show*` / `open*`, `close*` / `hide*`, `build*`
 
-- **`render*()`** — writes HTML to the DOM (full or partial re-render). Examples: `renderHome()`, `renderMyPlans()`, `renderProgress()`, `renderSession()`. These are the heavy-lifting functions that build UI from state.
-- **`show*()`** — displays something that already exists in the DOM by adding a class or setting visibility. Examples: `showToast()`, `showConfirm()`, `showOnboarding()`, `showWelcomeScreen()`. These never touch innerHTML.
+- **`render*()`** — (re)builds a screen, or part of one, from state, in place. Examples: `renderHome()`, `renderMyPlans()`, `renderProgress()`, `renderSession()`, `renderSettings()`.
+- **`show*()` / `open*()`** — puts an overlay, sheet, modal or flow on screen. It may build that overlay's HTML first (`showProgramBuilder()`, `showExerciseOptions()`, `showBackgroundPicker()`, `showWelcomeScreen()`, `openCalendarDay()`, `openExerciseSelector()`) or only reveal markup that already exists (`showToast()`, `showConfirm()`, `showOnboarding()`).
+- **`close*()` / `hide*()`** — removes or hides it again.
+- **`build*()` / `*Html()`** — return an HTML string and never touch the DOM (`buildProfileChip()`, `buildPrCard()`, `_dayCardHtml()`).
 
-Follow this convention when adding new functions so callsites remain predictable.
+Existing names stay as they are (decided 17 Nov 2026, REFACTOR_PLAN.md 6.2 option A). Follow this convention for new functions so callsites remain predictable.
 
 ---
 
