@@ -44,6 +44,7 @@ No files added or removed, so no SW change. `healthkit.js` dead code (formerly 1
 | 1.6 ✓ `d55cce7` | `settings.js` lines 361–362, 379–380, 438–439, 476–477 | `window.renderMyPlans()` called twice in a row. | Call once. | L | S | C 12 | — |
 | 1.7 ✓ `4a776ce` | `settings.js:108` | `${isStructured ? 'Switch' : 'Switch'}` | Plain `Switch`. | L | S | T (0.2) | — |
 | 1.8 ✓ `f25606e` | `progress.js` `getMostTrainedDay`; the `sessionsByDay` tally in `renderProgress` that only fed it | Unused by the app; only `progress-logic.test.js` calls it. | **Decided:** delete the function, its `getMostTrainedDay` test block and its import in that test file, and the unused `sessionsByDay` block in `renderProgress` (output unchanged). `searchExercises` and `getExercisesByMuscleGroup` stay (decided: keep). | L | S | T | — |
+| 1.9 ✓ `21dfcf7` | `settings.js` `activateTemplate` + binding | Its only caller was the template card deleted in 1.1, so nothing in the app calls it. Added 17 Nov after the Batch 1 review. | Delete the function, its `window` binding, its `program-actions.test.js` block and its entry in the 0.1 pinned list. | L | S | T (0.1, 0.3 — tests removed with it) | — |
 
 ## Batch 2 — Shared helpers inside existing files
 
@@ -100,7 +101,7 @@ Highest-churn batch. **Optional: decide after Batch 5 whether to do any of it.**
 
 | # | Location | Problem | Note |
 |---|----------|---------|------|
-| X1 | `css/main.css` (3,697 lines) | Base rules overridden by appended layers (`DAYLIGHT —`, `SHARPEN —`, `WARM DAYLIGHT —`); duplicate selectors (`.set-row` ×3, `.cal-day` ×3, `.suggestion` ×2…). | Visual risk with no automated check. Only with screenshot comparison per screen. H risk, L effort. |
+| X1 | `css/main.css` (3,697 lines) | Base rules overridden by appended layers (`DAYLIGHT —`, `SHARPEN —`, `WARM DAYLIGHT —`); duplicate selectors (`.set-row` ×3, `.cal-day` ×3, `.suggestion` ×2…). Probably dead since Batch 1 (1.1/1.2 deleted the markup that used them): `.program-item`, `.prog-btn`, `.programs-section-label`, `#createProgramModal` styles — confirm with a search over `js/` and `index.html` before removing. | Visual risk with no automated check. Only with screenshot comparison per screen. H risk, L effort. |
 | X2 | 56 inline `style="…"` attributes in JS templates (`progress.js` 22, `settings.js` 15) | Styling spread across JS. | Move to CSS classes alongside X1. Visual check needed. |
 | X3 | `exerciseSelector.js` labels `YOUR CUSTOM EXERCISES`, `EXERCISE LIBRARY` | ALL CAPS conflicts with the sentence-case rule in `CLAUDE.md`. | Design change, not a refactor. |
 
