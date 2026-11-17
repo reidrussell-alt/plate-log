@@ -11,6 +11,24 @@ let _openIdx = null;
 // The exercise that is expanded on screen right now (set on every render).
 let _renderedOpenIdx = null;
 
+// A set row as it starts in a session, before anything is entered.
+function _blankSet() {
+  return { weight: '', reps: '', logged: false, note: '', noteOpen: false };
+}
+
+// An exercise added (or swapped in) mid-session: no rep range, 3 blank sets.
+function _newSessionExercise(ex) {
+  return {
+    id: ex.id,
+    name: ex.name,
+    loadType: ex.loadType,
+    repRange: '',
+    targetSets: 3,
+    note: '',
+    sets: Array.from({ length: 3 }, _blankSet)
+  };
+}
+
 function _isComplete(ex) {
   const target = ex.targetSets || ex.sets.length;
   return ex.sets.length > 0 && ex.sets.length >= target && ex.sets.every(s => s.logged);
@@ -233,7 +251,7 @@ function _buildStructuredSession(dayId, date) {
       repRange: ex.repRange || (ex.repRangeMin && ex.repRangeMax ? `${ex.repRangeMin}-${ex.repRangeMax}` : ''),
       targetSets: ex.sets,
       note: '',
-      sets: Array.from({ length: ex.sets }, () => ({ weight: '', reps: '', logged: false, note: '', noteOpen: false }))
+      sets: Array.from({ length: ex.sets }, _blankSet)
     }))
   };
 }
@@ -603,7 +621,7 @@ export function toggleSetLogged(exIdx, setIdx) {
 }
 
 export function addSet(exIdx) {
-  state.currentSession.exercises[exIdx].sets.push({ weight: '', reps: '', logged: false, note: '', noteOpen: false });
+  state.currentSession.exercises[exIdx].sets.push(_blankSet());
   saveCurrentSession();
   renderSession();
 }
@@ -663,15 +681,7 @@ export function replaceExercise(exIdx) {
   const initialFilter = (libEx || customEx)?.muscleGroup || 'All';
 
   openExerciseSelector(newEx => {
-    state.currentSession.exercises[exIdx] = {
-      id: newEx.id,
-      name: newEx.name,
-      loadType: newEx.loadType,
-      repRange: '',
-      targetSets: 3,
-      note: '',
-      sets: Array.from({ length: 3 }, () => ({ weight: '', reps: '', logged: false, note: '', noteOpen: false }))
-    };
+    state.currentSession.exercises[exIdx] = _newSessionExercise(newEx);
     saveCurrentSession();
     renderSession();
   }, initialFilter);
@@ -698,15 +708,7 @@ export function removeSet(exIdx, setIdx) {
 
 export function showExercisePicker() {
   openExerciseSelector(ex => {
-    state.currentSession.exercises.push({
-      id: ex.id,
-      name: ex.name,
-      loadType: ex.loadType,
-      repRange: '',
-      targetSets: 3,
-      note: '',
-      sets: Array.from({ length: 3 }, () => ({ weight: '', reps: '', logged: false, note: '', noteOpen: false }))
-    });
+    state.currentSession.exercises.push(_newSessionExercise(ex));
     saveCurrentSession();
     renderSession();
   });
