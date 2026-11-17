@@ -53,7 +53,8 @@ lift-tracker/
     ├── restTimer.js        # Floating rest timer pill (background-accurate, vibrate alert)
     ├── progress.js         # Progress tab: stats, calendar, per-muscle charts + range filters, edit modals
     ├── charts.js           # Canvas chart drawing utility
-    ├── settings.js         # Profile tab: profile, rest timer, HealthKit, data backup; program actions
+    ├── settings.js         # Profile tab: profile, rest timer, HealthKit, data backup
+    ├── programActions.js   # Program actions (set active, delete, duplicate program/template) + custom-plan limit
     ├── onboarding.js       # New-user onboarding flow (name, mode, template, import)
     ├── programBuilder.js   # Full-screen program editor (drag-to-reorder, sets/rep ranges)
     ├── exerciseSelector.js # Exercise picker modal (search, filter by muscle, create custom)
@@ -350,7 +351,7 @@ Welcome screen shown on every app open (design: `design-reference/patterns.md`, 
 ## Service worker
 
 - Cache name must be bumped (v1 → v2 → v3...) on **every deploy** that changes JS/CSS files
-- Currently: `lift-tracker-v33`
+- Currently: `lift-tracker-v34`
 - Every JS file must be listed in the `ASSETS` array — add new modules there, remove deleted ones
 - Cover photos (`img/backgrounds/`) are **not** in `ASSETS`: they go in a separate `plate-log-backgrounds-v1` cache when first viewed, kept across versions
 - Cover photos are from Wikimedia Commons (CC BY / BY-SA / CC0); their licences require the credit line shown in the picker and under the Profile page — keep it

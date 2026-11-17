@@ -3,8 +3,8 @@ import { PROGRAM_TEMPLATES } from './programTemplates.js';
 import { getSuggestedDay } from './stats.js';
 import { buildProfileChip } from './profilePhoto.js';
 import { dayTitleBase } from './utils.js';
+import { MAX_CUSTOM_PROGRAMS } from './programActions.js';
 
-export const MAX_CUSTOM_PROGRAMS = 5;
 
 export function renderMyPlans() {
   const el = document.getElementById('myPlansPage');

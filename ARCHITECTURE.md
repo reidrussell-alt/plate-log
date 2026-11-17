@@ -123,10 +123,12 @@ graph LR
         backgrounds.js
         overload.js
         stats.js
+        programActions.js
     end
 
     app.js --> home.js
     app.js --> myplans.js
+    app.js --> programActions.js
     app.js --> session.js
     app.js --> progress.js
     app.js --> welcome.js
@@ -148,6 +150,7 @@ graph LR
     myplans.js --> data.js
     myplans.js --> stats.js
     myplans.js --> programTemplates.js
+    myplans.js --> programActions.js
     myplans.js --> utils.js
 
     session.js --> data.js
@@ -170,8 +173,7 @@ graph LR
     welcome.js --> utils.js
 
     settings.js --> data.js
-    settings.js --> programTemplates.js
-    settings.js --> myplans.js
+    settings.js --> programActions.js
     settings.js --> restTimer.js
     settings.js --> healthkit.js
     settings.js --> utils.js
@@ -212,6 +214,9 @@ graph LR
     overload.js --> utils.js
     stats.js --> data.js
     stats.js --> utils.js
+    programActions.js --> data.js
+    programActions.js --> programTemplates.js
+    programActions.js --> utils.js
 ```
 
 ---
@@ -223,14 +228,15 @@ graph LR
 | `app.js` | All modules | Entry point. Binds all `window.*` handlers. Calls `loadData()`, then `showWelcomeScreen()` — for a new user its button opens onboarding, otherwise Home. Registers service worker (non-localhost only). |
 | `home.js` | `data.js`, `overload.js`, `stats.js` | Home tab. Week streak, readiness strip (48h rule), split progress grid (3 cell states: completed/today/future), momentum row (most recent PR computed from history + coaching via `getSuggestion`), yesterday card with volume, stat footer. |
 | `stats.js` | `data.js`, `utils.js` | Pure stats and rotation logic, no DOM: `detectMostRecentPr()`, `calcWeekStreak()`, `_weekStart()`, `getDayType()`, `abbreviateTitle()`, `abbreviateDay()`, `getSuggestedDay()` (next day in the active program's rotation). Used by Home and My Plans. |
-| `myplans.js` | `data.js`, `programTemplates.js`, `stats.js` (next day), `utils.js` | My Plans tab — program management workshop only (no Start buttons). Active program day cards with exercise preview + chevron → program builder. Library section with Set Active / Duplicate / Delete overflow. |
+| `myplans.js` | `data.js`, `programTemplates.js`, `stats.js` (next day), `programActions.js` (custom-plan limit), `utils.js` | My Plans tab — program management workshop only (no Start buttons). Active program day cards with exercise preview + chevron → program builder. Library section with Set Active / Duplicate / Delete overflow. |
 | `program.js` | `exerciseLibrary.js` | Static data: original 4-day split, `MUSCLE_GROUPS` mapping (covers all exercise library IDs), display metadata. |
 | `data.js` | `utils.js`, `program.js`, `media.js` | `state` object (profile, programs, history, customExercises, currentSession). `loadData()` with v2→v3→v4→v5 migrations (`migrateToLatest()`), `applyImportedData()` shared by both import paths, `saveData()`, `saveCurrentSession()`, `exportData()` (includes the profile photo), `importData()`. |
 | `utils.js` | _(none)_ | `todayDateString()`, `isoDateOnly()`, `escapeHtml()` (shared by Profile, welcome, profile chip, program builder, background picker), `dayTitleBase()` (day title before " - "), `formatDate()`, `formatDateShort()`, `showToast()`, `showConfirm()`, `showPrompt()`. |
 | `exerciseLibrary.js` | _(none)_ | 127 exercises with id, name, muscleGroup, loadType. `MUSCLE_GROUP_ORDER`, `MUSCLE_GROUP_META`, `getExerciseById()` and search helpers. |
 | `programTemplates.js` | `exerciseLibrary.js` | 6 program templates (3-day full body, 4-day upper/lower, 4-day PPL, 5-day PPL, 6-day PPL 2×, 5-day bro split). `getTemplateById()`. |
 | `onboarding.js` | `data.js`, `programTemplates.js`, `utils.js` | Multi-step new-user onboarding, opened from the welcome screen's button: name → mode → template/track-as-you-go → save, then Home. Also handles backup import during onboarding. |
-| `settings.js` | `data.js`, `programTemplates.js`, `myplans.js`, `restTimer.js`, `healthkit.js`, `utils.js`, `media.js`, `backgrounds.js`, `backgroundPicker.js` | Profile tab: header (cover — orange fade or the chosen background photo, with its credit at the bottom of the page — centred profile photo, name, member since, mode), stats card, profile editing, rest timer settings, HealthKit toggles, data backup/restore. Also holds program activate/duplicate/delete actions used by My Plans. |
+| `settings.js` | `data.js`, `programActions.js` (re-export only), `restTimer.js`, `healthkit.js`, `utils.js`, `media.js`, `backgrounds.js`, `backgroundPicker.js` | Profile tab: header (cover — orange fade or the chosen background photo, with its credit at the bottom of the page — centred profile photo, name, member since, mode), stats card, profile editing, rest timer settings, HealthKit toggles, data backup/restore. Re-exports the program actions from `programActions.js` (kept for the program-action tests). |
+| `programActions.js` | `data.js`, `programTemplates.js`, `utils.js` | Program actions used by My Plans: `setActiveProgram()`, `deleteProgram()`, `duplicateProgram()`, `duplicateTemplate()`, each confirmed first; `MAX_CUSTOM_PROGRAMS` (5). Bound to `window` in `app.js`. |
 | `session.js` | `data.js`, `overload.js`, `exerciseLibrary.js`, `exerciseSelector.js`, `restTimer.js`, `healthkit.js`, `utils.js` | Structured and TAYG session lifecycle. `startSession()`, `startTrackAsYouGoWorkout()`, `renderSession()`, add/replace/remove exercise, add/remove set, reorder. In-progress session persisted separately so it survives app close. |
 | `overload.js` | `data.js`, `utils.js` | Progressive overload logic, no DOM: `getLastPerformance()`, `getSuggestion()`, `getLastExerciseNote()`. Used by the workout screen and Home's coaching card. |
 | `programBuilder.js` | `data.js`, `exerciseSelector.js`, `utils.js` | Full-screen program editor overlay. `showProgramBuilder(editingId, focusDayId?)` — optional `focusDayId` pre-expands and scrolls to the target day. Drag-to-reorder via Sortable.js. Per-exercise sets and rep type (range / fixed / AMRAP). |
@@ -527,7 +533,7 @@ flowchart TD
 
 **Remote:** `https://github.com/reidrussell-alt/plate-log.git` (live at `https://reidrussell-alt.github.io/plate-log/`; the old `lifting-tracker-Application` repository is kept as an archive)  
 **Auth:** Personal Access Token (GitHub no longer accepts passwords)  
-**Current SW cache version:** `lift-tracker-v33`  
+**Current SW cache version:** `lift-tracker-v34`  
 **Background photos** are not precached: the service worker keeps them in a separate `plate-log-backgrounds-v1` cache as they are viewed, and that cache survives app updates.  
 **Auto-update:** when a new service worker takes control, the app reloads itself. On iOS a delete + re-add is still the reliable way to force fresh code.
 

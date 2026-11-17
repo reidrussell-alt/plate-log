@@ -3,7 +3,7 @@ import { showWelcomeScreen } from './welcome.js';
 import { renderProgress, updateMuscleGroupExercise, setChartRange, toggleHistoryBlock, openEditModal, closeEditModal, saveEdit, deleteEditSession, navigateCalendar, openCalendarDay, closeCalendarDay, openManualWorkoutSelect, openSessionEdit, closeSessionEdit, saveSessionEdit, sessionEditDeleteExercise, sessionEditDeleteSet, deleteSession, _liveSessionIdx } from './progress.js';
 import { startSession, startTrackAsYouGoWorkout, abandonSession, finishSession, confirmFinishSession, closeModal, updateSessionDate, updateSet, toggleNote, toggleSetLogged, addSet, removeExercise, updateExerciseNote, showExercisePicker, renderSession, leaveSession, toggleReorderMode, startManualEntry, showExerciseOptions, closeExerciseOptions, replaceExercise, removeSet, openExercise } from './session.js';
 import { updateSessionBanner, hideSessionBanner, resumeSession } from './sessionBanner.js';
-import { renderSettings, editProfileName, switchTrainingMode, setActiveProgram, deleteProgram, duplicateProgram, duplicateTemplate, toggleRestTimer, onRestDurationChange, toggleRestAlert, connectHealth, toggleHealthEnabled, toggleHealthSteps, toggleHealthWeight } from './settings.js';
+import { renderSettings, editProfileName, switchTrainingMode, toggleRestTimer, onRestDurationChange, toggleRestAlert, connectHealth, toggleHealthEnabled, toggleHealthSteps, toggleHealthWeight } from './settings.js';
 import { initRestTimer, pauseTimer, skipTimer, resetTimer, toggleTimerExpanded, updatePillVisibility, reconcileTimer } from './restTimer.js';
 import { initHealthKit } from './healthkit.js';
 import { showOnboarding, hideOnboarding, obGoTo, obSelectMode, obSelectTemplate, obFinish, obProcessImport } from './onboarding.js';
@@ -13,6 +13,7 @@ import { renderHome, homeStartWorkout, homeOpenYesterday } from './home.js';
 import { showBackgroundPicker, closeBackgroundPicker, setBackgroundTab, selectBackground, saveBackground } from './backgroundPicker.js';
 import { showProfilePhotoOptions, closeProfilePhotoOptions, pickProfilePhoto, removeProfilePhoto, zoomPhotoCrop, cancelPhotoCrop, confirmPhotoCrop } from './profilePhoto.js';
 import { renderMyPlans, showCreatePlanSheet, myPlansToggleActions } from './myplans.js';
+import { setActiveProgram, deleteProgram, duplicateProgram, duplicateTemplate } from './programActions.js';
 import { state } from './data.js';
 
 function switchTab(tab) {
